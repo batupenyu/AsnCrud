@@ -115,6 +115,8 @@ urlpatterns = [
     path('spmt/<int:pk>/update/', views.SPMTUpdateView.as_view(), name='spmt_update'),
     path('spmt/<int:pk>/delete/', views.SPMTDeleteView.as_view(), name='spmt_delete'),
     path('spmt/<int:pk>/pdf/', views.spmt_export_pdf, name='spmt_export_pdf'),
+    path('spmt/export/excel/', views.spmt_export_excel, name='spmt_export_excel'),
+    path('spmt/import/excel/', views.spmt_import_excel, name='spmt_import_excel'),
 
     # Surat Umum routes
     path('surat_umum/', views.SuratUmumListView.as_view(), name='surat_umum_list'),

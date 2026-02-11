@@ -7,9 +7,17 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-file-alt"></i> Daftar Surat Perintah Melaksanakan Tugas (SPMT)</h2>
-        <a href="{% url 'spmt_create' %}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Tambah SPMT
-        </a>
+        <div class="btn-group">
+            <a href="{% url 'spmt_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Tambah SPMT
+            </a>
+            <a href="{% url 'spmt_export_excel' %}" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Export Excel
+            </a>
+            <a href="{% url 'spmt_import_excel' %}" class="btn btn-info">
+                <i class="fas fa-file-import"></i> Import Excel
+            </a>
+        </div>
     </div>
 
     <div class="card">

@@ -1548,6 +1548,138 @@ def spmt_export_pdf(request, pk):
 
     return response
 
+def spmt_export_excel(request):
+    """Export all SPMT data to an Excel file."""
+    import openpyxl
+    from openpyxl.utils import get_column_letter
+    from datetime import datetime
+
+    spmts = SPMT.objects.all()
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    sheet.title = 'SPMT Data'
+
+    # Write headers
+    headers = [
+        'Nomor Surat', 'Tempat Ditetapkan', 'Tanggal Surat', 
+        'Penandatangan (Nama)', 'Penandatangan (NIP)', 'Pegawai (Nama)', 'Pegawai (NIP)',
+        'Peraturan', 'Nomor Peraturan', 'Tahun Peraturan', 'Tentang',
+        'Tanggal Terhitung Mulai', 'Sebagai', 'Tempat Tugas',
+        'Created At', 'Updated At'
+    ]
+    for col_num, header in enumerate(headers, 1):
+        col_letter = get_column_letter(col_num)
+        sheet[f'{col_letter}1'] = header
+
+    # Write data
+    for row_num, spmt in enumerate(spmts, 2):
+        penandatangan_nama = spmt.penandatangan.nama if spmt.penandatangan else ''
+        penandatangan_nip = spmt.penandatangan.nip if spmt.penandatangan else ''
+        pegawai_nama = spmt.pegawai.nama if spmt.pegawai else ''
+        pegawai_nip = spmt.pegawai.nip if spmt.pegawai else ''
+        
+        sheet[f'A{row_num}'] = spmt.nomor_surat
+        sheet[f'B{row_num}'] = spmt.tempat_ditetapkan
+        sheet[f'C{row_num}'] = spmt.tanggal_surat.strftime('%Y-%m-%d') if spmt.tanggal_surat else ''
+        sheet[f'D{row_num}'] = penandatangan_nama
+        sheet[f'E{row_num}'] = penandatangan_nip
+        sheet[f'F{row_num}'] = pegawai_nama
+        sheet[f'G{row_num}'] = pegawai_nip
+        sheet[f'H{row_num}'] = spmt.peraturan
+        sheet[f'I{row_num}'] = spmt.nomor_peraturan
+        sheet[f'J{row_num}'] = spmt.tahun_peraturan
+        sheet[f'K{row_num}'] = spmt.tentang
+        sheet[f'L{row_num}'] = spmt.tanggal_terhitung.strftime('%Y-%m-%d') if spmt.tanggal_terhitung else ''
+        sheet[f'M{row_num}'] = spmt.sebagai
+        sheet[f'N{row_num}'] = spmt.tempat_tugas
+        sheet[f'O{row_num}'] = spmt.created_at.strftime('%Y-%m-%d %H:%M:%S') if spmt.created_at else ''
+        sheet[f'P{row_num}'] = spmt.updated_at.strftime('%Y-%m-%d %H:%M:%S') if spmt.updated_at else ''
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=spmt_data.xlsx'
+    workbook.save(response)
+    return response
+
+
+def spmt_import_excel(request):
+    """Import SPMT data from an Excel file."""
+    if request.method == 'POST':
+        import openpyxl
+        from datetime import datetime
+
+        excel_file = request.FILES['excel_file']
+        workbook = openpyxl.load_workbook(excel_file)
+        sheet = workbook.active
+
+        success_count = 0
+        error_count = 0
+
+        for row in sheet.iter_rows(min_row=2, values_only=True):
+            try:
+                (
+                    nomor_surat, tempat_ditetapkan, tanggal_surat_val,
+                    penandatangan_nama, penandatangan_nip, pegawai_nama, pegawai_nip,
+                    peraturan, nomor_peraturan, tahun_peraturan, tentang,
+                    tanggal_terhitung_val, sebagai, tempat_tugas
+                ) = row
+
+                # Handle date conversion
+                tanggal_surat = None
+                if isinstance(tanggal_surat_val, datetime):
+                    tanggal_surat = tanggal_surat_val.date()
+                elif isinstance(tanggal_surat_val, str):
+                    try:
+                        tanggal_surat = datetime.strptime(tanggal_surat_val, '%Y-%m-%d').date()
+                    except ValueError:
+                        pass
+
+                tanggal_terhitung = None
+                if isinstance(tanggal_terhitung_val, datetime):
+                    tanggal_terhitung = tanggal_terhitung_val.date()
+                elif isinstance(tanggal_terhitung_val, str):
+                    try:
+                        tanggal_terhitung = datetime.strptime(tanggal_terhitung_val, '%Y-%m-%d').date()
+                    except ValueError:
+                        pass
+
+                # Find penandatangan and pegawai by name (or NIP if available)
+                penandatangan = None
+                if penandatangan_nama:
+                    penandatangan = ASN.objects.filter(nama=penandatangan_nama).first()
+                    if not penandatangan and penandatangan_nip:
+                        penandatangan = ASN.objects.filter(nip=penandatangan_nip).first()
+
+                pegawai = None
+                if pegawai_nama:
+                    pegawai = ASN.objects.filter(nama=pegawai_nama).first()
+                    if not pegawai and pegawai_nip:
+                        pegawai = ASN.objects.filter(nip=pegawai_nip).first()
+
+                SPMT.objects.create(
+                    nomor_surat=nomor_surat,
+                    tempat_ditetapkan=tempat_ditetapkan,
+                    tanggal_surat=tanggal_surat,
+                    penandatangan=penandatangan,
+                    pegawai=pegawai,
+                    peraturan=peraturan,
+                    nomor_peraturan=nomor_peraturan,
+                    tahun_peraturan=str(tahun_peraturan) if tahun_peraturan else '',
+                    tentang=tentang,
+                    tanggal_terhitung=tanggal_terhitung,
+                    sebagai=sebagai,
+                    tempat_tugas=tempat_tugas
+                )
+                success_count += 1
+            except Exception as e:
+                logging.error(f"Error importing SPMT row: {e}")
+                error_count += 1
+
+        messages.success(request, f'Successfully imported {success_count} SPMT records. {error_count} errors.')
+        return redirect('spmt_list')
+    
+    return render(request, 'asn_app/spmt_import_form.html')
+
+
 # Surat Umum Views
 class SuratUmumListView(ListView):
     model = SuratUmum
