@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Surat Perintah Melaksanakan Tugas</title>
+    
+    <style>
+        body { font-family: 'Times New Roman', serif; font-size: 12pt; }
+        .center { text-align: center; }
+        .left { text-align: left; }
+        .justify { text-align: justify; }
+        .signature { padding-left: 250pt; }
+        table { border-collapse: collapse; width: 100%; }
+        td { vertical-align: top; }
+        .label { width: 150px; }
+        .colon { width: 10px; }
+	.kop-surat {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+        }
+        .kop-surat img {
+            max-width: 100%;
+            height: auto;
+        }
+	.kop-surat-container {
+            text-align: center;
+            margin-bottom: 10px;
+            margin-left: -2cm;
+            margin-right: -2cm;
+        }
+        .kop-surat-image {
+            width: 80%;
+            max-width: 21cm;
+            height: auto;
+            max-height: 200px; /* Batasi tinggi maksimal */
+            object-fit: contain;
+        }
+	@page {
+            size: A4;
+            /* margin: 1.5cm 2cm 0.5cm 2cm; */
+            margin: 1cm 2cm 0.5cm 2cm;
+        }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+        }
+    </style>
+</head>
+<body>
+{% load indonesian_date_tags %}
+<div class="kop-surat-container">
+        {% if kop_surat_base64 %}
+            <img src="{{ kop_surat_base64 }}" alt="Kop Surat" class="kop-surat-image">
+        {% elif spmt.kop_surat.gambar %}
+            <img src="{{ request.scheme }}://{{ request.get_host }}{{ spmt.kop_surat.gambar.url }}" alt="Kop Surat" class="kop-surat-image">
+        {% endif %}
+    </div>
+    <div class="center">
+        <p><b><u>SURAT PERINTAH MELAKSANAKAN TUGAS</u></b><br>
+           Nomor : {{ spmt.nomor_surat }}</p>
+    </div>
+    <br>
+    <!-- <p class="left">Yang bertanda tangan di bawah ini:</p> -->
+    <p class="justify">Yang bertanda tangan di bawah ini:</p>
+    <table>
+        <tr>
+            <td class="label">Nama</td>
+            <td class="colon">:</td>
+            <td>{{ spmt.penandatangan.nama }}</td>
+        </tr>
+        <tr>
+            <td class="label">NIP</td>
+            <td class="colon">:</td>
+            <td>{{ spmt.penandatangan.nip }}</td>
+        </tr>
+        <tr>
+            <td class="label">Pangkat/Golongan</td>
+            <td class="colon">:</td>
+            <td>{{ spmt.penandatangan.pangkat }} / {{ spmt.penandatangan.golongan }}</td>
+        </tr>
+        <tr>
+            <td class="label">Jabatan</td>
+            <td class="colon">:</td>
+            <td>{{ spmt.penandatangan.jabatan }}</td>
+        </tr>
+    </table>
+    <p class="left">dengan ini menyatakan dengan sesungguhnya bahwa:</p>
+    <table>
+        <tr>
+            <td class="label">Nama</td>
+            <td class="colon">:</td>
+            <td>{{ spmt.pegawai.nama }}</td>
+        </tr>
+        <tr>
+            <td class="label">NIP</td>
+            <td class="colon">:</td>
+            <td>{{ spmt.pegawai.nip }}</td>
+        </tr>
+        <tr>
+            <td class="label">Pangkat/Golongan</td>
+            <td class="colon">:</td>
+            <td>{{ spmt.pegawai.pangkat }} / {{ spmt.pegawai.golongan }}</td>
+        </tr>
+        <tr>
+            <td class="label">Jabatan</td>
+            <td class="colon">:</td>
+            <td>{{ spmt.pegawai.jabatan }}</td>
+        </tr>
+    </table>
+    <!-- <p class="justify" style="text-indent: 40px;"> -->
+    <p class="justify">
+        Yang diangkat berdasarkan Surat Keputusan {{ spmt.peraturan }} Nomor {{ spmt.nomor_peraturan }} Tahun {{ spmt.tahun_peraturan}} tentang {{ spmt.tentang }}, terhitung mulai tanggal {{ spmt.tanggal_terhitung|indonesian_date:"%d %B %Y" }} telah nyata menjalankan tugas sebagai {{ spmt.tugas }} di {{ spmt.tempat_tugas }}.
+    </p>
+    <!-- <p class="justify" style="text-indent: 40px;"> -->
+    <p class="justify">
+        Demikian surat pernyataan melaksankan tugas ini saya buat dengan sesungguhnya dengan meningat sumpah jabatan/pegawai negeri sipil dan apabila dikemudianhari isi surat pernyataan ini ternyata tidak benar yang berakibat kerugian bagi negara maka saya bersedia menanggung kerugian tersebut.
+    </p>
+    <br>
+    <div class="signature">
+	
+	<p>{{ spmt.tempat_ditetapkan }},{{ spmt.tanggal_surat|indonesian_date:"%d %B %Y" }} <br>{{ spmt.penandatangan.jabatan }}</p>
+        <br><br><br>
+        <p><strong>{{ spmt.penandatangan.nama }}</strong><br>
+            {{ spmt.penandatangan.pangkat }} / {{ spmt.penandatangan.golongan }}<br>
+            NIP. {{ spmt.penandatangan.nip }}</p>
+	
+    </div>
+</body>
+</html>

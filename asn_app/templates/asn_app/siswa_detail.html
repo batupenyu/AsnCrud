@@ -1,0 +1,72 @@
+{% extends 'asn_app/base.html' %}
+{% load i18n %}
+
+{% block title %}Detail {{ siswa.nama }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-user-graduate"></i> Detail Siswa
+                        </h4>
+                        <a href="{% url 'siswa_list' %}" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left"></i> Kembali
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-4">
+                            {% if siswa.foto %}
+                            <img src="{{ siswa.foto.url }}" alt="Foto {{ siswa.nama }}" 
+                                 class="img-fluid rounded-circle" style="max-width: 200px;">
+                            {% else %}
+                            <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" 
+                                 style="width: 200px; height: 200px;">
+                                <i class="fas fa-user fa-5x text-muted"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-sm-6 mb-3">
+                                    <strong>NIS:</strong><br>
+                                    {{ siswa.nis }}
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Nama:</strong><br>
+                                    {{ siswa.nama }}
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Kelas:</strong><br>
+                                    {{ siswa.kelas }}
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Jurusan:</strong><br>
+                                    {{ siswa.jurusan }}
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <strong>No. HP:</strong><br>
+                                    {{ siswa.no_hp }}
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Nama Orang Tua:</strong><br>
+                                    {{ siswa.nama_orang_tua }}
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <strong>Alamat:</strong><br>
+                                    {{ siswa.alamat|linebreaks }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

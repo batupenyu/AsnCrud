@@ -1,0 +1,2 @@
+- [ ] Fix surat_keterangan_list to filter out objects without valid pk
+- [ ] Test the fix by running the application

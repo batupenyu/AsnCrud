@@ -1,0 +1,17 @@
+<!-- asn_app/templates/asn_app/import_form.html -->
+{% extends 'asn_app/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="my-4">Import ASN from Excel</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="excel_file" class="form-label">Upload Excel File</label>
+            <input class="form-control" type="file" id="excel_file" name="excel_file" accept=".xlsx">
+        </div>
+        <button type="submit" class="btn btn-primary">Import</button>
+        <a href="{% url 'asn_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

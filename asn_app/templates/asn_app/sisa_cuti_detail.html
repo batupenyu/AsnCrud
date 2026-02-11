@@ -1,0 +1,63 @@
+<!-- asn_app/templates/asn_app/sisa_cuti_detail.html -->
+{% extends 'asn_app/base.html' %}
+{% load indonesian_date_tags %}
+
+{% block title %}Detail Sisa Cuti{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-calendar-check"></i> Detail Sisa Cuti
+                        </h4>
+                        <div>
+                            <a href="{% url 'sisa_cuti_update' sisa_cuti.pk %}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="{% url 'sisa_cuti_list' %}" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-arrow-left"></i> Kembali
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <strong>Pegawai:</strong><br>
+                                {{ sisa_cuti.pegawai.nama }} ({{ sisa_cuti.pegawai.nip }})
+                            </div>
+                            <div class="mb-3">
+                                <strong>Sisa Tahun N:</strong><br>
+                                {{ sisa_cuti.sisa_tahun_n }} hari
+                            </div>
+                            <div class="mb-3">
+                                <strong>Sisa Tahun N-1:</strong><br>
+                                {{ sisa_cuti.sisa_tahun_n_1 }} hari
+                            </div>
+                            <div class="mb-3">
+                                <strong>Sisa Tahun N-2:</strong><br>
+                                {{ sisa_cuti.sisa_tahun_n_2 }} hari
+                            </div>
+                            <div class="mb-3">
+                                <strong>Total Sisa Cuti:</strong><br>
+                                {{ sisa_cuti.total_sisa_cuti }} hari
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    <small>
+                        Dibuat: {{ sisa_cuti.created_at|indonesian_datetime:"%d %B %Y %H:%M" }} | 
+                        Diupdate: {{ sisa_cuti.updated_at|indonesian_datetime:"%d %B %Y %H:%M" }}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

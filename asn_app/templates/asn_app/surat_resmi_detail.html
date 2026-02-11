@@ -1,0 +1,100 @@
+{% extends 'asn_app/base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Detail Surat Resmi</h1>
+    <p class="mb-4">Informasi lengkap mengenai surat resmi {{ surat_resmi.nomor }}.</p>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Surat Resmi: {{ surat_resmi.nomor }}</h6>
+            <div class="dropdown no-arrow">
+                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                    <div class="dropdown-header">Aksi:</div>
+                    <a class="dropdown-item" href="{% url 'surat_resmi_update' surat_resmi.pk %}"><i class="fas fa-edit fa-sm fa-fw mr-2 text-gray-400"></i>Edit</a>
+                    <a class="dropdown-item" href="{% url 'surat_resmi_delete' surat_resmi.pk %}"><i class="fas fa-trash fa-sm fa-fw mr-2 text-gray-400"></i>Hapus</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'surat_resmi_export_pdf' surat_resmi.pk %}" target="_blank"><i class="fas fa-file-pdf fa-sm fa-fw mr-2 text-gray-400"></i>Export PDF</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="p-3">
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Kop Surat:</strong></div>
+                            <div class="col-sm-9">{{ surat_resmi.kop_surat.nama }}</div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Tempat Ditetapkan:</strong></div>
+                            <div class="col-sm-9">{{ surat_resmi.tempat_ditetapkan }}</div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Tanggal Ditetapkan:</strong></div>
+                            <div class="col-sm-9">{{ surat_resmi.tanggal_ditetapkan }}</div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Pejabat Tujuan Surat:</strong></div>
+                            <div class="col-sm-9">{{ surat_resmi.pejabat_tujuan_surat }}</div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Kota Tujuan Surat:</strong></div>
+                            <div class="col-sm-9">{{ surat_resmi.kota_tujuan_surat }}</div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Nomor:</strong></div>
+                            <div class="col-sm-9">{{ surat_resmi.nomor }}</div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Sifat:</strong></div>
+                            <div class="col-sm-9">{{ surat_resmi.sifat }}</div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Lampiran:</strong></div>
+                            <div class="col-sm-9">{{ surat_resmi.lampiran }}</div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Perihal:</strong></div>
+                            <div class="col-sm-9">{{ surat_resmi.perihal }}</div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Penandatangan:</strong></div>
+                            <div class="col-sm-9">{% if surat_resmi.penandatangan %}{{ surat_resmi.penandatangan.nama }} ({{ surat_resmi.penandatangan.nip }}){% else %}Belum ditentukan{% endif %}</div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Pegawai Terkait:</strong></div>
+                            <div class="col-sm-9">
+                                {% for pegawai in surat_resmi.pegawai.all %}
+                                    - {{ pegawai.nama }} ({{ pegawai.nip }})<br>
+                                {% empty %}
+                                    Tidak ada pegawai terkait.
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Pembuka Surat:</strong></div>
+                            <div class="col-sm-9">{{ surat_resmi.pembuka_surat|linebreaksbr }}</div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Isi Surat:</strong></div>
+                            <div class="col-sm-9">{{ surat_resmi.isi_surat|linebreaksbr }}</div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Penutup Surat:</strong></div>
+                            <div class="col-sm-9">{{ surat_resmi.penutup_surat|linebreaksbr }}</div>
+                        </div>
+                        <hr>
+                        <div class="text-center">
+                            <a href="{% url 'surat_resmi_list' %}" class="btn btn-secondary">Kembali ke Daftar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

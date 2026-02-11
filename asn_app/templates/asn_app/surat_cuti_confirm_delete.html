@@ -1,0 +1,40 @@
+<!-- asn_app/templates/asn_app/surat_cuti_confirm_delete.html -->
+{% extends 'asn_app/base.html' %}
+{% load indonesian_date_tags %}
+
+{% block title %}Hapus Surat Cuti{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-exclamation-triangle"></i> Konfirmasi Hapus
+                    </h4>
+                </div>
+                <div class="card-body text-center">
+                    <i class="fas fa-trash-alt fa-5x text-danger mb-4"></i>
+                    <h5>Apakah Anda yakin ingin menghapus data Surat Cuti ini?</h5>
+                    <p class="text-muted">
+                        <strong>Surat Cuti untuk {{ surat_cuti.pegawai.nama }} dari {{ surat_cuti.tanggal_awal|indonesian_date:"%d %B %Y" }} s.d. {{ surat_cuti.tanggal_akhir|indonesian_date:"%d %B %Y" }}</strong>
+                    </p>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Ya, Hapus
+                            </button>
+                            <a href="{% url 'surat_cuti_detail' surat_cuti.pk %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Batal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'asn_app/base.html' %}
+{% load indonesian_date_tags %}
+
+{% block title %}Detail Nota Dinas{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">{{ nota_dinas.hal }}</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Nomor:</strong> {{ nota_dinas.nomor }}</p>
+                    <p><strong>Tanggal:</strong> {{ nota_dinas.tanggal|indonesian_date:"%d %b %Y" }}</p>
+                    <p><strong>Sifat:</strong> {{ nota_dinas.sifat }}</p>
+                    <p><strong>Lampiran:</strong> {{ nota_dinas.lampiran }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Kepada:</strong> {{ nota_dinas.kepada }}</p>
+                    <p><strong>Dari:</strong> {{ nota_dinas.dari }}</p>
+                </div>
+            </div>
+            <hr>
+            <h5>Isi Surat</h5>
+            <p>{{ nota_dinas.isi_surat|linebreaks }}</p>
+            <hr>
+            <h5>Pegawai Terkait</h5>
+            <ul>
+                {% for pegawai in nota_dinas.pegawai.all %}
+                <li>{{ pegawai.nama }} ({{ pegawai.nip }})</li>
+                {% empty %}
+                <li>Tidak ada pegawai terkait.</li>
+                {% endfor %}
+            </ul>
+            <hr>
+            <h5>Penutup Surat</h5>
+            <p>{{ nota_dinas.penutup_surat|linebreaks }}</p>
+            <hr>
+            <h5>Penanda Tangan</h5>
+            <p>{{ nota_dinas.penanda_tangan.nama }}</p>
+            <p>NIP: {{ nota_dinas.penanda_tangan.nip }}</p>
+        </div>
+        <div class="card-footer text-end">
+            <a href="{% url 'nota_dinas_list' %}" class="btn btn-secondary">Kembali</a>
+            <a href="{% url 'nota_dinas_update' nota_dinas.pk %}" class="btn btn-warning">Edit</a>
+            <a href="{% url 'nota_dinas_export_pdf' nota_dinas.pk %}" class="btn btn-primary">Cetak PDF</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,205 @@
+<!-- asn_app/templates/asn_app/siswa_list.html -->
+{% extends 'asn_app/base.html' %}
+
+{% block title %}Daftar Siswa{% endblock %}
+
+{% block content %}
+<style>
+    .list-item-dashboard {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 2px 0;
+    }
+    .list-item-dashboard .label {
+        flex-grow: 1;
+        text-align: left;
+    }
+    .list-item-dashboard .value {
+        flex-shrink: 0;
+        text-align: right;
+        min-width: 30px; /* Adjust as needed */
+    }
+
+    .two-column-list {
+        column-count: 2;
+        column-gap: 20px; /* Adjust gap as needed */
+    }
+    .two-column-list li {
+        break-inside: avoid-column; /* Prevent list items from breaking across columns */
+    }
+</style>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-user-graduate"></i> Daftar Siswa</h2>
+        <div>
+            <a href="{% url 'import_siswa_excel' %}" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Import from Excel
+            </a>
+            <a href="{% url 'export_siswa_excel' %}" class="btn btn-info">
+                <i class="fas fa-file-excel"></i> Export to Excel
+            </a>
+            <a href="{% url 'siswa_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Tambah Siswa
+            </a>
+            <form id="deleteAllSiswaForm" action="{% url 'siswa_delete_all' %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteAllModal">
+                    <i class="fas fa-trash-alt"></i> Hapus Semua Siswa
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Siswa</h5>
+                    <p class="card-text fs-4">{{ total_siswa }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Siswa Berdasarkan Jurusan</h5>
+                    <ul class="list-unstyled two-column-list">
+                        {% for jurusan_data in siswa_by_jurusan %}
+                            <li class="list-item-dashboard"><span class="label">{{ jurusan_data.jurusan }}:</span> <span class="value">{{ jurusan_data.count }}</span></li>
+                        {% empty %}
+                            <li>Tidak ada data jurusan</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Siswa Berdasarkan Kelas</h5>
+                    <ul class="list-unstyled">
+                        {% for kelas_data in siswa_by_kelas %}
+                            <li class="list-item-dashboard"><span class="label">{{ kelas_data.kelas }}:</span> <span class="value">{{ kelas_data.count }}</span></li>
+                        {% empty %}
+                            <li>Tidak ada data kelas</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmDeleteAllModal" tabindex="-1" aria-labelledby="confirmDeleteAllModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteAllModalLabel">Konfirmasi Penghapusan Massal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Apakah Anda yakin ingin menghapus <strong>SEMUA</strong> data siswa? Tindakan ini tidak dapat dibatalkan.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteAllBtn">Hapus Semua</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <form method="get" action="{% url 'siswa_list' %}">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Cari berdasarkan nama..." value="{{ query|default:'' }}">
+                <button class="btn btn-outline-secondary" type="submit">
+                    <i class="fas fa-search"></i> Cari
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>NIS</th>
+                            <th>Nama</th>
+                            <th>Kelas</th>
+                            <th>Jurusan</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for siswa in page_obj %}
+                        <tr>
+                            <td>{{ siswa.nis }}</td>
+                            <td>{{ siswa.nama }}</td>
+                            <td>{{ siswa.kelas }}</td>
+                            <td>{{ siswa.jurusan }}</td>
+                            <td>
+                                <a href="{% url 'siswa_detail' siswa.pk %}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'siswa_update' siswa.pk %}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'siswa_delete' siswa.pk %}" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">
+                                <p class="text-muted">Belum ada data Siswa</p>
+                                <a href="{% url 'siswa_create' %}" class="btn btn-primary">Tambah Siswa Pertama</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Previous</a>
+                </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}">{{ num }}</a>
+                </li>
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Next</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const confirmDeleteAllBtn = document.getElementById('confirmDeleteAllBtn');
+        const deleteAllSiswaForm = document.getElementById('deleteAllSiswaForm');
+
+        if (confirmDeleteAllBtn && deleteAllSiswaForm) {
+            confirmDeleteAllBtn.addEventListener('click', function() {
+                deleteAllSiswaForm.submit();
+            });
+        }
+    });
+</script>
+{% endblock %}

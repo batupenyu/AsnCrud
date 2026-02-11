@@ -1,0 +1,76 @@
+{% extends 'asn_app/base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Detail SPTJM</h1>
+    <p class="mb-4">Informasi lengkap mengenai SPTJM {{ sptjm.nomor_surat }}.</p>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">SPTJM: {{ sptjm.nomor_surat }}</h6>
+            <div class="dropdown no-arrow">
+                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                    <div class="dropdown-header">Aksi:</div>
+                    <a class="dropdown-item" href="{% url 'sptjm_update' sptjm.pk %}"><i class="fas fa-edit fa-sm fa-fw mr-2 text-gray-400"></i>Edit</a>
+                    <a class="dropdown-item" href="{% url 'sptjm_delete' sptjm.pk %}"><i class="fas fa-trash fa-sm fa-fw mr-2 text-gray-400"></i>Hapus</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'sptjm_export_pdf' sptjm.pk %}" target="_blank"><i class="fas fa-file-pdf fa-sm fa-fw mr-2 text-gray-400"></i>Export PDF</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="p-3">
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Kop Surat:</strong></div>
+                            <div class="col-sm-9">{{ sptjm.kop_surat.nama|default:"Belum ditentukan" }}</div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Nomor Surat:</strong></div>
+                            <div class="col-sm-9">{{ sptjm.nomor_surat }}</div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Penandatangan:</strong></div>
+                            <div class="col-sm-9">{% if sptjm.penandatangan %}{{ sptjm.penandatangan.nama }} ({{ sptjm.penandatangan.nip }}){% else %}Belum ditentukan{% endif %}</div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Pegawai:</strong></div>
+                            <div class="col-sm-9">
+                                {% for pegawai in sptjm.pegawai.all %}
+                                    - {{ pegawai.nama }} ({{ pegawai.nip }})<br>
+                                {% empty %}
+                                    Tidak ada pegawai.
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Isi Surat:</strong></div>
+                            <div class="col-sm-9">{{ sptjm.isi_surat|linebreaksbr }}</div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Penutup Surat:</strong></div>
+                            <div class="col-sm-9">{{ sptjm.penutup_surat|linebreaksbr }}</div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Tempat Ditetapkan:</strong></div>
+                            <div class="col-sm-9">{{ sptjm.tempat_ditetapkan }}</div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3 mb-3 mb-sm-0"><strong>Tanggal Ditetapkan:</strong></div>
+                            <div class="col-sm-9">{{ sptjm.tanggal_ditetapkan }}</div>
+                        </div>
+                        <hr>
+                        <div class="text-center">
+                            <a href="{% url 'sptjm_list' %}" class="btn btn-secondary">Kembali ke Daftar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

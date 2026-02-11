@@ -1,0 +1,126 @@
+<!-- asn_app/templates/asn_app/asn_list.html -->
+{% extends 'asn_app/base.html' %}
+
+{% block title %}Daftar ASN{% endblock %}
+
+{% block content %}
+<style>
+    .asn-table {
+        font-size: 12px !important;
+    }
+    .asn-table th,
+    .asn-table td {
+        font-size: 12px !important;
+        padding: 0.25rem !important;
+    }
+    .btn.btn-sm {
+        font-size: 12px !important;
+        padding: 0.2rem 0.4rem !important;
+    }
+    .pagination .page-link {
+        font-size: 12px !important;
+        padding: 0.2rem 0.5rem !important;
+    }
+    .pagination .page-item {
+        margin: 0 0.05rem;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-list"></i> Daftar ASN</h2>
+        <div>
+            <a href="{% url 'import_asn_excel' %}" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Import from Excel
+            </a>
+            <a href="{% url 'export_asn_excel' %}" class="btn btn-info">
+                <i class="fas fa-file-excel"></i> Export to Excel
+            </a>
+            <a href="{% url 'asn_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Tambah ASN
+            </a>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <form method="get" action="{% url 'asn_list' %}">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Cari berdasarkan nama..." value="{{ query|default:'' }}">
+                <button class="btn btn-outline-secondary" type="submit">
+                    <i class="fas fa-search"></i> Cari
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped asn-table">
+                    <thead>
+                        <tr>
+                            <th>NIP</th>
+                            <th>Nama</th>
+                            <th>Jabatan</th>
+                            <th>Unit Kerja</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for asn in page_obj %}
+                        <tr>
+                            <td>{{ asn.nip }}</td>
+                            <td>{{ asn.nama }}</td>
+                            <td>{{ asn.jabatan }}</td>
+                            <td>{{ asn.unit_kerja }}</td>
+                            <td>
+                                <a href="{% url 'asn_detail' asn.pk %}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'asn_update' asn.pk %}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'asn_delete' asn.pk %}" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">
+                                <p class="text-muted">Belum ada data ASN</p>
+                                <a href="{% url 'asn_create' %}" class="btn btn-primary">Tambah ASN Pertama</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Previous</a>
+                </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}">{{ num }}</a>
+                </li>
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Next</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends 'asn_app/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>{{ title }}</h2>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.kepada.id_for_label }}" class="form-label">Kepada</label>
+                        {{ form.kepada }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.dari.id_for_label }}" class="form-label">Dari</label>
+                        {{ form.dari }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.tanggal.id_for_label }}" class="form-label">Tanggal</label>
+                        {{ form.tanggal }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.nomor.id_for_label }}" class="form-label">Nomor</label>
+                        {{ form.nomor }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.sifat.id_for_label }}" class="form-label">Sifat</label>
+                        {{ form.sifat }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.lampiran.id_for_label }}" class="form-label">Lampiran</label>
+                        {{ form.lampiran }}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.hal.id_for_label }}" class="form-label">Hal</label>
+                    {{ form.hal }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.isi_surat.id_for_label }}" class="form-label">Isi Surat</label>
+                    {{ form.isi_surat }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Pegawai</label>
+                    <div class="row">
+                    {% for choice in form.pegawai %}
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                {{ choice.tag }}
+                                <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                    {{ choice.choice_label }}
+                                </label>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.penutup_surat.id_for_label }}" class="form-label">Penutup Surat</label>
+                    {{ form.penutup_surat }}
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.penanda_tangan.id_for_label }}" class="form-label">Penanda Tangan</label>
+                        {{ form.penanda_tangan }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.kop_surat.id_for_label }}" class="form-label">Kop Surat</label>
+                        {{ form.kop_surat }}
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <a href="{% url 'nota_dinas_list' %}" class="btn btn-secondary me-2">Batal</a>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

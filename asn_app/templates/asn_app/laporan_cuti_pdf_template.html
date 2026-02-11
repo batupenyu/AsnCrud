@@ -1,0 +1,235 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Laporan Cuti Pegawai</title>
+    {% load indonesian_date_tags %}
+    <style>
+      @page {
+        size: A4 landscape;
+        margin: 0.5cm 2cm 1cm 2cm;
+      }
+      body {
+        font-family: "Helvetica", sans-serif;
+        font-size: 10pt;
+        line-height: 1.5;
+        color: #000;
+      }
+      .outer-container {
+        border: 1px solid black;
+        padding: 10px;
+        height: 98%; /* Adjust as needed */
+        box-sizing: border-box;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 15px;
+      }
+      .header h4 {
+        font-weight: bold;
+        margin: 0;
+        padding: 0;
+      }
+      .employee-details {
+        margin-bottom: 20px;
+      }
+      .employee-details table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .employee-details td {
+        padding: 0px 0;
+        vertical-align: top;
+      }
+      .employee-details .label-col {
+        width: 150pt; /* Fixed width for labels */
+        white-space: nowrap;
+      }
+      .employee-details .colon-col {
+        width: 10pt;
+        text-align: center;
+      }
+      .employee-details .value-col {
+        width: auto;
+      }
+      .leave-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      .leave-table th,
+      .leave-table td {
+        border: 1px solid black;
+        padding: 5px;
+        text-align: center;
+        vertical-align: middle;
+      }
+      .leave-table th {
+        background-color: #f2f2f2;
+      }
+      .left-section {
+        width: 48%;
+        float: left;
+        text-align: left;
+      }
+      .right-section {
+        width: 48%;
+        float: right;
+        text-align: left;
+      }
+      .clear-float {
+        clear: both;
+      }
+      .keterangan {
+        margin-top: 20px;
+        font-size: 9pt;
+      }
+      .keterangan p {
+        margin: 0;
+        padding: 0;
+      }
+      .signature-block {
+        margin-top: 20px;
+      }
+      .signature-block p {
+        margin: 0;
+        padding: 0;
+      }
+      .signature-block .jabatan {
+        margin-bottom: 50px; /* Space for signature */
+      }
+      .signature-block .nama {
+        text-decoration: underline;
+        font-weight: bold;
+      }
+      .signature-block .nip {
+        margin-top: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="outer-container">
+      <div class="header">
+        <h4>KARTU KENDALI CUTI PEGAWAI NEGERI SIPIL</h4>
+        <h4>SMK NEGERI 1 KOBA</h4>
+        <h4>CABANG DINAS PENDIDIKAN WILAYAH I</h4>
+        <h4>DINAS PENDIDIKAN PROVINSI KEPULAUAN BANGKA BELITUNG</h4>
+      </div>
+      <br />
+      <div class="employee-details">
+        <table>
+          <tr>
+            <td class="label-col">Nama</td>
+            <td class="colon-col">:</td>
+            <td class="value-col">{{ asn.nama }}</td>
+          </tr>
+          <tr>
+            <td class="label-col">NIP</td>
+            <td class="colon-col">:</td>
+            <td class="value-col">{{ asn.nip }}</td>
+          </tr>
+          <tr>
+            <td class="label-col">Pangkat/Gol. Ruang</td>
+            <td class="colon-col">:</td>
+            <td class="value-col">{{ asn.pangkat }},{{ asn.golongan }}</td>
+          </tr>
+          <tr>
+            <td class="label-col">Jabatan</td>
+            <td class="colon-col">:</td>
+            <td class="value-col">{{ asn.jabatan }}</td>
+          </tr>
+          <tr>
+            <td class="label-col">Unit Kerja</td>
+            <td class="colon-col">:</td>
+            <td class="value-col">{{ asn.unit_kerja }}</td>
+          </tr>
+        </table>
+      </div>
+
+      <table class="leave-table">
+        <thead>
+          <tr>
+            <th rowspan="2">No.</th>
+            <th colspan="2">Surat Izin/Surat Keputusan</th>
+            <th colspan="2">Lamanya</th>
+            <th rowspan="2">Jenis Cuti</th>
+            <th rowspan="2">
+              Paraf Pegawai <br />
+              Kepegawaian
+            </th>
+            <th colspan="3">Keterangan</th>
+          </tr>
+          <tr>
+            <th>Nomor</th>
+            <th>Tanggal</th>
+            <th>Dari Tanggal</th>
+            <th>Sampai Tanggal</th>
+            <th>ATB</th>
+            <th>LHC</th>
+            <th>STB</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in processed_surat_cuti_list %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ item.surat_cuti.nomor_surat }}</td>
+            <!-- <td>{{ item.surat_cuti.tanggal_surat|indonesian_date:"%d-%m-%Y" }}</td> -->
+            <td>-</td>
+            <td>
+              {{ item.surat_cuti.tanggal_awal|indonesian_date:"%d-%m-%Y" }}
+            </td>
+            <td>
+              {{ item.surat_cuti.tanggal_akhir|indonesian_date:"%d-%m-%Y" }}
+            </td>
+            <td>{{ item.surat_cuti.get_jenis_cuti_display }}</td>
+            <td></td>
+            {# Paraf Pegawai Kepegawaian - This might be a manual field #}
+            <td>{{ item.atb_for_row|default:"0" }}</td>
+            {# ATB #}
+            <td>{{ item.lhc }}</td>
+            {# LHC #}
+            <td>{{ item.stb_for_row|default:"0" }}</td>
+            {# STB #}
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="10">Tidak ada data cuti.</td>
+            {# Updated colspan #}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div style="width: 100%">
+        <div class="left-section">
+          <div class="keterangan">
+            <p>
+              ATB : Akumulasi Sisa Tahun Berjalan <br />
+              LHC : Lama Hari Cuti <br />
+              STB : Sisa Cuti Tahun Berjalan <br />
+              Sisa Cuti Tahun N: {{ sisa_cuti.sisa_tahun_n }} <br />
+              Sisa Cuti Tahun N-1: {{ sisa_cuti.sisa_tahun_n_1 }} <br />
+              Sisa Cuti Tahun N-2: {{ sisa_cuti.sisa_tahun_n_2 }} <br />
+              Total Sisa Cuti: {{ sisa_cuti.total_sisa_cuti }}
+            </p>
+          </div>
+        </div>
+        <div class="right-section">
+          <div
+            class="signature-block"
+            style="width: 250pt; margin-left: auto; text-align: center"
+          >
+            <p>Mengetahui,</p>
+            <p class="penandatangan">
+              {{ penandatangan.jabatan }}<br /><br /><br />
+              {{ penandatangan.nama }}<br />
+              {{ penandatangan.pangkat }}/{{ penandatangan.golongan }}<br />
+              NIP. {{ penandatangan.nip }}
+            </p>
+          </div>
+        </div>
+        <div class="clear-float"></div>
+      </div>
+    </div>
+  </body>
+</html>

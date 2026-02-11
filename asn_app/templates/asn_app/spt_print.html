@@ -1,0 +1,83 @@
+{% load i18n %}
+{% load indonesian_date_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cetak SPT - {{ spt.nomor_spt }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
+        .section { margin-bottom: 20px; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+        .info-item { display: flex; align-items: baseline; }
+        .info-label { min-width: 120px; font-weight: bold; }
+        .info-colon { margin-right: 5px; }
+        .info-value { flex: 1; }
+        @media print {
+            .no-print { display: none; }
+            body { margin: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print" style="margin-bottom: 20px;">
+        <button onclick="window.print()" class="btn btn-primary">🖨️ Cetak</button>
+        <button onclick="window.close()" class="btn btn-secondary">Tutup</button>
+    </div>
+
+    <div class="header">
+        <h1>Surat Perintah Tugas</h1>
+        <h2>{{ spt.nomor_spt }}</h2>
+    </div>
+
+    <div class="section">
+        <div class="info-grid">
+            <div class="info-item"><span class="info-label">Nomor SPT</span><span class="info-colon">:</span><span class="info-value">{{ spt.nomor_spt }}</span></div>
+            <div class="info-item"><span class="info-label">Nama Kegiatan</span><span class="info-colon">:</span><span class="info-value">{{ spt.nama_kegiatan }}</span></div>
+            <div class="info-item"><span class="info-label">Tempat Pelaksanaan</span><span class="info-colon">:</span><span class="info-value">{{ spt.tempat_pelaksanaan }}</span></div>
+            <div class="info-item"><span class="info-label">Waktu Pelaksanaan</span><span class="info-colon">:</span><span class="info-value">{{ spt.waktu_pelaksanaan|indonesian_datetime:"%A, %d %B %Y %H:%M" }}</span></div>
+            <div class="info-item"><span class="info-label">Tanggal Pelaksanaan</span><span class="info-colon">:</span><span class="info-value">{{ spt.tanggal_pelaksanaan|indonesian_date:"%d %B %Y" }}</span></div>
+            <div class="info-item"><span class="info-label">Tanggal Akhir Pelaksanaan</span><span class="info-colon">:</span><span class="info-value">{{ spt.tanggal_akhir_pelaksanaan|indonesian_date:"%d %B %Y" }}</span></div>
+            <div class="info-item"><span class="info-label">Tempat Ditetapkan</span><span class="info-colon">:</span><span class="info-value">{{ spt.tempat_ditetapkan }}</span></div>
+            <div class="info-item"><span class="info-label">Tanggal Ditetapkan</span><span class="info-colon">:</span><span class="info-value">{{ spt.tanggal_ditetapkan|indonesian_date:"%d %B %Y" }}</span></div>
+        </div>
+        <div class="info-item" style="grid-column: 1 / -1;"><span class="info-label">Dasar Surat</span><span class="info-colon">:</span><span class="info-value">{{ spt.dasar_surat|linebreaks }}</span></div>
+    </div>
+
+    <div class="section">
+        <h3>Peserta</h3>
+        <ul>
+            {% for peserta in spt.peserta.all %}
+            <li>{{ peserta.nama }} ({{ peserta.nip }}) - {{ peserta.jabatan }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="section">
+        <h3>Penandatangan</h3>
+        {% if spt.penandatangan %}
+        <ul>
+            <li>{{ spt.penandatangan.nama }} - {{ spt.penandatangan.jabatan }}</li>
+        </ul>
+        {% else %}
+        <p>-</p>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <h3>Kuasa Pengguna Anggaran</h3>
+        {% if spt.kuasa_pengguna_anggaran %}
+        <ul>
+            <li>{{ spt.kuasa_pengguna_anggaran.nama }} - {{ spt.kuasa_pengguna_anggaran.jabatan }}</li>
+        </ul>
+        {% else %}
+        <p>-</p>
+        {% endif %}
+    </div>
+
+    <div class="footer" style="margin-top: 50px; text-align: center; font-size: 12px; color: #666;">
+        Dicetak pada {{ current_time|indonesian_datetime:"%d %B %Y %H:%M" }}
+    </div>
+
+</body>
+</html>

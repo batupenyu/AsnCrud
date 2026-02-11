@@ -1,0 +1,51 @@
+<!-- asn_app/templates/asn_app/hari_libur_detail.html -->
+{% extends 'asn_app/base.html' %}
+{% load indonesian_date_tags %}
+
+{% block title %}Detail Hari Libur{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-calendar-alt"></i> Detail Hari Libur
+                        </h4>
+                        <div>
+                            <a href="{% url 'hari_libur_update' hari_libur.pk %}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="{% url 'hari_libur_list' %}" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-arrow-left"></i> Kembali
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <strong>Tanggal Libur:</strong><br>
+                                {{ hari_libur.tanggal|indonesian_date:"%d %B %Y" }}
+                            </div>
+                            <div class="mb-3">
+                                <strong>Nama Hari Libur:</strong><br>
+                                {{ hari_libur.nama_hari }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    <small>
+                        Dibuat: {{ hari_libur.created_at|indonesian_datetime:"%d %B %Y %H:%M" }} | 
+                        Diupdate: {{ hari_libur.updated_at|indonesian_datetime:"%d %B %Y %H:%M" }}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

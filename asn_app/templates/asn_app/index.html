@@ -1,0 +1,229 @@
+<!-- asn_app/templates/asn_app/index.html -->
+{% extends 'asn_app/base.html' %}
+{% load i18n %}
+{% load indonesian_date_tags %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold">SiM ASN</h1>
+                <p class="lead">Platform terintegrasi untuk mengelola data Aparatur Sipil Negara dengan mudah dan efisien.</p>
+                <div class="mt-4">
+                    <a href="{% url 'asn_list' %}" class="btn btn-light btn-lg me-3">
+                        <i class="fas fa-list"></i> Lihat Daftar ASN
+                    </a>
+                    <a href="{% url 'asn_create' %}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-plus"></i> Tambah ASN Baru
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="fas fa-users fa-10x opacity-75"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                    <h3>{{ total_asn }}</h3>
+                    <p class="text-muted">Total ASN Terdaftar</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <i class="fas fa-sync fa-3x text-success mb-3"></i>
+                    <h3>CRUD</h3>
+                    <p class="text-muted">Operasi Lengkap</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <i class="fas fa-shield-alt fa-3x text-warning mb-3"></i>
+                    <h3>Aman</h3>
+                    <p class="text-muted">Data Terproteksi</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <i class="fas fa-bolt fa-3x text-info mb-3"></i>
+                    <h3>Cepat</h3>
+                    <p class="text-muted">Proses Instan</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Surat Resmi Section -->
+<!-- <section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h3 class="text-center mb-4">Surat Resmi</h3>
+                <div class="text-center mb-4">
+                    <a href="{% url 'surat_resmi_create' %}" class="btn btn-success btn-lg">
+                        <i class="fas fa-plus"></i> Buat Surat Resmi Baru
+                    </a>
+                    <a href="{% url 'surat_resmi_list' %}" class="btn btn-outline-primary btn-lg ms-3">
+                        <i class="fas fa-list"></i> Lihat Daftar Surat Resmi
+                    </a>
+                </div>
+                {% comment %}
+                {% if recent_surat_resmi %}
+                <div class="list-group">
+                    {% for surat in recent_surat_resmi %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ surat.perihal }}</h6>
+                            <small>{{ surat.created_at|indonesian_date:"%d %B %Y" }}</small>
+                        </div>
+                        <p class="mb-1">Nomor: {{ surat.nomor }}</p>
+                        <small class="text-muted">Ditetapkan: {{ surat.tempat_ditetapkan }}, {{ surat.tanggal_ditetapkan|indonesian_date:"%d %B %Y" }}</small>
+                        <div class="mt-2">
+                            <a href="{% url 'surat_resmi_detail' surat.pk %}" class="btn btn-sm btn-info">Detail</a>
+                            <a href="{% url 'surat_resmi_update' surat.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                            <a href="{% url 'surat_resmi_export_pdf' surat.pk %}" class="btn btn-sm btn-success">Cetak PDF</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center">
+                    <i class="fas fa-envelope fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Belum ada data Surat Resmi</h5>
+                    <p>Buat Surat Resmi pertama Anda.</p>
+                </div>
+                {% endif %}
+                {% endcomment %}
+            </div>
+        </div>
+    </div>
+</section> -->
+
+<!-- Recent ASN Section -->
+<!-- <section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h3 class="text-center mb-4">ASN Terbaru</h3>
+                <div class="list-group">
+                    {% for asn in recent_asn %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ asn.nama }}</h6>
+                            <small>{{ asn.created_at|indonesian_date:"%d %B %Y" }}</small>
+                        </div>
+                        <p class="mb-1">NIP: {{ asn.nip }}</p>
+                        <small class="text-muted">{{ asn.jabatan }} - {{ asn.unit_kerja }}</small>
+                    </div>
+                    {% empty %}
+                    <div class="text-center">
+                        <p class="text-muted">Belum ada data ASN</p>
+                        <a href="{% url 'asn_create' %}" class="btn btn-primary">Tambah ASN Pertama</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section> -->
+
+<!-- SPT Section -->
+<!-- <section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h3 class="text-center mb-4">Surat Perintah Tugas</h3>
+                <div class="text-center mb-4">
+                    <a href="{% url 'spt_create' %}" class="btn btn-success btn-lg">
+                        <i class="fas fa-plus"></i> Buat SPT Baru
+                    </a>
+                    <a href="{% url 'spt_list' %}" class="btn btn-outline-primary btn-lg ms-3">
+                        <i class="fas fa-list"></i> Lihat Daftar SPT
+                    </a>
+                </div>
+                {% if recent_spt %}
+                <div class="list-group">
+                    {% for spt in recent_spt %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ spt.nama_kegiatan }}</h6>
+                            <small>{{ spt.created_at|indonesian_date:"%d %B %Y" }}</small>
+                        </div>
+                        <p class="mb-1">Nomor SPT: {{ spt.nomor_spt }}</p>
+                        <small class="text-muted">{{ spt.tempat_pelaksanaan }} - {{ spt.tanggal_pelaksanaan|indonesian_date:"%d %B %Y" }}</small>
+                        <div class="mt-2">
+                            <a href="{% url 'spt_detail' spt.pk %}" class="btn btn-sm btn-info">Detail</a>
+                            <a href="{% url 'spt_update' spt.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                            <a href="{% url 'spt_export_pdf' spt.pk %}" class="btn btn-sm btn-success">Cetak</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center">
+                    <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Belum ada data SPT</h5>
+                    <p>Buat Surat Perintah Tugas pertama Anda.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section> -->
+
+<!-- Kop Surat Section -->
+<!-- <section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h3 class="text-center mb-4">Kop Surat</h3>
+                <div class="text-center mb-4">
+                    <a href="{% url 'kop_surat_create' %}" class="btn btn-info btn-lg">
+                        <i class="fas fa-plus"></i> Tambah Kop Surat
+                    </a>
+                    <a href="{% url 'kop_surat_list' %}" class="btn btn-outline-secondary btn-lg ms-3">
+                        <i class="fas fa-list"></i> Lihat Daftar Kop Surat
+                    </a>
+                </div>
+                {% if recent_kop_surat %}
+                <div class="list-group">
+                    {% for ks in recent_kop_surat %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ ks.nama }}</h6>
+                            <small>{{ ks.created_at|indonesian_date:"%d %B %Y" }}</small>
+                        </div>
+                        <p class="mb-1">{{ ks.deskripsi|truncatechars:100 }}</p>
+                        <div class="mt-2">
+                            {% if ks.gambar %}
+                            <img src="{{ ks.gambar.url }}" alt="{{ ks.nama }}" style="max-width: 100px; max-height: 100px; float: left; margin-right: 10px;">
+                            {% endif %}
+                            <a href="{% url 'kop_surat_update' ks.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                            <a href="{% url 'kop_surat_delete' ks.pk %}" class="btn btn-sm btn-danger">Hapus</a>
+                        </div>
+                        <div style="clear: both;"></div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center">
+                    <i class="fas fa-image fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Belum ada data Kop Surat</h5>
+                    <p>Buat Kop Surat pertama Anda.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section> -->
+{% endblock %}

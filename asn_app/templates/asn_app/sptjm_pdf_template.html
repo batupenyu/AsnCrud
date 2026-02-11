@@ -1,0 +1,213 @@
+{% load indonesian_date_tags %}<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>SPTJM - {{ sptjm.nomor_surat }}</title>
+    <style>
+        @page {
+            size: A4;
+            /* margin: 1.5cm 2cm 0.5cm 2cm; */
+            margin: 1cm 2cm 0.5cm 2cm;
+        }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+        }
+        .kop-surat {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+        }
+        .kop-surat img {
+            max-width: 100%;
+            height: auto;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-left {
+            text-align: left;
+        }
+        .signer-section {
+            padding-left: 250pt;
+            text-align: left;
+        }
+        .details-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .details-table td {
+            padding: 1px 0;
+            vertical-align: top;
+        }
+        .details-table .label {
+            width: 120px;
+        }
+        .details-table .colon {
+            width: 10px;
+            text-align: center;
+        }
+        .employee-list {
+            padding-left: 20px;
+        }
+        .employee-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .employee-table td {
+            padding: 1px 5px;
+        }
+        .employee-table .number {
+            width: 5%;
+            vertical-align: top;
+        }
+        .employee-table .label {
+            width: 25%;
+            vertical-align: top;
+        }
+        .employee-table .colon {
+            width: 5%;
+            text-align: center;
+            vertical-align: top;
+        }
+        .employee-table .value {
+            width: 65%;
+            vertical-align: top;
+        }
+        .closing-section {
+            margin-top: 15px;
+        }
+        .signature-section {
+            margin-top: 60px;
+        }
+        .kop-surat-container {
+            text-align: center;
+            margin-bottom: 10px;
+            margin-left: -2cm;
+            margin-right: -2cm;
+        }
+        .kop-surat-image {
+            width: 80%;
+            max-width: 21cm;
+            height: auto;
+            max-height: 200px; /* Batasi tinggi maksimal */
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+<div class="kop-surat-container">
+        {% if kop_surat_base64 %}
+            <img src="{{ kop_surat_base64 }}" alt="Kop Surat" class="kop-surat-image">
+        {% elif sptjm.kop_surat.gambar %}
+            <img src="{{ request.scheme }}://{{ request.get_host }}{{ sptjm.kop_surat.gambar.url }}" alt="Kop Surat" class="kop-surat-image">
+        {% endif %}
+    </div>
+
+    <div class="text-center">
+        <p><b><u>SURAT PERTANGGUNGJAWABAN MUTLAK</u></b><br>
+        Nomor: {{ sptjm.nomor_surat }}</p>
+    </div>
+
+    <p>Yang bertanda tangan di bawah ini:</p>
+    {% if sptjm.penandatangan %}
+    <table class="details-table">
+        <tr>
+            <td class="label">Nama</td>
+            <td class="colon">:</td>
+            <td>{{ sptjm.penandatangan.nama }}</td>
+        </tr>
+        <tr>
+            <td class="label">NIP</td>
+            <td class="colon">:</td>
+            <td>{{ sptjm.penandatangan.nip }}</td>
+        </tr>
+        <tr>
+            <td class="label">Pangkat/Golongan</td>
+            <td class="colon">:</td>
+            <td>{{ sptjm.penandatangan.pangkat }} / {{ sptjm.penandatangan.golongan }}</td>
+        </tr>
+        <tr>
+            <td class="label">Jabatan</td>
+            <td class="colon">:</td>
+            <td>{{ sptjm.penandatangan.jabatan }}</td>
+        </tr>
+    </table>
+    {% else %}
+    <p><em>Penandatangan tidak ditentukan.</em></p>
+    {% endif %}
+
+    <p>Menyatakan bahwa nama berikut:</p>
+    <div class="employee-list">
+        {% if sptjm.pegawai.all %}
+            {% if sptjm.pegawai.all.count > 1 %}
+                <table class="employee-table">
+                    {% for p in sptjm.pegawai.all %}
+                    <tr>
+                        <td class="number">{{ forloop.counter }}.</td>
+                        <td class="label">Nama</td>
+                        <td class="colon">:</td>
+                        <td class="value">{{ p.nama }}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="label">NIP</td>
+                        <td class="colon">:</td>
+                        <td class="value">{{ p.nip }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                {% for p in sptjm.pegawai.all %} {# This will loop only once #}
+                <table class="employee-table">
+                    <tr>
+                        <td class="label" style="padding-left: 20px;">Nama</td>
+                        <td class="colon">:</td>
+                        <td class="value">{{ p.nama }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label" style="padding-left: 20px;">NIP</td>
+                        <td class="colon">:</td>
+                        <td class="value">{{ p.nip }}</td>
+                    </tr>
+                </table>
+                {% endfor %}
+            {% endif %}
+        {% else %}
+            <p><em>Tidak ada pegawai yang tercantum.</em></p>
+        {% endif %}
+    </div>
+
+    <div style="margin-top: 20px; text-align: justify;">
+        {{ sptjm.isi_surat|linebreaksbr }}
+    </div>
+
+    <div class="closing-section" style="text-align: justify;">
+        {{ sptjm.penutup_surat|linebreaksbr }}
+    </div>
+
+    <div class="signer-section">
+        <p>
+            {{ sptjm.tempat_ditetapkan }}, {{ sptjm.tanggal_ditetapkan|indonesian_date:"%d %B %Y" }}<br>
+            {% if sptjm.penandatangan %}
+                {{ sptjm.penandatangan.jabatan }},
+                <div class="signature-section">
+                    <strong>{{ sptjm.penandatangan.nama }}</strong><br>
+                    {{ sptjm.penandatangan.pangkat }} {{ sptjm.penandatangan.golongan }}<br>
+                    NIP. {{ sptjm.penandatangan.nip }}
+                </div>
+            {% else %}
+                [Jabatan Penandatangan]
+                <div class="signature-section">
+                    <strong>[Nama Penandatangan]</strong><br>
+                    [Pangkat Penandatangan] [Golongan Penandatangan]<br>
+                    NIP. [NIP Penandatangan]
+                </div>
+            {% endif %}
+        </p>
+    </div>
+
+</body>
+</html>
+

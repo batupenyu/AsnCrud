@@ -1,0 +1,22 @@
+{% extends 'asn_app/base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Hapus SPTJM</h1>
+    <p class="mb-4">Apakah Anda yakin ingin menghapus SPTJM "{{ sptjm.nomor_surat }}"?</p>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Konfirmasi Hapus</h6>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <p>SPTJM dengan nomor: <strong>{{ sptjm.nomor_surat }}</strong> akan dihapus secara permanen.</p>
+                <button type="submit" class="btn btn-danger">Hapus</button>
+                <a href="{% url 'sptjm_detail' sptjm.pk %}" class="btn btn-secondary">Batal</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

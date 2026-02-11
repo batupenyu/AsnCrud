@@ -1,0 +1,135 @@
+{% extends 'asn_app/base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">{{ title }}</h1>
+    <p class="mb-4">Formulir untuk {{ title|lower }} data surat resmi.</p>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">{{ title }}</h6>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="form-group row">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                        {{ form.kop_surat.label_tag }}
+                        {{ form.kop_surat }}
+                        {% if form.kop_surat.errors %}<div class="text-danger">{{ form.kop_surat.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-sm-6">
+                        {{ form.tempat_ditetapkan.label_tag }}
+                        {{ form.tempat_ditetapkan }}
+                        {% if form.tempat_ditetapkan.errors %}<div class="text-danger">{{ form.tempat_ditetapkan.errors }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                        {{ form.tanggal_ditetapkan.label_tag }}
+                        {{ form.tanggal_ditetapkan }}
+                        {% if form.tanggal_ditetapkan.errors %}<div class="text-danger">{{ form.tanggal_ditetapkan.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-sm-6">
+                        {{ form.pejabat_tujuan_surat.label_tag }}
+                        {{ form.pejabat_tujuan_surat }}
+                        {% if form.pejabat_tujuan_surat.errors %}<div class="text-danger">{{ form.pejabat_tujuan_surat.errors }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                        {{ form.kota_tujuan_surat.label_tag }}
+                        {{ form.kota_tujuan_surat }}
+                        {% if form.kota_tujuan_surat.errors %}<div class="text-danger">{{ form.kota_tujuan_surat.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-sm-6">
+                        {{ form.nomor.label_tag }}
+                        {{ form.nomor }}
+                        {% if form.nomor.errors %}<div class="text-danger">{{ form.nomor.errors }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                        {{ form.sifat.label_tag }}
+                        {{ form.sifat }}
+                        {% if form.sifat.errors %}<div class="text-danger">{{ form.sifat.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-sm-6">
+                        {{ form.lampiran.label_tag }}
+                        {{ form.lampiran }}
+                        {% if form.lampiran.errors %}<div class="text-danger">{{ form.lampiran.errors }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{ form.perihal.label_tag }}
+                    {{ form.perihal }}
+                    {% if form.perihal.errors %}<div class="text-danger">{{ form.perihal.errors }}</div>{% endif %}
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                        {{ form.penandatangan.label_tag }}
+                        {{ form.penandatangan }}
+                        {% if form.penandatangan.errors %}<div class="text-danger">{{ form.penandatangan.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-sm-6">
+                        {{ form.pegawai.label_tag }}
+                        {% for checkbox in form.pegawai %}
+                            <div class="form-check">
+                                {{ checkbox.tag }}
+                                <label class="form-check-label" for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
+                            </div>
+                        {% endfor %}
+                        {% if form.pegawai.errors %}<div class="text-danger">{{ form.pegawai.errors }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{ form.pembuka_surat.label_tag }}
+                    {{ form.pembuka_surat }}
+                    {% if form.pembuka_surat.errors %}<div class="text-danger">{{ form.pembuka_surat.errors }}</div>{% endif %}
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-4 mb-3 mb-sm-0">
+                        {{ form.tanggal_kegiatan.label_tag }}
+                        {{ form.tanggal_kegiatan }}
+                        {% if form.tanggal_kegiatan.errors %}<div class="text-danger">{{ form.tanggal_kegiatan.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-sm-4">
+                        {{ form.waktu_kegiatan.label_tag }}
+                        {{ form.waktu_kegiatan }}
+                        {% if form.waktu_kegiatan.errors %}<div class="text-danger">{{ form.waktu_kegiatan.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-sm-4">
+                        {{ form.tempat_kegiatan.label_tag }}
+                        {{ form.tempat_kegiatan }}
+                        {% if form.tempat_kegiatan.errors %}<div class="text-danger">{{ form.tempat_kegiatan.errors }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{ form.isi_surat.label_tag }}
+                    {{ form.isi_surat }}
+                    {% if form.isi_surat.errors %}<div class="text-danger">{{ form.isi_surat.errors }}</div>{% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.penutup_surat.label_tag }}
+                    {{ form.penutup_surat }}
+                    {% if form.penutup_surat.errors %}<div class="text-danger">{{ form.penutup_surat.errors }}</div>{% endif %}
+                </div>
+
+                <hr>
+                <button type="submit" class="btn btn-primary btn-block">Simpan</button>
+                <a href="{% url 'surat_resmi_list' %}" class="btn btn-secondary btn-block">Batal</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

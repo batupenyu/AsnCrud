@@ -1,0 +1,86 @@
+<!-- asn_app/templates/asn_app/surat_cuti_detail.html -->
+{% extends 'asn_app/base.html' %}
+{% load indonesian_date_tags %}
+
+{% block title %}Detail Surat Cuti{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-envelope"></i> Detail Surat Cuti
+                        </h4>
+                        <div>
+                            <a href="{% url 'surat_cuti_update' surat_cuti.pk %}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="{% url 'surat_cuti_export_pdf' surat_cuti.pk %}" class="btn btn-success btn-sm" target="_blank">
+                                <i class="fas fa-file-pdf"></i> PDF
+                            </a>
+                            <a href="{% url 'surat_cuti_list' %}" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-arrow-left"></i> Kembali
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <strong>Pegawai:</strong><br>
+                                {{ surat_cuti.pegawai.nama }} ({{ surat_cuti.pegawai.nip }})
+                            </div>
+                            <div class="mb-3">
+                                <strong>Tempat Ditetapkan:</strong><br>
+                                {{ surat_cuti.tempat_ditetapkan }}
+                            </div>
+                            <div class="mb-3">
+                                <strong>Tanggal Surat:</strong><br>
+                                {{ surat_cuti.tanggal_surat|indonesian_date:"%d %B %Y" }}
+                            </div>
+                            <div class="mb-3">
+                                <strong>Tujuan Surat:</strong><br>
+                                {{ surat_cuti.tujuan_surat }}
+                            </div>
+                            <div class="mb-3">
+                                <strong>Tanggal Awal Cuti:</strong><br>
+                                {{ surat_cuti.tanggal_awal|indonesian_date:"%d %B %Y" }}
+                            </div>
+                            <div class="mb-3">
+                                <strong>Tanggal Akhir Cuti:</strong><br>
+                                {{ surat_cuti.tanggal_akhir|indonesian_date:"%d %B %Y" }}
+                            </div>
+                            <div class="mb-3">
+                                <strong>Jumlah Hari Cuti Efektif:</strong><br>
+                                {{ surat_cuti.calculate_effective_leave_days }} hari
+                            </div>
+                            <div class="mb-3">
+                                <strong>Penandatangan:</strong><br>
+                                {% if surat_cuti.penandatangan %}{{ surat_cuti.penandatangan.nama }} ({{ surat_cuti.penandatangan.jabatan }}){% else %}-{% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <strong>Alasan Cuti:</strong><br>
+                                {% if surat_cuti.alasan_cuti %}{{ surat_cuti.alasan_cuti|linebreaksbr }}{% else %}-{% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <strong>Kop Surat:</strong><br>
+                                {% if surat_cuti.kop_surat %}{{ surat_cuti.kop_surat.nama }}{% else %}-{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    <small>
+                        Dibuat: {{ surat_cuti.created_at|indonesian_datetime:"%d %B %Y %H:%M" }} | 
+                        Diupdate: {{ surat_cuti.updated_at|indonesian_datetime:"%d %B %Y %H:%M" }}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'asn_app/base.html' %}
+{% load i18n %}
+{% load indonesian_date_tags %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Detail Surat Santunan Korpri</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Nomor Surat:</strong> {{ surat.nomor_surat }}</p>
+                    <p><strong>Tanggal Surat:</strong> {{ surat.tanggal_surat|indonesian_date:"%d %B %Y" }}</p>
+                    <p><strong>Tempat Ditetapkan:</strong> {{ surat.tempat_ditetapkan }}</p>
+                    <p><strong>Sifat:</strong> {{ surat.sifat }}</p>
+                    <p><strong>Lampiran:</strong> {{ surat.lampiran }}</p>
+                    <p><strong>Perihal:</strong> {{ surat.perihal }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Instansi Tujuan:</strong> {{ surat.instansi_tujuan_surat }}</p>
+                    <p><strong>Kota Tujuan:</strong> {{ surat.kota_tujuan_surat }}</p>
+                    <p><strong>Tujuan:</strong> {{ surat.tujuan }}</p>
+                    <p><strong>Pegawai:</strong> {{ surat.pegawai.nama }}</p>
+                    <p><strong>Penandatangan:</strong> {{ surat.penandatangan.nama }}</p>
+                    <p><strong>Kop Surat:</strong> {{ surat.kop_surat.nama }}</p>
+                </div>
+            </div>
+            <!-- <hr> -->
+            <!-- <h5>Isi Surat</h5> -->
+            <!-- <p><strong>Isi Surat Pertama:</strong></p>
+            <p>{{ surat.isi_surat_pertama|linebreaks }}</p>
+            <p><strong>Isi Surat Kedua:</strong></p>
+            <p>{{ surat.isi_surat_kedua|linebreaks }}</p>
+            <p><strong>Penutup Surat:</strong></p>
+            <p>{{ surat.penutup_surat|linebreaks }}</p> -->
+        </div>
+        <div class="card-footer text-end">
+            <a href="{% url 'surat_santunan_korpri_list' %}" class="btn btn-secondary">Kembali</a>
+            <a href="{% url 'surat_santunan_korpri_export_pdf' surat.pk %}" class="btn btn-primary">Cetak PDF</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

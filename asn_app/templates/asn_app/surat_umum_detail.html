@@ -1,0 +1,73 @@
+{% extends 'asn_app/base.html' %}
+{% load i18n %}
+{% load indonesian_date_tags %}
+
+{% block title %}Detail Surat Umum{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-file-alt"></i> Detail Surat Umum
+                        </h4>
+                        <div>
+                            <a href="{% url 'surat_umum_export_pdf' surat.pk %}" class="btn btn-success" target="_blank">
+                                <i class="fas fa-file-pdf"></i> Export to PDF
+                            </a>
+                            <a href="{% url 'surat_umum_list' %}" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-arrow-left"></i> Kembali
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Pegawai:</strong><br>
+                                    {{ surat.pegawai.nama }}
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Penandatangan:</strong><br>
+                                    {{ surat.penandatangan.nama }}
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Tempat Ditetapkan:</strong><br>
+                                    {{ surat.tempat_ditetapkan }}
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Tanggal Ditetapkan:</strong><br>
+                                    {{ surat.tanggal_ditetapkan|indonesian_date:"%d %B %Y" }}
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <strong>Pembuka Surat:</strong><br>
+                                    {{ surat.pembuka_surat|linebreaks }}
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <strong>Isi Surat:</strong><br>
+                                    {{ surat.isi_surat|linebreaks }}
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <strong>Penutup Surat:</strong><br>
+                                    {{ surat.penutup_surat|linebreaks }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    <small>
+                        Dibuat: {{ surat.created_at|indonesian_datetime:"%d %B %Y %H:%M" }} |
+                        Diupdate: {{ surat.updated_at|indonesian_datetime:"%d %B %Y %H:%M" }}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

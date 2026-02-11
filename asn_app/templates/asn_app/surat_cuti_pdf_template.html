@@ -1,0 +1,205 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Surat Cuti</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+      @page {
+        size: A4;
+        margin: 0.5cm 2cm 1cm 2cm;
+      }
+      body {
+        font-family: "Helvetica", sans-serif;
+        font-size: 10pt;
+        line-height: 1.5;
+        color: #000;
+      }
+      .container {
+        width: 100%;
+        margin: 0 auto;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 0cm;
+      }
+      .kop-surat {
+        width: 100%;
+        height: auto;
+        margin-bottom: 0cm;
+      }
+      .right-align {
+        text-align: right;
+      }
+      .left-align {
+        text-align: left;
+      }
+      .justify {
+        text-align: justify;
+      }
+      .indent {
+        text-indent: 1cm;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .no-border {
+        border: none;
+      }
+      .valign-top {
+        vertical-align: top;
+      }
+      .signature-block {
+        width: 100%;
+        margin-top: 1cm;
+      }
+      .signature-col {
+        width: 50%;
+        float: left;
+        text-align: center;
+      }
+      .clear-float {
+        clear: both;
+      }
+      .label-col {
+        width: 10%;
+        white-space: nowrap;
+      }
+      .colon-col {
+        width: 2%;
+        text-align: center;
+      }
+      .value-col {
+        width: 65%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      {% if kop_surat_base64 %}
+      <div class="header">
+        <img src="{{ kop_surat_base64 }}" class="kop-surat" alt="Kop Surat" />
+      </div>
+      {% endif %}
+
+      <div class="right-align">
+        {% load indonesian_date_tags %}{{ surat_cuti.tempat_ditetapkan }} {{ surat_cuti.tanggal_surat|indonesian_date:"%d %B %Y" }}
+      </div>
+
+      <table class="no-border" style="margin-top: 0.5cm">
+        <tr>
+          <td class="label-col valign-top">Nomor</td>
+          <td class="colon-col valign-top">:</td>
+          <td class="value-col valign-top">{{ surat_cuti.nomor_surat }}</td>
+        </tr>
+        <tr>
+          <td class="label-col valign-top">Sifat</td>
+          <td class="colon-col valign-top">:</td>
+          <td class="value-col valign-top">{{ surat_cuti.sifat_surat }}</td>
+        </tr>
+        <tr>
+          <td class="label-col valign-top">Lampiran</td>
+          <td class="colon-col valign-top">:</td>
+          <td class="value-col valign-top">{{ surat_cuti.lampiran_surat }}</td>
+        </tr>
+        <tr>
+          <td class="label-col valign-top">Perihal</td>
+          <td class="colon-col valign-top">:</td>
+          <td class="value-col valign-top">{{ surat_cuti.perihal_surat }}</td>
+        </tr>
+      </table>
+
+      <div style="margin-top: 0.5cm">
+        <div class="left-align">
+          Kepada<br />
+          Yth. {{ surat_cuti.tujuan_surat }}<br />
+          di -<br />
+          {{ surat_cuti.tempat_ditetapkan }}
+        </div>
+      </div>
+
+      <br />
+
+      <div style="margin-top: 0.5cm" class="left-align justify indent">
+        Yang bertanda tangan dibawah ini :
+      </div>
+
+      <table class="no-border" style="margin-top: 0.5cm">
+        <tr>
+          <td class="label-col valign-top">Nama</td>
+          <td class="colon-col valign-top">:</td>
+          <td class="value-col valign-top">{{ surat_cuti.pegawai.nama }}</td>
+        </tr>
+        <tr>
+          <td class="label-col valign-top">NIP</td>
+          <td class="colon-col valign-top">:</td>
+          <td class="value-col valign-top">{{ surat_cuti.pegawai.nip }}</td>
+        </tr>
+        <tr>
+          <td class="label-col valign-top">Pangkat/Gol.Ruang</td>
+          <td class="colon-col valign-top">:</td>
+          <td class="value-col valign-top">
+            {{ surat_cuti.pegawai.pangkat }}/{{ surat_cuti.pegawai.golongan }}
+          </td>
+        </tr>
+        <tr>
+          <td class="label-col valign-top">Jabatan</td>
+          <td class="colon-col valign-top">:</td>
+          <td class="value-col valign-top">{{ surat_cuti.pegawai.jabatan }}</td>
+        </tr>
+        <tr>
+          <td class="label-col valign-top">Unit Kerja</td>
+          <td class="colon-col valign-top">:</td>
+          <td class="value-col valign-top">
+            {{ surat_cuti.pegawai.unit_kerja }}
+          </td>
+        </tr>
+      </table>
+
+      <div style="margin-top: 0.5cm" class="left-align justify indent">
+        Dengan ini mengajukan permintaan Cuti Tahunan {{ leave_duration_text }}
+        dengan alasan {% if surat_cuti.alasan_cuti %}{{ surat_cuti.alasan_cuti|linebreaksbr }}{% else %}-{% endif %}.
+      </div>
+
+      <div style="margin-top: 0.5cm" class="left-align justify indent">
+        Demikian permohonan ini disampaikan untuk dapat dipertimbangkan, atas
+        perhatian Bapak diucapkan terima kasih.
+      </div>
+
+      <div class="signature-block">
+        {% if surat_cuti.penandatangan %}
+        <div class="signature-col">
+          <p>
+            Mengetahui,<br />
+            {{ surat_cuti.penandatangan.jabatan }}
+          </p>
+          <br /><br />
+          <p>
+            <u>{{ surat_cuti.penandatangan.nama }}</u><br />
+            {{ surat_cuti.penandatangan.pangkat }}
+            <br />
+            NIP. {{ surat_cuti.penandatangan.nip }}
+          </p>
+        </div>
+        {% endif %}
+
+        <div class="signature-col">
+          <p>
+            Hormat saya,<br />
+            {{ surat_cuti.pegawai.jabatan }}
+          </p>
+          <br /><br />
+          <p>
+            <u>{{ surat_cuti.pegawai.nama }}</u><br />
+            {{ surat_cuti.pegawai.pangkat }}/{{ surat_cuti.pegawai.golongan }}
+            <br />
+            NIP.{{ surat_cuti.pegawai.nip }}
+          </p>
+        </div>
+
+        <div class="clear-float"></div>
+      </div>
+    </div>
+  </body>
+</html>

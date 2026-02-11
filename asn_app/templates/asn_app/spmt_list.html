@@ -1,0 +1,64 @@
+<!-- asn_app/templates/asn_app/spmt_list.html -->
+{% extends 'asn_app/base.html' %}
+
+{% block title %}Daftar SPMT{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-file-alt"></i> Daftar Surat Perintah Melaksanakan Tugas (SPMT)</h2>
+        <a href="{% url 'spmt_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Tambah SPMT
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nomor Surat</th>
+                            <th>Pegawai</th>
+                            <th>Tanggal Surat</th>
+                            <th>Tempat Tugas</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for spmt in spmt_list %}
+                        <tr>
+                            <td>{{ spmt.nomor_surat }}</td>
+                            <td>{{ spmt.pegawai.nama }}</td>
+                            <td>{{ spmt.tanggal_surat }}</td>
+                            <td>{{ spmt.tempat_tugas }}</td>
+                            <td>
+                                <a href="{% url 'spmt_detail' spmt.pk %}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'spmt_update' spmt.pk %}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'spmt_delete' spmt.pk %}" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                                <a href="{% url 'spmt_export_pdf' spmt.pk %}" class="btn btn-sm btn-secondary">
+                                    <i class="fas fa-file-pdf"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">
+                                <p class="text-muted">Belum ada data SPMT</p>
+                                <a href="{% url 'spmt_create' %}" class="btn btn-primary">Tambah SPMT Pertama</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

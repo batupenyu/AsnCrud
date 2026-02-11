@@ -1,0 +1,20 @@
+{% extends "asn_app/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Upload Foto Kegiatan untuk SPT: {{ spt.nomor_spt }}</h2>
+    <p>{{ spt.nama_kegiatan }}</p>
+    
+    <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="id_foto" class="form-label">Pilih Foto (bisa lebih dari satu)</label>
+        <input type="file" name="foto" multiple class="form-control">
+    </div>
+    {{ form.as_p }}
+    
+    <button type="submit" class="btn btn-primary">Upload</button>
+    <a href="{% url 'spt_detail' spt.pk %}" class="btn btn-secondary">Batal</a>
+</form>
+</div>
+{% endblock %}

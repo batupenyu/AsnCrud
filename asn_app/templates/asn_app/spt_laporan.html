@@ -1,0 +1,499 @@
+{% extends "asn_app/base.html" %}
+
+{% block title %}Laporan SPT - {{ spt.nomor_spt }}{% endblock %}
+
+{% block content %}
+{% load indonesian_date_tags %}
+<div>
+    <button onclick="window.print();" class="btn btn-primary no-print">Cetak</button>
+    <a href="{% url 'spt_detail' spt.pk %}" class="btn btn-secondary no-print">Kembali</a>
+</div>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        {% if spt.kop_surat.gambar %}
+            <img src="{{ spt.kop_surat.gambar.url }}" alt="{{ spt.kop_surat.nama }}" style="max-width: 100%; height: auto;">
+        {% else %}
+            <h2>Laporan Surat Perintah Tugas</h2>
+        {% endif %}
+      
+    </div>
+    
+    <!-- <div class="card"> -->
+        <div class="card-header" style="line-height: 1.2;">
+            <div class="header-item"><span class="header-label">Kepada</span><span class="header-colon">:</span> Yth. {{spt.penandatangan.jabatan}} {{spt.penandatangan.unit_kerja}}</div>
+            <div class="header-item"><span class="header-label">Dari</span><span class="header-colon">:</span> {{ spt.peserta.first.jabatan|default:"-" }}</div>
+            <div class="header-item"><span class="header-label">Tanggal</span><span class="header-colon">:</span> {{ spt.tanggal_dibuat_laporan|default:spt.created_at|indonesian_date:"%d %B %Y" }}</div>
+            <!-- <div class="header-item"><span class="header-label">Nomor</span><span class="header-colon">:</span> {{ spt.nomor_spt }}, tanggal {{ spt.tanggal_ditetapkan|indonesian_date:"%d %B %Y" }}</div> -->
+            <div class="header-item"><span class="header-label">Nomor</span><span class="header-colon">:</span> {{ spt.nomor_spt }}</div>
+            <div class="header-item"><span class="header-label">Sifat</span><span class="header-colon">:</span> {{ spt.sifat_surat }}</div>
+            <div class="header-item"><span class="header-label">Hal</span><span class="header-colon">:</span> Laporan {{ spt.nama_kegiatan }}</div>
+        </div>
+        <div class="card-body">
+            <div class="report-section">
+                <div>
+                    <p style="text-align: justify;">
+                        Bersama ini disampaikan laporan hasil perjalanan dinas dalam rangka Orientasi Penyusunan Renja 2027 dengan rincian sebagai berikut :
+                    </p>
+                </div>
+                <div class="section-title">
+                    <span class="section-letter">A.</span>
+                    <span class="section-name">Pendahuluan</span>
+                </div>
+                <div class="subsection">
+                    <div class="subsection-number">1.</div>
+                    <div class="subsection-content">
+                        <div class="subsection-title">Umum/Latar Belakang</div>
+                        <p>{{ spt.latar_belakang|default:"-"|linebreaksbr }}</p>
+                    </div>
+                </div>
+                <div class="subsection">
+                    <div class="subsection-number">2.</div>
+                    <div class="subsection-content">
+                        <div class="subsection-title">Landasan Hukum</div>
+                        <ol class="custom-ol" style="text-align: justify;">
+                            <li>
+                                {{ spt.dasar_surat|default:"-"|linebreaksbr }}
+                            </li>
+                            <li>
+                                SPT {{ spt.nomor_spt }}
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="subsection">
+                    <div class="subsection-number">3.</div>
+                    <div class="subsection-content">
+                        <div class="subsection-title">Maksud dan Tujuan</div>
+                        <p style="text-align: justify;">{{ spt.maksud_dan_tujuan|default:"-"|linebreaksbr }}</p>
+                    </div>
+                </div>
+                <div class="section-title">
+                    <span class="section-letter">B.</span>
+                    <span class="section-name">Kegiatan yang dilaksanakan</span>
+                </div>
+                <div class="subsection-content" style="margin-left: 25px;">
+                    <p style="text-align: justify;">{{ spt.nama_kegiatan }} bertempat di {{ spt.tempat_pelaksanaan }} yang dilaksanakan pada tanggal {{ spt.tanggal_pelaksanaan|indonesian_date:"%d %B %Y" }}
+                    {% if spt.tanggal_akhir_pelaksanaan and spt.tanggal_pelaksanaan != spt.tanggal_akhir_pelaksanaan %}
+                        sampai dengan tanggal {{ spt.tanggal_akhir_pelaksanaan|indonesian_date:"%d %B %Y" }}
+                    {% endif %}
+                    </p>
+                </div>
+                <div class="section-title">
+                    <span class="section-letter">C.</span>
+                    <span class="section-name">Hasil yang dicapai</span>
+                </div>
+                <div class="subsection-content" style="margin-left: 25px;">
+                    <p style="text-align: justify;">{{ spt.hasil_yang_dicapai|default:"-"|linebreaksbr }}</p>
+                </div>
+
+                <div class="section-title">
+                    <span class="section-letter">D.</span>
+                    <span class="section-name">Kesimpulan dan Saran</span>
+                </div>
+                <div class="subsection-content" style="margin-left: 25px;">
+                    <p style="text-align: justify;">{{ spt.kesimpulan_dan_saran|default:"-"|linebreaksbr }}</p>
+                </div>
+
+                <div class="section-title">
+                    <span class="section-letter">E.</span>
+                    <span class="section-name">Penutup</span>
+                </div>
+                <div class="subsection-content penutup-section" style="margin-left: 25px;">
+                    <p style="text-align: justify;">{{ spt.penutup|default:"-"|linebreaksbr }}</p>
+                </div>
+            </div>
+            <!-- Page break container untuk tanda tangan -->
+            <div class="signature-page-break">
+                <div class="row mt-2 signature-section">
+                    <div class="col-6 text-center">
+                        <!-- <p>Mengetahui, <br>
+                            {{ spt.penandatangan.jabatan }}</p>
+                        <br><br><br>
+                            {{ spt.penandatangan.nama }} <br>
+                        <p>
+                            {% if spt.penandatangan.golongan == "IX" %}
+                                Golongan IX <br>
+                            {% else %}
+                                {{ spt.penandatangan.pangkat }}/{{ spt.penandatangan.golongan }} <br>
+                            {% endif %}
+                            NIP. {{ spt.penandatangan.nip }}</p> -->
+                    </div>
+                    <div class="col-6 text-center">
+                        {% with first_peserta=spt.peserta.first %}
+                            {% if first_peserta %}
+                                <p> Yang membuat laporan,<br>
+                                    {{ first_peserta.jabatan }} </p>
+                                <br><br><br>
+                                    {{ first_peserta.nama }} <br>
+                                  <p>{% if first_peserta.golongan == "IX" %}
+                                        Golongan IX <br>
+                                    {% else %}
+                                        {{ first_peserta.pangkat }}/{{ first_peserta.golongan }} <br>
+                                    {% endif %}
+                                    NIP. {{ first_peserta.nip }}</p>
+                            {% else %}
+                                <p>Tidak ada peserta</p>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- </div> -->
+
+    <!-- Halaman foto terpisah dengan 4 foto per halaman -->
+    <div class="photos-separate-page no-print">
+        <h3>Foto Kegiatan</h3>
+        <p class="text-muted">Foto akan dicetak pada halaman terpisah dengan pengaturan 4 foto per halaman.</p>
+    </div>
+</div>
+
+<!-- Container terpisah untuk foto saat print -->
+<div class="print-photos-container" style="display: none;">
+    {% if grouped_fotos %}
+        {% for group in grouped_fotos %}
+        <div class="photo-page-break">
+            <!-- <div class="photos-header">
+                <h2>Dokumentasi Foto Kegiatan</h2>
+                <p><strong>Kegiatan:</strong> {{ spt.nama_kegiatan }}</p>
+                <p><strong>Tanggal:</strong> {{ spt.tanggal_pelaksanaan|indonesian_date:"%d %B %Y" }}{% if spt.tanggal_akhir_pelaksanaan and spt.tanggal_pelaksanaan != spt.tanggal_akhir_pelaksanaan %} - {{ spt.tanggal_akhir_pelaksanaan|indonesian_date:"%d %B %Y" }}{% endif %}</p>
+                <p><strong>Tempat:</strong> {{ spt.tempat_pelaksanaan }}</p>
+                <hr>
+            </div> -->
+            <div class="photos-grid">
+                {% for foto in group %}
+                <div class="photo-item">
+                    <div class="photo-frame">
+                        <img src="{{ foto.foto.url }}" alt="{{ foto.keterangan }}">
+                    </div>
+                    <div class="photo-caption">
+                        <p><strong>Foto {{ forloop.counter }}:</strong> {{ foto.keterangan|default:"-" }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="photos-footer">
+                <p>Halaman {{ forloop.counter }} dari {{ grouped_fotos|length }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="photo-page-break">
+        <div class="photos-header">
+            <h2>Dokumentasi Foto Kegiatan</h2>
+            <p><strong>Kegiatan:</strong> {{ spt.nama_kegiatan }}</p>
+            <hr>
+        </div>
+        <div class="no-photos">
+            <p>Tidak ada foto dokumentasi kegiatan.</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+/* Styling untuk tampilan web (non-print) */
+@media screen {
+    .print-photos-container {
+        display: none;
+    }
+    .photos-separate-page {
+        margin-top: 3rem;
+        padding: 2rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+    }
+    .photos-separate-page h3 {
+        color: #343a40;
+        margin-bottom: 1rem;
+    }
+}
+
+@media print {
+    /* Reset dan pengaturan halaman untuk cetak */
+    @page {
+        size: A4;
+        margin: 2cm 1.5cm 2cm 1.5cm;
+    }
+    
+    @page :first {
+        margin-top: 1cm;
+    }
+    
+    /* Sembunyikan elemen yang tidak perlu dicetak */
+    .no-print, .photos-separate-page, .sidebar, .sidebar-toggler {
+        display: none !important;
+    }
+    
+    /* Tampilkan container foto saat print */
+    .print-photos-container {
+        display: block !important;
+    }
+    
+    /* Reset untuk body dan container */
+    body, html {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+    }
+    
+    .container {
+        max-width: none !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Halaman laporan utama */
+    .card-body {
+        font-size: 12pt !important;
+        line-height: 1.5 !important;
+    }
+    
+    /* Page break untuk tanda tangan */
+    .signature-page-break {
+        page-break-before: auto;
+        break-before: auto;
+    }
+    
+    .signature-section {
+        page-break-inside: avoid;
+        break-inside: avoid;
+        margin-top: 2cm;
+    }
+    
+    /* Pengaturan khusus untuk halaman foto */
+    .photo-page-break {
+        page-break-after: always !important;
+        break-after: page !important;
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        min-height: 25.7cm !important; /* Tinggi A4 - margin */
+    }
+    
+    .photo-page-break:last-child {
+        page-break-after: auto !important;
+        break-after: auto !important;
+    }
+    
+    /* Header untuk halaman foto */
+    .photos-header {
+        text-align: center;
+        margin-bottom: 1.5cm !important;
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+    }
+    
+    .photos-header h2 {
+        font-size: 16pt !important;
+        font-weight: bold !important;
+        margin-bottom: 0.5cm !important;
+    }
+    
+    .photos-header p {
+        font-size: 11pt !important;
+        margin: 0.2cm 0 !important;
+    }
+    
+    .photos-header hr {
+        border-top: 2px solid #000 !important;
+        margin: 0.5cm 0 !important;
+    }
+    
+    /* Grid untuk 4 foto per halaman */
+    .photos-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        grid-template-rows: repeat(2, 1fr) !important;
+        gap: 0.8cm !important;
+        flex: 1 !important;
+        margin-bottom: 1cm !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        align-content: center !important;
+        height: calc(100% - 4cm) !important; /* Sesuaikan dengan header dan footer */
+    }
+    
+    /* Item foto */
+    .photo-item {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        border: 1px solid #ddd !important;
+        border-radius: 4px !important;
+        overflow: hidden !important;
+        background: white !important;
+    }
+    
+    /* Frame untuk foto */
+    .photo-frame {
+        flex: 1 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0.3cm !important;
+        min-height: 8cm !important;
+        max-height: 9cm !important;
+    }
+    
+    .photo-frame img {
+        max-width: 100% !important;
+        max-height: 100% !important;
+        width: auto !important;
+        height: auto !important;
+        object-fit: contain !important;
+        display: block !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+    
+    /* Keterangan foto */
+    .photo-caption {
+        padding: 0.4cm !important;
+        background: #f8f9fa !important;
+        border-top: 1px solid #ddd !important;
+        font-size: 10pt !important;
+        line-height: 1.3 !important;
+        min-height: 1.5cm !important;
+    }
+    
+    .photo-caption p {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Footer halaman foto */
+    .photos-footer {
+        text-align: center;
+        font-size: 10pt !important;
+        color: #666 !important;
+        margin-top: 0.5cm !important;
+        page-break-before: avoid !important;
+        break-before: avoid !important;
+    }
+    
+    /* Styling untuk tidak ada foto */
+    .no-photos {
+        text-align: center;
+        padding: 3cm 0 !important;
+        font-size: 12pt !important;
+        color: #666 !important;
+    }
+    
+    /* Pastikan tidak ada overflow */
+    * {
+        overflow: visible !important;
+    }
+}
+
+/* Styling umum untuk laporan */
+.custom-ol {
+    padding-left: 0;
+    list-style-position: inside;
+}
+.custom-ol li {
+    text-indent: -25px;
+    padding-left: 25px;
+}
+.header-item {
+    display: flex;
+    align-items: baseline;
+}
+.header-label {
+    min-width: 70px;
+}
+.header-colon {
+    margin-right: 5px;
+}
+.report-section {
+    margin-bottom: 1rem;
+}
+.section-title {
+    display: flex;
+    font-weight: bold;
+}
+.section-letter {
+    width: 25px;
+}
+.section-name {
+    flex: 1;
+}
+.subsection {
+    display: flex;
+    margin-left: 25px;
+}
+.subsection-number {
+    width: 20px;
+}
+.subsection-content {
+    flex: 1;
+}
+.subsection-title {
+    font-weight: bold;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fungsi untuk mengatur cetak
+    function setupPrint() {
+        // Pindahkan container foto ke body saat cetak
+        window.addEventListener('beforeprint', function() {
+            const printPhotosContainer = document.querySelector('.print-photos-container');
+            if (printPhotosContainer) {
+                // Simpan posisi asli
+                const originalParent = printPhotosContainer.parentNode;
+                const originalNextSibling = printPhotosContainer.nextSibling;
+                
+                // Pindahkan ke body
+                document.body.appendChild(printPhotosContainer);
+                
+                // Restore setelah cetak selesai
+                window.addEventListener('afterprint', function() {
+                    if (originalParent && originalNextSibling) {
+                        originalParent.insertBefore(printPhotosContainer, originalNextSibling);
+                    } else if (originalParent) {
+                        originalParent.appendChild(printPhotosContainer);
+                    }
+                }, { once: true });
+            }
+        });
+        
+        // Deteksi jika penutup hampir memenuhi halaman
+        function checkSignaturePageBreak() {
+            const penutupSection = document.querySelector('.penutup-section');
+            const signatureBreak = document.querySelector('.signature-page-break');
+            
+            if (penutupSection && signatureBreak) {
+                // Hitung tinggi konten penutup
+                const penutupHeight = penutupSection.offsetHeight;
+                
+                // Dapatkan tinggi halaman yang tersedia (perkiraan)
+                // Untuk A4 portrait, tinggi konten sekitar 25.7cm = 727px (dengan margin 2cm atas/bawah)
+                const pageContentHeight = 727; // px
+                
+                // Jika konten penutup lebih dari 50% halaman, paksa page break
+                if (penutupHeight > (pageContentHeight * 0.5)) {
+                    signatureBreak.style.pageBreakBefore = 'always';
+                    signatureBreak.style.breakBefore = 'page';
+                }
+            }
+        }
+        
+        // Panggil fungsi saat dokumen siap dan sebelum cetak
+        checkSignaturePageBreak();
+        window.addEventListener('beforeprint', checkSignaturePageBreak);
+    }
+    
+    setupPrint();
+});
+</script>
+{% endblock %}

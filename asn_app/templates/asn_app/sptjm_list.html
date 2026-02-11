@@ -1,0 +1,70 @@
+{% extends 'asn_app/base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Daftar SPTJM</h1>
+    <p class="mb-4">Halaman ini menampilkan semua Surat Pernyataan Tanggung Jawab Mutlak (SPTJM) yang terdaftar.</p>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <a href="{% url 'sptjm_create' %}" class="btn btn-primary btn-sm btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-plus"></i>
+                </span>
+                <span class="btn btn-primary">Tambah SPTJM</span>
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Nomor Surat</th>
+                            <th>Isi Surat</th>
+                            <th>Tanggal Ditetapkan</th>
+                            <th>Penandatangan</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sptjm in sptjm_list %}
+                        <tr>
+                            <td>{{ sptjm.nomor_surat }}</td>
+                            <td>{{ sptjm.isi_surat|truncatewords:10 }}</td>
+                            <td>{{ sptjm.tanggal_ditetapkan }}</td>
+                            <td>{% if sptjm.penandatangan %}{{ sptjm.penandatangan.nama }}{% else %}Belum ditentukan{% endif %}</td>
+                            <td>
+                                <a href="{% url 'sptjm_detail' sptjm.pk %}" class="btn btn-info btn-sm btn-icon-split">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-eye"></i>
+                                    </span>
+                                    <span class="text">Detail</span>
+                                </a>
+                                <a href="{% url 'sptjm_update' sptjm.pk %}" class="btn btn-warning btn-sm btn-icon-split">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-edit"></i>
+                                    </span>
+                                    <span class="text">Edit</span>
+                                </a>
+                                <a href="{% url 'sptjm_delete' sptjm.pk %}" class="btn btn-danger btn-sm btn-icon-split">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-trash"></i>
+                                    </span>
+                                    <span class="text">Hapus</span>
+                                </a>
+                                <a href="{% url 'sptjm_export_pdf' sptjm.pk %}" class="btn btn-secondary btn-sm btn-icon-split">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </span>
+                                    <span class="text">PDF</span>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

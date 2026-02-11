@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+{% load indonesian_date_tags %}
+<html>
+<head>
+    <title>Surat Umum</title>
+    <style>
+         @page {
+            size: A4;
+            margin: 0.5cm 2.5cm 1cm 2.5cm;
+        }
+        body {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 12pt;
+        }
+        .kop-surat {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+        }
+        .kop-surat img {
+            max-width: 100%;
+            height: auto;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-left {
+            text-align: left;
+        }
+        .justify {
+            text-align: justify;
+        }
+        .signature-container {
+            width: 100%;
+            margin-top: 50px;
+            overflow: hidden; /* Clear floats */
+        }
+        .signature-left {
+            width: 50%;
+            float: left;
+            text-align: center;
+        }
+        .signature-right {
+            width: 50%;
+            float: right;
+            text-align: center;
+        }
+        .pegawai-details {
+            margin-left: 50px;
+        }
+        .kop-surat-container {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-left: -2cm;
+            margin-right: -2cm;
+        }
+        .kop-surat-image {
+            width: 80%;
+            max-width: 21cm;
+            height: auto;
+            max-height: 200px;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <div class="kop-surat-container">
+        {% if kop_surat_base64 %}
+            <img src="{{ kop_surat_base64 }}" alt="Kop Surat" class="kop-surat-image">
+        {% elif surat.kop_surat.gambar %}
+            <img src="{{ request.scheme }}://{{ request.get_host }}{{ surat.kop_surat.gambar.url }}" alt="Kop Surat" class="kop_surat-image">
+        {% endif %}
+    </div>
+
+    <div class="text-center">
+        <h3>SURAT PERNYATAAN</h3>
+    </div>
+
+    <div class="justify">
+        <p>{{ surat.pembuka_surat|linebreaksbr }}</p>
+    </div>
+
+    <div class="pegawai-details">
+        <table>
+            <tr>
+                <td>Nama</td>
+                <td>:</td>
+                <td>{{ surat.pegawai.nama }}</td>
+            </tr>
+            <tr>
+                <td>NIP</td>
+                <td>:</td>
+                <td>{% if surat.pegawai.nip %}{{ surat.pegawai.nip }}{% else %}-{% endif %}</td>
+            </tr>
+            <tr>
+                <td>Pangkat/Golongan</td>
+                <td>:</td>
+                <td>{% if surat.pegawai.pangkat %}{{ surat.pegawai.pangkat }}{% else %}-{% endif %} / {% if surat.pegawai.golongan %}{{ surat.pegawai.golongan }}{% else %}-{% endif %}</td>
+            </tr>
+            <tr>
+                <td>Jabatan</td>
+                <td>:</td>
+                <td>{{ surat.pegawai.jabatan }}</td>
+            </tr>
+            <tr>
+                <td>Unit Kerja</td>
+                <td>:</td>
+                <td>{{ surat.pegawai.unit_kerja }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="justify">
+        <p>{{ surat.isi_surat|linebreaksbr }}</p>
+    </div>
+
+    <div class="justify">
+        <p>{{ surat.penutup_surat|linebreaksbr }}</p>
+    </div>
+
+    <div class="signature-container">
+        <div class="signature-left">
+            <p>Mengetahui, <br>
+                {{ surat.penandatangan.jabatan }}</p>
+            <br>
+            <br>
+            <br>
+            <p><u>{{ surat.penandatangan.nama }}</u><br>
+                {% if surat.penandatangan.pangkat %}{{ surat.penandatangan.pangkat }}{% else %}-{% endif %},
+                {% if surat.penandatangan.golongan %}{{ surat.penandatangan.golongan }}{% else %}-{% endif %} <br>
+                NIP. {% if surat.penandatangan.nip %}{{ surat.penandatangan.nip }}{% else %}-{% endif %}</p>
+        </div>
+        <div class="signature-right">
+            <p>{{ surat.tempat_ditetapkan }}, {{ surat.tanggal_ditetapkan|indonesian_date:"%d %B %Y" }} <br>
+                Yang membuat pernyataan,</p>
+            <br>
+            <br>
+            <br>
+            <p><u>{{ surat.pegawai.nama }}</u> <br>
+                {% if surat.pegawai.pangkat %}{{ surat.pegawai.pangkat }}{% else %}-{% endif %} 
+                {% if surat.pegawai.golongan %}{{ surat.pegawai.golongan }}{% else %}-{% endif %}<br>
+                NIP. {% if surat.pegawai.nip %}{{ surat.pegawai.nip }}{% else %}-{% endif %}</p>
+        </div>
+    </div>
+</body>
+</html>

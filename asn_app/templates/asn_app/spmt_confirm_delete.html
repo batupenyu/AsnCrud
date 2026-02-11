@@ -1,0 +1,26 @@
+<!-- asn_app/templates/asn_app/spmt_confirm_delete.html -->
+{% extends 'asn_app/base.html' %}
+
+{% block title %}Hapus SPMT{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h3>Hapus Surat Perintah Melaksanakan Tugas (SPMT)</h3>
+        </div>
+        <div class="card-body">
+            <p>Apakah Anda yakin ingin menghapus SPMT dengan nomor surat <strong>{{ spmt.nomor_surat }}</strong>?</p>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Ya, Hapus
+                </button>
+                <a href="{% url 'spmt_detail' spmt.pk %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Batal
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

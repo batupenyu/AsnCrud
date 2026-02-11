@@ -1,0 +1,68 @@
+{% extends 'asn_app/base.html' %}
+{% load i18n %}
+{% load indonesian_date_tags %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Daftar Surat Perintah Tugas</h2>
+                <a href="{% url 'spt_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Tambah SPT Baru
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    {% if spt_list %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Nomor SPT</th>
+                                        <th>Nama Kegiatan</th>
+                                        <th>Tempat Pelaksanaan</th>
+                                        <th>Tanggal Pelaksanaan</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for spt in spt_list %}
+                                    <tr>
+                                        <td>{{ spt.nomor_spt }}</td>
+                                        <td>{{ spt.nama_kegiatan }}</td>
+                                        <td>{{ spt.tempat_pelaksanaan }}</td>
+                                        <td>{{ spt.tanggal_pelaksanaan|indonesian_date:"%d %b %Y" }}</td>
+                                        <td>
+                                            <a href="{% url 'spt_detail' spt.pk %}" class="btn btn-sm btn-info">
+                                                <i class="fas fa-eye"></i> Detail
+                                            </a>
+                                            <a href="{% url 'spt_update' spt.pk %}" class="btn btn-sm btn-warning">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                            <a href="{% url 'spt_delete' spt.pk %}" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i> Hapus
+                                            </a>
+                                            <a href="{% url 'spt_export_pdf' spt.pk %}" class="btn btn-sm btn-success">
+                                                <i class="fas fa-print"></i> Cetak
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Belum ada data SPT</h5>
+                            <a href="{% url 'spt_create' %}" class="btn btn-primary">Tambah SPT Pertama</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

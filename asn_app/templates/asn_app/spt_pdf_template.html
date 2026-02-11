@@ -1,0 +1,457 @@
+{% load i18n %}
+{% load image_tags %}
+{% load indonesian_date_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Surat Perintah Tugas - {{ spt.nomor_spt }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1cm 1.5cm 0.5cm 1.5cm;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.4;
+            color: #333;
+        }
+        .kop-surat-container {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-left: -2cm;
+            margin-right: -2cm;
+        }
+        .kop-surat-image {
+            width: 80%;
+            max-width: 21cm;
+            height: auto;
+            max-height: 200px; /* Batasi tinggi maksimal */
+            object-fit: contain;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        td:nth-child(2) {
+            vertical-align: top;
+            text-align: center;
+        }
+        td:nth-child(3) {
+            vertical-align: top;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+        .penandatangan {
+            padding-left: 300pt;
+            text-align: center;
+            padding-top: 20px;
+        }
+        .borderless, .borderless th, .borderless td {
+            border: none;
+        }
+        .participant-table td {
+            border: none;
+            padding: 0;
+            vertical-align: top;
+        }
+        .participant-table .number {
+            width: 20px;
+            text-align: left;
+        }
+        .participant-table .label {
+            width: 40px;
+            text-align: left;
+        }
+        .participant-table .colon {
+            width: 5px;
+            text-align: center;
+            padding: 0 10pt;
+        }
+        
+        /* DEBUG STYLES - bisa dihapus setelah berhasil */
+        .debug-info {
+            border: 1px solid red;
+            background: #ffe6e6;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    
+
+    <div class="kop-surat-container">
+        {% if kop_surat_base64 %}
+            <img src="{{ kop_surat_base64 }}" alt="Kop Surat" class="kop-surat-image">
+        {% elif spt.kop_surat.gambar %}
+            <img src="{{ request.scheme }}://{{ request.get_host }}{{ spt.kop_surat.gambar.url }}" alt="Kop Surat" class="kop-surat-image">
+        {% endif %}
+    </div>
+
+   
+
+    <!-- CONTENT SPT -->
+    <table class="borderless">
+        <tr>
+            <td colspan="3" style="text-align: center;">
+                <u><b>SURAT PERINTAH TUGAS</b></u> 
+                <br> Nomor: {{ spt.nomor_spt }}
+                <br><br>
+            </td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top; width: 15%;">Dasar</td>
+            <td style="vertical-align: top; width: 5%;">:</td>
+            <td style="vertical-align: top; width: 80%;">{{ spt.dasar_surat }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">Kepada</td>
+            <td style="vertical-align: top;">:</td>
+            
+                <td>
+                    {% for peserta in spt.peserta.all %}
+                    <table style="width: 100%; border: none; margin: 0;">
+                        <tr class="participant-table">
+                            <td class="number">{% if spt.peserta.all|length > 1 %}{{ forloop.counter }}.{% endif %}</td>
+                            <td class="label">Nama</td>
+                            <td class="colon">:</td>
+                            <td>{{ peserta.nama }}</td>
+                        </tr>
+                        <tr class="participant-table">
+                            <td class="number"></td>
+                            <td class="label">NIP</td>
+                            <td class="colon">:</td>
+                            <td>{{ peserta.nip }}</td>
+                        </tr>
+                        <tr class="participant-table">
+                            <td class="number"></td>
+                            <td class="label">Golongan</td>
+                            <td class="colon">:</td>
+                            <td>{{ peserta.golongan }}</td>
+                        </tr>
+                        <tr class="participant-table">
+                            <td class="number"></td>
+                            <td class="label">Jabatan</td>
+                            <td class="colon">:</td>
+                            <td>{{ peserta.jabatan }}</td>
+                        </tr>
+                    </table>
+                    {% if not forloop.last %}<br>{% endif %}
+                    {% endfor %}
+                </td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">Untuk</td>
+            <td style="vertical-align: top;">:</td>
+            <td style="vertical-align: top; text-align: justify;">
+                <div style="padding-left: 15pt; text-indent: -15pt;">
+                    1. Dalam rangka melaksanakan kegiatan {{ spt.nama_kegiatan }} yang akan dilaksanakan di {{ spt.tempat_pelaksanaan }} pada tanggal {{ spt.tanggal_pelaksanaan|indonesian_date:"%d %B %Y" }}{% if spt.tanggal_pelaksanaan != spt.tanggal_akhir_pelaksanaan %} sampai dengan {{ spt.tanggal_akhir_pelaksanaan|indonesian_date:"%d %B %Y" }}{% endif %}.
+                </div>
+                <div style="padding-left: 15pt; text-indent: -15pt;">
+                    2. Membuat laporan hasil pelaksanaan perintah tugas kepada {% if spt.penandatangan %}{{spt.penandatangan.jabatan|split:" "|first}}  {{spt.penandatangan.unit_kerja}}{% endif %} 
+                </div>
+                </div>
+                <div style="padding-left: 15pt; text-indent: -15pt;">
+                    3. Dilaksanakan dengan sebaik-baiknya dan penuh rasa tanggung jawab.
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="penandatangan">
+        {% if spt.tempat_ditetapkan and spt.tanggal_ditetapkan %}
+        <div>
+            {{ spt.tempat_ditetapkan }}, {{ spt.tanggal_ditetapkan|indonesian_date:"%d %B %Y" }}
+        </div>
+        {% endif %}
+        {% if spt.penandatangan %}
+        <div>{{ spt.penandatangan.jabatan }}</div>
+        <br><br>
+        <div>
+            {{ spt.penandatangan.nama }}<br>
+            {{ spt.penandatangan.pangkat }} {{ spt.penandatangan.golongan }}<br>
+            NIP. {{ spt.penandatangan.nip }}
+        </div>
+        {% endif %}
+    </div>
+    <div class="new-page" style="page-break-before: always; margin-top: 0.0cm;">
+        <div class="kop-surat-container">
+            {% if kop_surat_base64 %}
+                <img src="{{ kop_surat_base64 }}" alt="Kop Surat" class="kop-surat-image">
+            {% elif spt.kop_surat.gambar %}
+                <img src="{{ request.scheme }}://{{ request.get_host }}{{ spt.kop_surat.gambar.url }}" alt="Kop Surat" class="kop-surat-image">
+            {% endif %}
+        </div>
+        <p style="margin: 0; padding: 0; padding-left: 120pt; line-height: 1.3; font-size: smaller;">
+            <i><span style="display: inline-block; width: 20%; vertical-align: top;">Lembar ke</span>
+            <span style="display: inline-block; width: 5%; vertical-align: top;">:</span>
+            <span style="display: inline-block; vertical-align: top;"> ... </span></i>
+        </p>
+        <p style="margin: 0; padding: 0; padding-left: 120pt; line-height: 1.3; font-size: smaller;">
+            <i><span style="display: inline-block; width: 20%; vertical-align: top;">Kode</span>
+            <span style="display: inline-block; width: 5%; vertical-align: top;">:</span>
+            <span style="display: inline-block; vertical-align: top;"> ... </span></i>
+        </p>
+        <p style="margin: 0; padding: 0; padding-left: 120pt; line-height: 1.3; font-size: smaller;">
+            <i><span style="display: inline-block; width: 20%; vertical-align: top;">Nomor</span>
+            <span style="display: inline-block; width: 5%; vertical-align: top;">:</span>
+            <span style="display: inline-block; vertical-align: top;">{{ spt.nomor_spt }}</span></i>
+        </p>
+        <h3 style="text-align: center;">SURAT PERINTAH PERJALANAN DINAS</h3>
+       <table class="attachment-table" style="border-collapse: collapse; width: 100%; font-size: smaller; line-height: 1.2; border: 1px solid black;">
+            <tr>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top; border: 1px solid black;">1.</td>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; text-align: left; vertical-align: top; border: 1px solid black;">Pejabat yang memberi perintah</td>
+                {% if spt.penandatangan %}
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; text-align: left; vertical-align: top; border: 1px solid black;">
+                    {{spt.penandatangan.jabatan|split:" "|first}}  {{spt.penandatangan.unit_kerja}} 
+                </td>
+                {% else %}
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; text-align: left; vertical-align: top; border: 1px solid black;">-</td>
+                {% endif %}
+            </tr>
+            <tr>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top; border: 1px solid black;">2.</td>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; text-align: left; vertical-align: top; border: 1px solid black;">Nama/NIP Pegawai yang melaksanakan perjalanan dinas</td>
+                {% for peserta in spt.peserta.all|slice:":1" %}
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; text-align: left; vertical-align: top; border: 1px solid black;">{{peserta.nama}}/{{peserta.nip}}</td>
+            </tr>
+            <tr>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top; border: 1px solid black;">3.</td>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; text-align: left; vertical-align: top; border: 1px solid black;">
+                    a. Pangkat dan Golongan <br>
+                    b. Jabatan/Instansi <br>
+                    c. Tingkat Biaya Perjalanan Dinas
+                </td>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; text-align: left; vertical-align: top; border: 1px solid black;">
+                    <div style="padding-left: 1em; text-indent: -1em; padding-top: 0cm; padding-bottom: 0cm;">
+                        a. {{peserta.pangkat}}/{{peserta.golongan}}
+                    </div>
+                    <div style="padding-left: 1em; text-indent: -1em; padding-top: 0cm; padding-bottom: 0cm;">
+                        b. {{peserta.jabatan}} {{peserta.unit_kerja}}
+                    </div>
+                    <div style="padding-left: 1em; text-indent: -1em; padding-top: 0cm; padding-bottom: 0cm;">
+                        c. {{peserta.tingkat_biaya_perjalanan_dinas}}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top; border: 1px solid black;">4.</td>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; text-align: left; vertical-align: top; border: 1px solid black;">Maksud Perjalanan</td>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top; border: 1px solid black;">Dalam rangka melaksanakan kegiatan {{ spt.nama_kegiatan }} </td>
+            </tr>
+            <tr>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top; border: 1px solid black;">5.</td>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top; text-align: left; border: 1px solid black;">Alat angkut yang digunakan</td>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top; border: 1px solid black;">Umum</td>
+            </tr>
+            <tr>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top; border: 1px solid black;">6.</td>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top;text-align: left; border: 1px solid black;">
+                    a. Tempat Berangkat <br>
+                    b. Tempat Tujuan
+                </td>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top; border: 1px solid black;">
+                    a. {{ spt.tempat_berangkat }} <br>
+                    b. {{ spt.tempat_pelaksanaan }}
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top; border: 1px solid black;">7.</td>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top;text-align: left; border: 1px solid black;">
+                    a. Lama Perjalanan Dinas <br>
+                    b. Tanggal Berangkat <br>
+                    c. Tanggal Kembali
+                </td>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top; border: 1px solid black;">
+                    a. {% if spt.tanggal_pelaksanaan == spt.tanggal_akhir_pelaksanaan %}1 (satu) hari{% else %}{{ spt.tanggal_pelaksanaan|days_between:spt.tanggal_akhir_pelaksanaan }} hari ({{ spt.tanggal_pelaksanaan|days_between:spt.tanggal_akhir_pelaksanaan|terbilang_filter }}){% endif %} <br>
+                    b. {{ spt.tanggal_pelaksanaan|indonesian_date:"%d %B %Y" }} <br>
+                    c. {{ spt.tanggal_akhir_pelaksanaan|indonesian_date:"%d %B %Y" }}
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top; border: 1px solid black;">8.</td>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top;text-align: left; border: 1px solid black;">
+                    <div style="padding-top: 0.1cm; padding-bottom: 0.1cm;">
+                        Pengikut&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nama
+                    </div>
+
+                    {% for peserta in spt.peserta.all|slice:"1:" %}
+                        <div style="margin: 0; padding: 0; height: auto; padding-top: 0cm; padding-bottom: 0cm;">
+                            <span style="display: inline-block; width: 2.5em; text-align: right;">{{ forloop.counter }}.</span>
+                            <span style="display: inline-block; padding-left: 1em;">{{ peserta.nama }}</span>
+                        </div>
+                    {% endfor %}
+                </td>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top; border: 1px solid black;">
+                    <div style="padding-top: 0.1cm; padding-bottom: 0.1cm;">
+                        Tanggal lahir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Keterangan
+                    </div>
+
+                    {% for peserta in spt.peserta.all|slice:"1:" %}
+                        <div style="margin: 0; padding: 0; height: auto; padding-top: 0cm; padding-bottom: 0cm;">
+                            <span style="display: inline-block; width: 2.5em; text-align: right;">{{ peserta.tanggal_lahir|indonesian_date:"%d/%m/%Y" }}.</span>
+                            <span style="display: inline-block; padding-left: 10em;">......</span>
+                        </div>
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top; border: 1px solid black;">9.</td>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top;text-align: left; border: 1px solid black;">
+                    Pembebanan Anggaran <br>
+                    a. Instansi <br>
+                    b. Akun
+                </td>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top; border: 1px solid black;">
+                    <br>
+                    a. {{ spt.pembebanan_instansi }} <br>
+                    b. {{ spt.pembebanan_akun }}
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top; border: 1px solid black;">10.</td>
+                <td style="padding-top: 0.1cm; padding-bottom: 0.1cm; vertical-align: top;text-align: left; border: 1px solid black;">Ketentuan Lain - Lain</td>
+                <td style="padding-top: 0.2cm; padding-bottom: 0.2cm; vertical-align: top; border: 1px solid black;">
+                    Surat tugas nomor :{{ spt.nomor_spt }} tanggal {{ spt.ditetapkan|indonesian_date:"%d %B %Y" }} 
+                </td>
+            </tr>
+        </table>
+            <p style="padding-left:255pt;text-align: left;line-height: 1.2;">
+                Dikeluarkan di &nbsp;: {{spt.tempat_ditetapkan}} <br>
+                Pada tanggal&nbsp;&nbsp;&nbsp;&nbsp;: {{spt.tanggal_ditetapkan|indonesian_date:"%d %B %Y"}}
+            </p>
+            <p style="padding-left: 200pt; text-align: center;line-height: 1.2;">
+            {% if spt.penandatangan %}
+                {{spt.penandatangan.jabatan|split:" "|first}}  {{spt.penandatangan.unit_kerja}} <br><br><br><br>
+                {{spt.penandatangan.nama}} <br>
+                {{spt.penandatangan.pangkat}} {{spt.penandatangan.golongan}} <br>
+                NIP. {{spt.penandatangan.nip}} <br>
+            {% endif %}
+        </p>
+    </div>
+    
+    <div class="new-page" style="page-break-before: always; margin-top: 0.0cm;font-size: 10pt;">
+        <table style="padding-top: 0cm; padding-bottom: 0cm; border-collapse: collapse; width: 100%; font-size: 10pt; line-height: 1.3; border: 1px solid black;">
+            <tr>
+                <td style="width: 5%;vertical-align: top; border: 1px solid black;">I.</td>
+                <td style="width: 47%; border: 1px solid black;"></td>
+                <td style="width: 47%; border: 1px solid black;">
+                    Berangkat dari &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <br>
+                    (Tempat Kedudukan)&nbsp;&nbsp; : <br>
+                    Pada tanggal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : <br>
+                    {% if spt.kuasa_pengguna_anggaran %}
+                        {{spt.kuasa_pengguna_anggaran.jabatan|split:" "|first}}  {{spt.kuasa_pengguna_anggaran.unit_kerja}} <br><br><br>
+                        {{spt.kuasa_pengguna_anggaran.nama}} <br>
+                        {{spt.kuasa_pengguna_anggaran.pangkat}} {{spt.kuasa_pengguna_anggaran.golongan}} <br>
+                        NIP. {{spt.kuasa_pengguna_anggaran.nip}} <br>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 5%;vertical-align: top; border: 1px solid black;">II.</td>
+                <td style="width: 47%;text-align: left; border: 1px solid black;">
+                    Tiba di &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <br>
+                    Pada tanggal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <br>
+                    Kepala &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <br><br><br><br>
+                    (....................................) <br>
+                    NIP. 
+                </td>
+                <td style="width: 47%; border: 1px solid black;">
+                    Berangkat dari &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <br>
+                    (Tempat Kedudukan)&nbsp;&nbsp;&nbsp;: <br>
+                    Pada tanggal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : <br>
+                    Kepala &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <br><br><br>
+                    (....................................) <br>
+                    NIP. 
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 5%;vertical-align: top; border: 1px solid black;">III.</td>
+                <td style="width: 47%;text-align: left; border: 1px solid black;">
+                    Tiba di &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <br>
+                    Pada tanggal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <br>
+                    Kepala &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <br><br><br><br>
+                    (....................................) <br>
+                    NIP. 
+                </td>
+                <td style="width: 47%; border: 1px solid black;">
+                    Berangkat dari &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <br>
+                    (Tempat Kedudukan)&nbsp;&nbsp;&nbsp;: <br>
+                    Pada tanggal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : <br>
+                    Kepala &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <br><br><br>
+                    (....................................) <br>
+                    NIP. 
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 5%;vertical-align: top; border: 1px solid black;">IV.</td>
+                <td style="width: 47%;text-align: left; border: 1px solid black;">
+                    Tiba di &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <br>
+                    Pada tanggal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <br>
+                    Kepala &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <br><br><br><br>
+                    (....................................) <br>
+                    NIP. 
+                </td>
+                <td style="width: 47%; border: 1px solid black;">
+                    Berangkat dari &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <br>
+                    (Tempat Kedudukan)&nbsp;&nbsp;&nbsp;: <br>
+                    Pada tanggal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : <br>
+                    Kepala &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <br><br><br>
+                    (....................................) <br>
+                    NIP. 
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 5%;vertical-align: top; border: 1px solid black;">V.</td>
+                <td style="width: 47%;text-align: left; border: 1px solid black;">
+                    Tiba Kembali di <br>
+                    Tempat Kedudukan <br>
+                    Pada tanggal <br><br>
+                    <p style="text-align: center;">
+                        {% if spt.penandatangan %}
+                            {{spt.penandatangan.jabatan|split:" "|first}}  {{spt.penandatangan.unit_kerja}} <br><br><br><br>
+                            {{spt.penandatangan.nama}} <br>
+                            {{spt.penandatangan.pangkat}} {{spt.penandatangan.golongan}} <br>
+                            NIP. {{spt.penandatangan.nip}} <br>
+                        {% endif %}
+                    </p>
+                </td>
+                <td style="width: 47%; text-align: justify; border: 1px solid black;">
+                    Telah diperiksa, dengan keterangan bahwa perjalanan tersebut diatas benar dilakukan atas perintahnya dan semata-mata untuk kepentingan jabatan dalam waktu yang sesingkat-singkatnya 
+                    <p style="text-align: center;">
+                        Pejabat yang memberi perintah <br>
+                        {% if spt.kuasa_pengguna_anggaran %}
+                            {{spt.kuasa_pengguna_anggaran.jabatan|split:" "|first}}  {{spt.kuasa_pengguna_anggaran.unit_kerja}} <br><br><br>
+                            {{spt.kuasa_pengguna_anggaran.nama}} <br>
+                            {{spt.kuasa_pengguna_anggaran.pangkat}} {{spt.kuasa_pengguna_anggaran.golongan}} <br>
+                            NIP. {{spt.kuasa_pengguna_anggaran.nip}} <br>
+                        {% endif %}
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" style="border: 1px solid black;">VI. Catatan Lain-Lain</td>
+            </tr>
+            <tr>
+                <td style="text-align: justify; border: 1px solid black;" colspan="3">
+                    VII. PERHATIAN <br>
+                    Pejabat yang menerbitkan SPD, pegawai yang melakukan perjalanan dinas, para pejabat yang mengesahkan tanggal berangkat/tiba, serta bendahara pengeluaran bertanggung jawab berdasarkan peraturan-peraturan Keuangan Negara apabila negara menderita rugi akibat kesalahan, kelalaian dan kealpaannya.
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

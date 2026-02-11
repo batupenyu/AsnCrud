@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Preview Surat Pernyataan</title>
+  <style>
+    body {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 14pt;
+      line-height: 1.5;
+      margin: 2cm 2cm 2cm 2cm; /* margin biasa (top, right, bottom, left) */
+      max-width: 21cm;
+      margin: auto;
+    }
+
+    .kop-surat {
+      text-align: center;
+      margin-bottom: 1.5cm;
+      line-height: 1.3;
+    }
+
+    .kop-surat .instansi {
+      font-size: 16pt;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .kop-surat .alamat,
+    .kop-surat .info {
+      font-size: 12pt;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .text-left {
+      text-align: left;
+    }
+
+    .mt-2cm {
+      margin-top: 2cm;
+    }
+
+    .mt-1cm {
+      margin-top: 1cm;
+    }
+
+    .signature-block {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2cm;
+    }
+
+    .signature-left,
+    .signature-right {
+      width: 45%;
+    }
+
+    .label-colon {
+      display: flex;
+      margin-bottom: 0.3cm;
+    }
+
+    .label-colon span:first-child {
+      width: 150px;
+      display: inline-block;
+    }
+
+    .br-2cm {
+      display: block;
+      height: 2cm;
+    }
+
+    .garis-kop {
+      border-top: 2px solid black;
+      margin: 8px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Kop Surat -->
+  <div class="kop-surat">
+    <div class="instansi">[NAMA INSTANSI / ORGANISASI]</div>
+    <div class="alamat">[Alamat Lengkap Instansi]</div>
+    <div class="info">Telepon: [Nomor Telepon] | Email: [Email Instansi] | Website: [Website]</div>
+    <div class="garis-kop"></div>
+  </div>
+
+  <!-- Judul Surat -->
+  <div class="text-center">
+    <strong>SURAT PERNYATAAN</strong>
+  </div>
+
+  <!-- Jarak 2cm -->
+  <div class="mt-2cm"></div>
+
+  <!-- Paragraf pembuka -->
+  <div class="text-left">
+    Yang bertandatangan di bawah ini:
+  </div>
+
+  <!-- Jarak 1cm -->
+  <div class="mt-1cm"></div>
+
+  <!-- Data Pegawai -->
+  <div class="text-left">
+    <div class="label-colon"><span>Nama</span>: <span id="nama_pegawai">[Nama Pegawai]</span></div>
+    <div class="label-colon"><span>NIP</span>: <span id="nip_pegawai">[NIP Pegawai]</span></div>
+    <div class="label-colon"><span>Pangkat/Golongan</span>: <span id="pangkat_pegawai">[Pangkat/Golongan Pegawai]</span></div>
+    <div class="label-colon"><span>Jabatan</span>: <span id="jabatan_pegawai">[Jabatan Pegawai]</span></div>
+    <div class="label-colon"><span>Unit Kerja</span>: <span id="unit_kerja">[Unit Kerja]</span></div>
+  </div>
+
+  <!-- Jarak 2cm -->
+  <div class="mt-2cm"></div>
+
+  <!-- Isi Surat -->
+  <div class="text-left" id="isi_surat">
+    [Isi surat akan ditampilkan di sini...]
+  </div>
+
+  <!-- Penutup Surat -->
+  <div class="text-left" id="penutup_surat">
+    [Penutup surat akan ditampilkan di sini...]
+  </div>
+
+  <!-- Tempat dan Tanggal -->
+  <div class="text-left" id="tempat_tanggal">
+    <span id="tempat_ditetapkan">[Tempat]</span>, <span id="tanggal_ditetapkan">[Tanggal]</span>
+  </div>
+
+  <!-- Tanda tangan -->
+  <div class="signature-block">
+    <div class="signature-left">
+      <div>Mengetahui,</div>
+      <div class="br-2cm"></div>
+      <div id="jabatan_penandatangan">[Jabatan Penandatangan]</div>
+      <div id="nama_penandatangan">[Nama Penandatangan]</div>
+      <div id="pangkat_penandatangan">[Pangkat/Golongan Penandatangan]</div>
+      <div id="nip_penandatangan">NIP. [NIP Penandatangan]</div>
+    </div>
+    <div class="signature-right">
+      <div id="jabatan_pegawai_bawah">[Jabatan Pegawai]</div>
+      <div class="br-2cm"></div>
+      <div id="nama_pegawai_bawah">[Nama Pegawai]</div>
+      <div id="pangkat_pegawai_bawah">[Pangkat/Golongan Pegawai]</div>
+      <div id="nip_pegawai_bawah">NIP. [NIP Pegawai]</div>
+    </div>
+  </div>
+
+</body>
+</html>

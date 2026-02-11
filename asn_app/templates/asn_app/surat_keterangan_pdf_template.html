@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="id">
+<style>
+        @page {
+            size: A4;
+            margin: 1cm 1.5cm 0.5cm 1.5cm;
+        }
+        td.label {
+            width: 150px;
+        }
+      
+</style>
+<head>
+    <meta charset="UTF-8">
+    <title>Surat Keterangan {{ surat.nomor_surat }}</title>
+</head>
+<body>
+    {% load indonesian_date_tags %}
+    {% if kop_surat_base64 %}
+    <img src="{{ kop_surat_base64 }}" style="max-width: 100%; height: auto; display: block; margin-bottom: 20px;" />
+    {% endif %}
+    <div class="header" style="text-align: center;">
+        <p><strong>SURAT KETERANGAN</strong><br>
+        <strong>Nomor : {{ surat.nomor_surat }}</strong></p>
+    </div>
+    <br>
+    <div class="content">
+        <p>Yang bertanda tangan di bawah ini:</p>
+        <table>
+            <tr>
+                <td class="label">Nama</td>
+                <td class="colon">:</td>
+                <td>{{ surat.penandatangan.nama }}</td>
+            </tr>
+            <tr>
+                <td class="label">Jabatan</td>
+                <td class="colon">:</td>
+                <td>{{ surat.penandatangan.jabatan }}</td>
+            </tr>
+        </table>
+        <br>
+        <p>dengan ini menerangkan bahwa:</p>
+        {% if surat.pegawai %}
+        <table>
+            <tr>
+                <td class="label">Nama</td>
+                <td class="colon">:</td>
+                <td>{{ surat.pegawai.nama }}</td>
+            </tr>
+            <tr>
+                <td class="label">NIP</td>
+                <td class="colon">:</td>
+                <td>{{ surat.pegawai.nip }}</td>
+            </tr>
+            <tr>
+                <td class="label">Pangkat/Golongan</td>
+                <td class="colon">:</td>
+                <td>{{ surat.pegawai.pangkat }} / {{ surat.pegawai.golongan }}</td>
+            </tr>
+            <tr>
+                <td class="label">Jabatan</td>
+                <td class="colon">:</td>
+                <td>{{ surat.pegawai.jabatan }}</td>
+            </tr>
+            <tr>
+                <td class="label">Unit Kerja</td>
+                <td class="colon">:</td>
+                <td>{{ surat.pegawai.unit_kerja }}</td>
+            </tr>
+        </table>
+        {% elif surat.siswa %}
+        <table>
+            <tr>
+                <td class="label">Nama</td>
+                <td class="colon">:</td>
+                <td>{{ surat.siswa.nama }}</td>
+            </tr>
+            <tr>
+                <td class="label">NIS</td>
+                <td class="colon">:</td>
+                <td>{{ surat.siswa.nis }}</td>
+            </tr>
+            <tr>
+                <td class="label">Kelas</td>
+                <td class="colon">:</td>
+                <td>{{ surat.siswa.kelas }}</td>
+            </tr>
+            <tr>
+                <td class="label">Jurusan</td>
+                <td class="colon">:</td>
+                <td>{{ surat.siswa.jurusan }}</td>
+            </tr>
+            <tr>
+                <td class="label">Alamat</td>
+                <td class="colon">:</td>
+                <td>{{ surat.siswa.alamat }}</td>
+            </tr>
+            <tr>
+                <td class="label">Nama Orang Tua</td>
+                <td class="colon">:</td>
+                <td>{{ surat.siswa.nama_orang_tua }}</td>
+            </tr>
+        </table>
+        {% endif %}
+    </div>
+    <br>
+    <div class="isi-surat-content" style="text-align: justify; text-indent: 1cm;">
+        {{ surat.isi_surat|linebreaksbr }}
+    </div>
+    <br>
+    <div class="signature" style="padding-left: 250pt;">
+        <p>{{ surat.tempat_ditetapkan }}, {{ surat.tanggal_ditetapkan|indonesian_date:"%d %B %Y" }} <br>
+        {{ surat.penandatangan.jabatan }},</p>
+        <br>
+        <br>
+        <br>
+        <p>{{ surat.penandatangan.nama }} <br>
+        {{ surat.penandatangan.pangkat }},{{ surat.penandatangan.golongan }} <br>
+        NIP. {{ surat.penandatangan.nip }}</p>
+    </div>
+</body>
+</html>

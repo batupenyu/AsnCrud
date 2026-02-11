@@ -1,0 +1,69 @@
+{% extends "asn_app/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Detail Surat Perintah Tugas</h2>
+    <div class="card">
+        <div class="card-header">
+            SPT {{ spt.nomor_spt }}
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">{{ spt.nama_kegiatan }}</h5>
+            <p class="card-text"><strong>Dasar Surat:</strong> {{ spt.dasar_surat }}</p>
+            <p class="card-text"><strong>Tempat Pelaksanaan:</strong> {{ spt.tempat_pelaksanaan }}</p>
+            <p class="card-text"><strong>Waktu Pelaksanaan:</strong> {{ spt.waktu_pelaksanaan }}</p>
+            <p class="card-text"><strong>Tanggal Pelaksanaan:</strong> {{ spt.tanggal_pelaksanaan }}</p>
+            {% if spt.tanggal_akhir_pelaksanaan %}
+            <p class="card-text"><strong>Tanggal Akhir Pelaksanaan:</strong> {{ spt.tanggal_akhir_pelaksanaan }}</p>
+            {% endif %}
+            <p class="card-text"><strong>Tanggal Dibuat Laporan:</strong> {{ spt.tanggal_dibuat_laporan|default:"-" }}</p>
+            <p class="card-text"><strong>Sifat Surat:</strong> {{ spt.sifat_surat|default:"-" }}</p>
+            <p class="card-text"><strong>Peserta:</strong></p>
+            <ul>
+                {% for p in spt.peserta.all %}
+                <li>{{ p.nama }}</li>
+                {% endfor %}
+            </ul>
+            <p class="card-text"><strong>Penandatangan:</strong> {{ spt.penandatangan.nama }}</p>
+            {% if spt.kuasa_pengguna_anggaran %}
+            <p class="card-text"><strong>Kuasa Pengguna Anggaran:</strong> {{ spt.kuasa_pengguna_anggaran.nama }}</p>
+            {% endif %}
+            <hr>
+            <h5>Laporan</h5>
+            <p class="card-text"><strong>Latar Belakang:</strong> {{ spt.latar_belakang|default:"-" }}</p>
+            <p class="card-text"><strong>Maksud dan Tujuan:</strong> {{ spt.maksud_dan_tujuan|default:"-" }}</p>
+            <p class="card-text"><strong>Hasil yang Dicapai:</strong> {{ spt.hasil_yang_dicapai|default:"-" }}</p>
+            <p class="card-text"><strong>Kesimpulan dan Saran:</strong> {{ spt.kesimpulan_dan_saran|default:"-" }}</p>
+            <p class="card-text"><strong>Penutup:</strong> {{ spt.penutup|default:"-" }}</p>
+            <a href="{% url 'spt_update' spt.pk %}" class="btn btn-warning">Edit</a>
+            <a href="{% url 'spt_delete' spt.pk %}" class="btn btn-danger">Hapus</a>
+            <a href="{% url 'spt_laporan' spt.pk %}" class="btn btn-info">Cetak Laporan</a>
+            <a href="{% url 'spt_list' %}" class="btn btn-secondary">Kembali ke Daftar</a>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <h3>Foto Kegiatan</h3>
+        <a href="{% url 'upload_foto_kegiatan' spt.pk %}" class="btn btn-primary mb-3">Upload Foto</a>
+        <a href="{% url 'cetak_foto_kegiatan_pdf' spt.pk %}" class="btn btn-info mb-3" target="_blank">Cetak PDF Foto</a>
+        <div class="row">
+            {% for foto in fotos %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="{{ foto.foto.url }}" class="card-img-top" alt="{{ foto.keterangan }}">
+                    <div class="card-body">
+                        <p class="card-text">{{ foto.keterangan|default:"Tanpa keterangan" }}</p>
+                        <form method="post" action="{% url 'delete_foto_kegiatan' foto.pk %}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus foto ini?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p>Belum ada foto kegiatan.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

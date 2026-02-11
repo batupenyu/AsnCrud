@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Surat Resmi</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1cm 2.5cm 2.5cm 2.5cm; /* top right bottom left */
+        }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+        }
+        .kop-surat {
+            text-align: center;
+            margin-bottom: 20pt;
+        }
+        .kop-surat img {
+            max-width: 100%;
+            height: auto;
+        }
+        .tempat-tanggal-ditetapkan {
+            text-align: right;
+            margin-bottom: 20pt;
+        }
+        .tujuan-surat {
+            text-align: left;
+            margin-bottom: 10pt;
+        }
+        .tujuan-surat p {
+            margin: 0;
+            padding: 0;
+        }
+        .nomor-sifat-lampiran-perihal {
+            margin-bottom: 20pt;
+            width: 100%;
+        }
+        .nomor-sifat-lampiran-perihal table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .nomor-sifat-lampiran-perihal td {
+            padding: 0;
+            vertical-align: top;
+        }
+        .nomor-sifat-lampiran-perihal .label {
+            width: 80pt; /* Adjust as needed for alignment */
+            text-align: left;
+        }
+        .nomor-sifat-lampiran-perihal .colon {
+            width: 10pt;
+            text-align: center;
+        }
+        .pembuka-surat, .isi-surat, .penutup-surat {
+            text-align: justify;
+            text-indent: 1cm;
+            margin-bottom: 10pt;
+            line-height: 1.5;
+        }
+        .data-pegawai {
+            margin-top: 20pt;
+            margin-bottom: 20pt;
+            margin-left: 0cm; /* Indent for pegawai data */
+        }
+        .data-pegawai table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .data-pegawai td {
+            padding: 2pt 0;
+            vertical-align: top;
+        }
+        .data-pegawai .label {
+            width: 150px; /* Adjust as needed */
+            white-space: nowrap;
+        }
+        .data-pegawai .colon {
+            width: 10px;
+        }
+        .detail-kegiatan {
+            margin-bottom: 10pt;
+            margin-left: 0cm; /* Align left without indent */
+        }
+        .detail-kegiatan table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .detail-kegiatan td {
+            padding: 2pt 0;
+            vertical-align: top;
+        }
+        .detail-kegiatan .label {
+            width: 70px; /* Adjust as needed */
+            white-space: nowrap;
+        }
+        .detail-kegiatan .colon {
+            width: 20px;
+            text-align: center;
+        }
+        .signature-block {
+            margin-top: 20pt;
+            text-align: left;
+            padding-left: 250pt; /* Adjust as needed */
+        }
+        .signature-block p {
+            margin: 0;
+            padding: 0;
+        }
+        .signature-name {
+            margin-top: 60pt; /* Space for signature */
+            font-weight: bold;
+            /* text-decoration: underline; */
+        }
+    </style>
+</head>
+<body>
+    {% if surat.kop_surat and kop_surat_base64 %}
+        <div class="kop-surat">
+            <img src="{{ kop_surat_base64 }}" alt="{{ surat.kop_surat.nama }}">
+        </div>
+    {% endif %}
+
+    <div class="tempat-tanggal-ditetapkan">
+        {{ surat.tempat_ditetapkan }}, {% load indonesian_date_tags %}{{ surat.tanggal_ditetapkan|indonesian_date }}
+    </div>
+
+    
+    <div class="nomor-sifat-lampiran-perihal">
+        <table>
+            <tr>
+                <td class="label">Nomor</td>
+                <td class="colon">:</td>
+                <td>{{ surat.nomor }}</td>
+            </tr>
+            <tr>
+                <td class="label">Sifat</td>
+                <td class="colon">:</td>
+                <td>{{ surat.sifat }}</td>
+            </tr>
+            <tr>
+                <td class="label">Lampiran</td>
+                <td class="colon">:</td>
+                <td>{{ surat.lampiran }}</td>
+            </tr>
+            <tr>
+                <td class="label">Perihal</td>
+                <td class="colon">:</td>
+                <td><strong>{{ surat.perihal }}</strong></td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="tujuan-surat">
+        <p>Kepada</p>
+        <p>Yth. {{ surat.pejabat_tujuan_surat }}</p>
+        <p>di</p>
+        <p><strong>{{ surat.kota_tujuan_surat }}</strong></p>
+    </div>
+    
+    <div class="pembuka-surat">
+        <p>{{ surat.pembuka_surat|linebreaksbr }}</p>
+    </div>
+
+    {% if surat.tanggal_kegiatan or surat.waktu_kegiatan or surat.tempat_kegiatan %}
+    <div class="detail-kegiatan">
+        <table>
+            {% if surat.tanggal_kegiatan %}
+            <tr>
+                <td class="label">Hari/Tanggal</td>
+                <td class="colon">:</td>
+                <td>{% load indonesian_date_tags %}{{ surat.tanggal_kegiatan|indonesian_datetime:"%A, %d %B %Y" }}</td>
+
+                </td>
+            </tr>
+            {% endif %}
+            {% if surat.waktu_kegiatan %}
+            <tr>
+                <td class="label">Waktu</td>
+                <td class="colon">:</td>
+                <td>{{ surat.waktu_kegiatan }}</td>
+            </tr>
+            {% endif %}
+            {% if surat.tempat_kegiatan %}
+            <tr>
+                <td class="label">Tempat</td>
+                <td class="colon">:</td>
+                <td>{{ surat.tempat_kegiatan }}</td>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
+    {% endif %}
+
+    {% if surat.pegawai.all %}
+    <div class="data-pegawai">
+        <p>Adapun nama pegawai yang dimaksud:</p>
+        <table>
+            {% for pegawai in surat.pegawai.all %}
+            <tr>
+                <td class="label">Nama</td>
+                <td class="colon">:</td>
+                <td>{{ pegawai.nama }}</td>
+            </tr>
+            <tr>
+                <td class="label">NIP</td>
+                <td class="colon">:</td>
+                <td>{{ pegawai.nip }}</td>
+            </tr>
+            {% if pegawai.pangkat != "IX" %}
+            <tr>
+                <td class="label">Pangkat/Gol. Ruang</td>
+                <td class="colon">:</td>
+                <td>{{ pegawai.pangkat }}/{{ pegawai.golongan }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td class="label">Jabatan</td>
+                <td class="colon">:</td>
+                <td>{{ pegawai.jabatan }}</td>
+            </tr>
+            <tr>
+                <td class="label">Unit Kerja</td>
+                <td class="colon">:</td>
+                <td>{{ pegawai.unit_kerja }}</td>
+            </tr>
+            {% if not forloop.last %}
+            <tr><td colspan="3"><hr style="border-top: 1px dashed #ccc;"></td></tr>
+            {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+
+    <div class="isi-surat">
+        <p>{{ surat.isi_surat|linebreaksbr }}</p>
+    </div>
+
+    <div class="penutup-surat">
+        <p>{{ surat.penutup_surat|linebreaksbr }}</p>
+    </div>
+
+    {% if surat.penandatangan %}
+    <div class="signature-block">
+        <p>{{ surat.penandatangan.jabatan }} <br><br><br><br><br></p>
+        <p class="signature-name">{{ surat.penandatangan.nama }} <br>
+            {% if surat.penandatangan.pangkat != "IX" %}{{ surat.penandatangan.pangkat }},{{ surat.penandatangan.golongan }}<br>{% endif %}
+        </p>
+        <p>NIP. {{ surat.penandatangan.nip }}</p>
+    </div>
+    {% endif %}
+
+</body>
+</html>

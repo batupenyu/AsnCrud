@@ -1,0 +1,28 @@
+{% extends "asn_app/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Hapus Foto Kegiatan</h2>
+    <p>Apakah Anda yakin ingin menghapus foto ini?</p>
+    
+    <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ foto.foto.url }}" class="img-fluid rounded-start" alt="Foto Kegiatan">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <p class="card-text">{{ foto.keterangan|default:"Tidak ada keterangan" }}</p>
+                    <p class="card-text"><small class="text-muted">Di-upload pada: {{ foto.created_at }}</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Hapus</button>
+        <a href="{% url 'spt_detail' foto.spt.pk %}" class="btn btn-secondary">Batal</a>
+    </form>
+</div>
+{% endblock %}

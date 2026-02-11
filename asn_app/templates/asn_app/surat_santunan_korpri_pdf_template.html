@@ -1,0 +1,172 @@
+{% load i18n %}
+<!DOCTYPE html>
+{% load image_tags %}
+{% load indonesian_date_tags %}
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Surat Santunan Korpri - {{ surat.nomor_surat }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0.5cm 2.5cm 1cm 2.5cm;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.3;
+            color: #333;
+        }
+        .kop-surat-container {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-left: -2cm;
+            margin-right: -2cm;
+        }
+        .kop-surat-image {
+            width: 80%;
+            max-width: 21cm;
+            height: auto;
+            max-height: 200px;
+            object-fit: contain;
+        }
+        .address-block {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .content-block {
+            text-align: justify;
+        }
+        .content-block p {
+            text-indent: 50px;
+        }
+        .signature-block {
+            padding-left: 250pt;
+            text-align: center;
+            margin-top: 40px;
+        }
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .info-table td {
+            padding: 2px 0;
+            vertical-align: top;
+        }
+        .info-table .label {
+            width: 150px;
+        }
+        .info-table .colon {
+            width: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="kop-surat-container">
+        {% if kop_surat_base64 %}
+            <img src="{{ kop_surat_base64 }}" alt="Kop Surat" class="kop-surat-image">
+        {% elif surat.kop_surat.gambar %}
+            <img src="{{ request.scheme }}://{{ request.get_host }}{{ surat.kop_surat.gambar.url }}" alt="Kop Surat" class="kop_surat-image">
+        {% endif %}
+    </div>
+
+    <div style="text-align: right;">
+        {{ surat.tempat_ditetapkan }}, {{ surat.tanggal_surat|indonesian_date:"%d %B %Y" }}
+    </div>
+    <br><br>
+    <div class="address-block">
+        Kepada<br>
+        Yth.{{ surat.instansi_tujuan_surat }}<br>
+        di<br>
+        {{ surat.kota_tujuan_surat }}
+    </div>
+    <br>
+    <div class="content-block">
+        <!-- <p>{{ surat.isi_surat_pertama }}</p> -->
+    </div>
+    <div class="content-block">
+        <p>Yang bertanda tangan dibawah ini : </p>
+    </div>
+
+    <table class="info-table">
+        <tr>
+            <td class="label">Nama</td>
+            <td class="colon">:</td>
+            <td>{{ surat.penandatangan.nama }}</td>
+        </tr>
+        <tr>
+            <td class="label">Pangkat/Golongan</td>
+            <td class="colon">:</td>
+            <td>{{ surat.penandatangan.pangkat }} / {{ surat.penandatangan.golongan }}</td>
+        </tr>
+        <tr>
+            <td class="label">Jabatan</td>
+            <td class="colon">:</td>
+            <td>{{ surat.penandatangan.jabatan }}</td>
+        </tr>
+    </table>
+    <div class="content-block">
+        <p>Dengan ini menyampaikan permohonan usulan bantuan korpri/tali asih pegawai berikut :</p>
+    </div>
+
+    <table class="info-table">
+        <tr>
+            <td class="label">Nama</td>
+            <td class="colon">:</td>
+            <td>{{ surat.pegawai.nama }}</td>
+        </tr>
+        <tr>
+            <td class="label">NIP</td>
+            <td class="colon">:</td>
+            <td>{{ surat.pegawai.nip }}</td>
+        </tr>
+        <tr>
+            <td class="label">Pangkat/Gol.Ruang</td>
+            <td class="colon">:</td>
+            <td>{{ surat.pegawai.pangkat }},{{ surat.pegawai.golongan }}</td>
+        </tr>
+        <tr>
+            <td class="label">Tempat/Tgl. Lahir</td>
+            <td class="colon">:</td>
+            <td>{{ surat.pegawai.tempat_lahir }} / {{ surat.pegawai.tanggal_lahir|indonesian_date:"%d %B %Y" }}</td>
+        </tr>
+        <tr>
+            <td class="label">Alamat</td>
+            <td class="colon">:</td>
+            <td>{{ surat.pegawai.alamat }}</td>
+        </tr>
+        <tr>
+            <td class="label">Unit Kerja</td>
+            <td class="colon">:</td>
+            <td>{{ surat.pegawai.unit_kerja }}</td>
+        </tr>
+        <tr>
+            <td class="label">Nomor HP</td>
+            <td class="colon">:</td>
+            <td>{{ surat.pegawai.telepon }}</td>
+        </tr>
+        <tr>
+            <td class="label">Nama Istri/Suami</td>
+            <td class="colon">:</td>
+            <td>{{surat.pegawai.nama_istri_suami}}</td>
+        </tr>
+    </table>
+
+
+    <div class="content-block">
+         <p>Demikian surat permohonan ini kami sampaikan, atas perhatian dan kerjasama yang diberikan kami ucapkan terima kasih.</p>
+    </div>
+
+    <div class="signature-block">
+        <div>{{ surat.penandatangan.jabatan|split:" "|first }} {{surat.penandatangan.unit_kerja}}</div>
+        <br><br><br>
+        <div>
+            <u>{{ surat.penandatangan.nama }}</u><br>
+            {{ surat.penandatangan.pangkat }} / {{ surat.penandatangan.golongan }}<br>
+            NIP. {{ surat.penandatangan.nip }}
+        </div>
+    </div>
+
+</body>
+</html>

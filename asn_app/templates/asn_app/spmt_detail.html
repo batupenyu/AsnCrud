@@ -1,0 +1,47 @@
+<!-- asn_app/templates/asn_app/spmt_detail.html -->
+{% extends 'asn_app/base.html' %}
+{% load indonesian_date_tags %}
+
+{% block title %}Detail SPMT{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3>Detail Surat Perintah Melaksanakan Tugas (SPMT)</h3>
+            <a href="{% url 'spmt_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </a>
+        </div>
+        <div class="card-body">
+            <p><strong>Nomor Surat:</strong> {{ spmt.nomor_surat }}</p>
+            <p><strong>Kop Surat:</strong> {{ spmt.kop_surat.nama }}</p>
+            {% if spmt.kop_surat.gambar %}
+                <img src="{{ spmt.kop_surat.gambar.url }}" alt="{{ spmt.kop_surat.nama }}" class="img-thumbnail" width="200">
+            {% endif %}
+            <p><strong>Tempat Ditetapkan:</strong> {{ spmt.tempat_ditetapkan }}</p>
+            <p><strong>Tanggal Surat:</strong> {{ spmt.tanggal_surat|indonesian_date }}</p>
+            <p><strong>Penandatangan:</strong> {{ spmt.penandatangan.nama }}</p>
+            <p><strong>Pegawai:</strong> {{ spmt.pegawai.nama }}</p>
+            <p><strong>Peraturan:</strong> {{ spmt.peraturan }}</p>
+            <p><strong>Nomor Peraturan:</strong> {{ spmt.nomor_peraturan }}</p>
+            <p><strong>Tahun Peraturan:</strong> {{ spmt.tahun_peraturan }}</p>
+            <p><strong>Tentang:</strong> {{ spmt.tentang }}</p>
+            <p><strong>Tanggal Terhitung:</strong> {{ spmt.tanggal_terhitung|indonesian_date }}</p>
+            <p><strong>Sebagai:</strong> {{ spmt.sebagai }}</p>
+            <p><strong>Tempat Tugas:</strong> {{ spmt.tempat_tugas }}</p>
+        </div>
+        <div class="card-footer">
+            <a href="{% url 'spmt_update' spmt.pk %}" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+            <a href="{% url 'spmt_delete' spmt.pk %}" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Hapus
+            </a>
+            <a href="{% url 'spmt_export_pdf' spmt.pk %}" class="btn btn-info">
+                <i class="fas fa-file-pdf"></i> Export to PDF
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

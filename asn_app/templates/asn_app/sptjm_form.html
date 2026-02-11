@@ -1,0 +1,102 @@
+{% extends 'asn_app/base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">{{ title|default:'Tambah SPTJM' }}</h1>
+    <p class="mb-4">Formulir untuk {{ title|lower|default:'tambah sptjm' }} data SPTJM.</p>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">{{ title|default:'Tambah SPTJM' }}</h6>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    {{ form.kop_surat.label_tag }}
+                    {{ form.kop_surat }}
+                    {% if form.kop_surat.errors %}<div class="text-danger">{{ form.kop_surat.errors }}</div>{% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.nomor_surat.label_tag }}
+                    {{ form.nomor_surat }}
+                    {% if form.nomor_surat.errors %}<div class="text-danger">{{ form.nomor_surat.errors }}</div>{% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.penandatangan.label_tag }}
+                    {{ form.penandatangan }}
+                    {% if form.penandatangan.errors %}<div class="text-danger">{{ form.penandatangan.errors }}</div>{% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label>{{ form.pegawai.label_tag }}</label>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            Pilih Pegawai
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            {% for checkbox in form.pegawai %}
+                            <div class="dropdown-item">
+                                <div class="form-check">
+                                    {{ checkbox.tag }}
+                                    <label class="form-check-label" for="{{ checkbox.id_for_label }}">
+                                        {{ checkbox.choice_label }}
+                                    </label>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% if form.pegawai.errors %}<div class="text-danger">{{ form.pegawai.errors }}</div>{% endif %}
+                </div>
+
+
+                <div class="form-group">
+                    {{ form.isi_surat.label_tag }}
+                    {{ form.isi_surat }}
+                    {% if form.isi_surat.errors %}<div class="text-danger">{{ form.isi_surat.errors }}</div>{% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.penutup_surat.label_tag }}
+                    {{ form.penutup_surat }}
+                    {% if form.penutup_surat.errors %}<div class="text-danger">{{ form.penutup_surat.errors }}</div>{% endif %}
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                        {{ form.tempat_ditetapkan.label_tag }}
+                        {{ form.tempat_ditetapkan }}
+                        {% if form.tempat_ditetapkan.errors %}<div class="text-danger">{{ form.tempat_ditetapkan.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-sm-6">
+                        {{ form.tanggal_ditetapkan.label_tag }}
+                        {{ form.tanggal_ditetapkan }}
+                        {% if form.tanggal_ditetapkan.errors %}<div class="text-danger">{{ form.tanggal_ditetapkan.errors }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <hr>
+                <button type="submit" class="btn btn-primary btn-block">Simpan</button>
+                <a href="{% url 'sptjm_list' %}" class="btn btn-secondary btn-block">Batal</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block custom_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var dropdownMenu = document.querySelector('.dropdown-menu');
+    if (dropdownMenu) {
+        dropdownMenu.addEventListener('click', function (e) {
+            e.stopPropagation();
+        });
+    }
+});
+</script>
+{% endblock %}

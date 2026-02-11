@@ -1,0 +1,25 @@
+{% extends 'asn_app/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Hapus Surat Santunan Korpri</h4>
+                </div>
+                <div class="card-body">
+                    <p>Anda yakin ingin menghapus surat dengan nomor <strong>{{ surat.nomor_surat }}</strong>?</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'surat_santunan_korpri_detail' surat.pk %}" class="btn btn-secondary">Batal</a>
+                            <button type="submit" class="btn btn-danger">Hapus</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

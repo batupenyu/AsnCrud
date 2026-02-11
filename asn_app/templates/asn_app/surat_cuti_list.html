@@ -1,0 +1,91 @@
+<!-- asn_app/templates/asn_app/surat_cuti_list.html -->
+{% extends 'asn_app/base.html' %}
+{% load indonesian_date_tags %}
+
+{% block title %}Daftar Surat Cuti{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-envelope"></i> Daftar Surat Cuti</h2>
+        <div>
+            <a href="{% url 'surat_cuti_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Buat Surat Cuti
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Pegawai</th>
+                            <th>Tanggal Surat</th>
+                            <th>Tanggal Awal Cuti</th>
+                            <th>Tanggal Akhir Cuti</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for surat_cuti in surat_cuti_list %}
+                        <tr>
+                            <td>{{ surat_cuti.pegawai.nama }}</td>
+                            <td>{{ surat_cuti.tanggal_surat|indonesian_date:"%d %B %Y" }}</td>
+                            <td>{{ surat_cuti.tanggal_awal|indonesian_date:"%d %B %Y" }}</td>
+                            <td>{{ surat_cuti.tanggal_akhir|indonesian_date:"%d %B %Y" }}</td>
+                            <td>
+                                <a href="{% url 'surat_cuti_detail' surat_cuti.pk %}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'surat_cuti_update' surat_cuti.pk %}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'surat_cuti_delete' surat_cuti.pk %}" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                                <a href="{% url 'surat_cuti_export_pdf' surat_cuti.pk %}" class="btn btn-sm btn-success" target="_blank">
+                                    <i class="fas fa-file-pdf"></i> PDF
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">
+                                <p class="text-muted">Belum ada data Surat Cuti</p>
+                                <a href="{% url 'surat_cuti_create' %}" class="btn btn-primary">Buat Surat Cuti Pertama</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% if is_paginated %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

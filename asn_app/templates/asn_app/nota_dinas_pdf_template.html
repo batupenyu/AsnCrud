@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nota Dinas</title>
+    {% load indonesian_date_tags %}
+    <style>
+        @page {
+            size: A4;
+            /* margin: 1.5cm 2cm 0.5cm 2cm; */
+            margin: 1cm 2cm 0.5cm 2cm;
+        }
+        body {
+            /* font-family: 'Times New Roman', Times, serif; */
+            font-family: 'Helvetica', Arial, sans-serif;
+            font-size: 12pt;
+            line-height: 1.5;
+        }
+        .kop-surat-container {
+            text-align: center;
+            margin-bottom: 10px;
+            margin-left: -2cm;
+            margin-right: -2cm;
+        }
+        .kop-surat-image {
+            width: 80%;
+            max-width: 21cm;
+            height: auto;
+            max-height: 200px; /* Batasi tinggi maksimal */
+            object-fit: contain;
+        }
+        .nota-dinas-title {
+            text-align: center;
+            font-weight: bold;
+            text-decoration: underline;
+            font-size: 14pt;
+            margin-bottom: 20px;
+        }
+        .metadata {
+            margin-bottom: 20px;
+        }
+        .metadata table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .metadata td {
+            padding: 2px 0;
+        }
+        .metadata .label {
+            width: 100px;
+            vertical-align: top;
+        }
+        .metadata .colon {
+            width: 10px;
+            vertical-align: top;
+        }
+        .content {
+            text-align: justify;
+        }
+        .isi-surat {
+            text-indent: 50px;
+            margin-bottom: 20px;
+        }
+        .penutup-surat {
+            text-indent: 50px;
+            margin-bottom: 40px;
+        }
+        .pegawai-info {
+            margin-bottom: 20px;
+        }
+        .pegawai-info table {
+            border-collapse: collapse;
+        }
+        .pegawai-info .label {
+            width: 100px;
+            vertical-align: top;
+        }
+        .pegawai-info .colon {
+            width: 10px;
+            vertical-align: top;
+        }
+
+        .penandatangan-container {
+            display: flex;
+            justify-content: space-between; /* atau space-around, space-evenly */
+            align-items: flex-start;
+            margin-top: 50px;
+            gap: 40px; /* jarak antara dua penandatangan */
+        }
+        
+        .penandatangan {
+            text-align: center;
+            flex: 1; /* membuat kedua kolom lebar sama */
+            max-width: 300px; /* sesuaikan jika perlu */
+        }
+        
+        .penandatangan .nama {
+            margin: 40px 0 20px 0; /* memberi jarak untuk tanda tangan */
+            font-weight: bold;
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid black;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="kop-surat-container">
+        {% if kop_surat_base64 %}
+            <img src="{{ kop_surat_base64 }}" alt="Kop Surat" class="kop-surat-image">
+        {% elif spt.kop_surat.gambar %}
+            <img src="{{ request.scheme }}://{{ request.get_host }}{{ spt.kop_surat.gambar.url }}" alt="Kop Surat" class="kop-surat-image">
+        {% endif %}
+    </div>
+
+    <div class="nota-dinas-title">
+        NOTA DINAS
+    </div>
+
+    <div class="metadata">
+        <table>
+            <tr>
+                <td class="label">Kepada</td>
+                <td class="colon">:</td>
+                <td>{{ nota_dinas.kepada }}</td>
+            </tr>
+            <tr>
+                <td class="label">Dari</td>
+                <td class="colon">:</td>
+                <td>{{ nota_dinas.dari }}</td>
+            </tr>
+            <tr>
+                <td class="label">Tanggal</td>
+                <td class="colon">:</td>
+                <td>{{ nota_dinas.tanggal|indonesian_date:"%d %B %Y" }}</td>
+            </tr>
+            <tr>
+                <td class="label">Nomor</td>
+                <td class="colon">:</td>
+                <td>{{ nota_dinas.nomor }}</td>
+            </tr>
+            <tr>
+                <td class="label">Sifat</td>
+                <td class="colon">:</td>
+                <td>{{ nota_dinas.sifat }}</td>
+            </tr>
+            <tr>
+                <td class="label">Lampiran</td>
+                <td class="colon">:</td>
+                <td>{{ nota_dinas.lampiran }}</td>
+            </tr>
+            <tr>
+                <td class="label">Hal</td>
+                <td class="colon">:</td>
+                <td>{{ nota_dinas.hal }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <hr>
+
+    <div class="content isi-surat">
+        <!-- Yang bertanda tangan di bawah ini: -->
+        {{ nota_dinas.isi_surat|linebreaksbr }}
+    </div>
+
+    {% if nota_dinas.pegawai.all %}
+    <div class="pegawai-info">
+        <table>
+            {% for p in nota_dinas.pegawai.all %}
+            <tr>
+                <td class="label">Nama</td>
+                <td class="colon">:</td>
+                <td>{{ p.nama }}</td>
+            </tr>
+            <tr>
+                <td class="label">NIP</td>
+                <td class="colon">:</td>
+                <td>{{ p.nip }}</td>
+            </tr>
+            <tr>
+                <td class="label">Jabatan</td>
+                <td class="colon">:</td>
+                <td>{{ p.jabatan }}</td>
+            </tr>
+            <tr>
+                <td class="label">Pangkat/Gol</td>
+                <td class="colon">:</td>
+                <td>{{ p.pangkat }} / {{ p.golongan }}</td>
+            </tr>
+            {% if not forloop.last %}
+            <tr><td colspan="3" style="padding-top: 10px;"></td></tr>
+            {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+
+    <div class="content penutup-surat">
+        {{ nota_dinas.penutup_surat|linebreaksbr }}
+    </div>
+
+    <div class="penandatangan-container">
+        <div class="penandatangan">
+            <!-- <div>Mengetahui;<br>{{ nota_dinas.penanda_tangan.jabatan }} </div>
+            <br>
+            <div class="nama">{{ nota_dinas.penanda_tangan.nama }} <br>
+                {{ nota_dinas.penanda_tangan.pangkat }} / {{ nota_dinas.penanda_tangan.golongan }} <br>
+                NIP. {{ nota_dinas.penanda_tangan.nip }}</div> -->
+        </div>
+        <div class="penandatangan">
+        {% if nota_dinas.pegawai.all %}
+                {% for p in nota_dinas.pegawai.all %}
+                {% if forloop.last %}
+                    <div>Pemohon, <br> {{ p.jabatan }} </div>
+                    <br>
+                    <div class="nama">{{ p.nama }} <br> 
+                        {{ p.pangkat }} / {{ p.golongan }} <br>
+                        NIP. {{ p.nip }}</div>
+                {% endif %}
+                {% endfor %}
+        {% endif %}
+        </div>
+    </div>
+
+</body>
+</html>
