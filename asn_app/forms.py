@@ -367,7 +367,44 @@ class SPTJMForm(forms.ModelForm):
         self.fields['penandatangan'].label_from_instance = lambda obj: obj.nama
         self.fields['pegawai'].label_from_instance = lambda obj: obj.nama
 
+JABATAN_CHOICES = [
+    ('Analis Sumber Daya Manusia Aparatur Ahli Muda', 'Analis Sumber Daya Manusia  Aparatur Ahli Muda'),
+    ('Penelaah Teknis Kebijakan', 'Penelaah Teknis Kebijakan'),
+    ('Pengolah Data dan Informasi', 'Pengolah Data  dan Informasi'),
+    ('Pengadministrasi Perkantoran', 'Pengadministrasi Perkantoran'),
+    ('Operator Layanan Operasional', 'Operator Layanan Operasional'),
+    ('Pengelola Umum Operasional', 'Pengelola  Umum Operasional'),
+    ('Guru Ahli Madya - Bahasa Inggris', 'Guru Ahli Madya  - Bahasa  Inggris'),
+    ('Guru Ahli Madya - Teknik Ketenagalistrikan', 'Guru Ahli Madya  -  Teknik Ketenagalistrikan'),
+    ('Guru Ahli Madya - Teknik Otomotif', 'Guru Ahli Madya  -  Teknik Otomotif'),
+    ('Guru Ahli Muda - Bahasa Indonesia', 'Guru Ahli Muda  -  Bahasa Indonesia'),
+    ('Guru Ahli Muda - Bahasa Inggris', 'Guru Ahli Muda  -  Bahasa Inggris'),
+    ('Guru Ahli Muda - Teknik Jaringan Komputer dan Telekomunikasi', 'Guru Ahli Muda  -  Teknik Jaringan Komputer dan Telekomunikasi'),
+    ('Guru Ahli Muda - Informatika', 'Guru Ahli Muda  -  Informatika'),
+    ('Guru Ahli Muda - IPAS', 'Guru Ahli Muda  -  IPAS'),
+    ('Guru Ahli Muda - Agama Islam', 'Guru Ahli Muda  -  Agama Islam'),
+    ('Guru Ahli Muda - PPKn', 'Guru Ahli Muda  -  PPKn'),
+    ('Guru Ahli Muda - Sejarah', 'Guru Ahli Muda  -  Sejarah'),
+    ('Guru Ahli Muda - Bimbingan Konseling', 'Guru Ahli Muda  - Bimbingan Konseling'),
+    ('Guru Ahli Muda - Teknik Ketenagalistrikan', 'Guru Ahli Muda  -  Teknik Ketenagalistrikan'),
+    ('Guru Ahli Muda - Matematika', 'Guru Ahli Muda  -  Matematika'),
+    ('Guru Ahli Muda - Teknik Otomotif', 'Guru Ahli Muda  -  Teknik Otomotif'),
+    ('Guru Ahli Pertama - Bahasa Indonesia', 'Guru Ahli Pertama  - Bahasa  Indonesia'),
+    ('Guru Ahli Pertama - Bahasa Inggris', 'Guru Ahli Pertama  - Bahasa  Inggris'),
+    ('Guru Ahli Pertama - Agama Islam', 'Guru Ahli Pertama  - Agama  Islam'),
+    ('Guru Ahli Pertama - Penjasorkes', 'Guru Ahli Pertama  - Penjasorkes'),
+    ('Guru Ahli Pertama - PPKn', 'Guru Ahli Pertama  -  PPKn'),
+    ('Guru Ahli Pertama - Seni Budaya', 'Guru Ahli Pertama  -  Seni Budaya'),
+    ('Guru Ahli Pertama - Bimbingan Konseling', 'Guru Ahli Pertama  - Bimbingan Konseling'),
+    ('Guru Ahli Pertama - Teknik Ketenagalistrikan', 'Guru Ahli Pertama  - Teknik Ketenagalistrikan'),
+    ('Guru Ahli Pertama - Matematika', 'Guru Ahli Pertama  -  Matematika'),
+    ('Guru Ahli Pertama - Teknik Pengelasan dan Fabrikasi Logam', 'Guru Ahli Pertama  -  Teknik Pengelasan dan Fabrikasi Logam'),
+    ('Guru Ahli Pertama - Teknik Jaringan Komputer dan Telekomunikasi', 'Guru Ahli Pertama  -  Teknik Jaringan Komputer dan Telekomunikasi'),
+    ('Asisten Perpustakaan Terampil', 'Asisten Perpustakaan Terampil'),
+]
+
 class SPMTForm(forms.ModelForm):
+    sebagai = forms.ChoiceField(choices=JABATAN_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
     class Meta:
         model = SPMT
         fields = '__all__'
@@ -383,7 +420,6 @@ class SPMTForm(forms.ModelForm):
             'tahun_peraturan': forms.TextInput(attrs={'class': 'form-control'}),
             'tentang': forms.Textarea(attrs={'rows': 5, 'class': 'form-control'}),
             'tanggal_terhitung': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'sebagai': forms.TextInput(attrs={'class': 'form-control'}),
             'tempat_tugas': forms.TextInput(attrs={'class': 'form-control'}),
         }
 

@@ -1,0 +1,53 @@
+# Django
+*.log
+*.pyc
+__pycache__/
+db.sqlite3
+media/
+
+# Python
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Static files
+staticfiles/
+static/
+
+# Backup files
+*.bak
+*~
+
+# Database
+*.sqlite3
+*.db
+
+# Migration files
+!*/migrations/__init__.py
+
+# Test files
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Cache
+.cache/
+*.egg-info/
+dist/
+build/
