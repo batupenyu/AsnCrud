@@ -1,3 +1,4 @@
+{% load indonesian_date_tags %}
 <!doctype html>
 <html>
   <head>
@@ -84,11 +85,12 @@
       {% endif %}
 
       <div class="right-align">
-        {% load indonesian_date_tags %}{{ surat_cuti.tempat_ditetapkan }} {{ surat_cuti.tanggal_surat|indonesian_date:"%d %B %Y" }}
+        {{ surat_cuti.tempat_ditetapkan }}, {{ surat_cuti.tanggal_surat|indonesian_date:"%d %B %Y" }}
       </div>
-
+      <br />
+      <br />
       <table class="no-border" style="margin-top: 0.5cm">
-        <tr>
+        <!-- <tr>
           <td class="label-col valign-top">Nomor</td>
           <td class="colon-col valign-top">:</td>
           <td class="value-col valign-top">{{ surat_cuti.nomor_surat }}</td>
@@ -102,7 +104,7 @@
           <td class="label-col valign-top">Lampiran</td>
           <td class="colon-col valign-top">:</td>
           <td class="value-col valign-top">{{ surat_cuti.lampiran_surat }}</td>
-        </tr>
+        </tr> -->
         <tr>
           <td class="label-col valign-top">Perihal</td>
           <td class="colon-col valign-top">:</td>
