@@ -33,7 +33,21 @@ def asn_list(request):
 def asn_detail(request, pk):
     """Menampilkan detail ASN"""
     asn = get_object_or_404(ASN, pk=pk)
-    return render(request, 'asn_app/asn_detail.html', {'asn': asn})
+    
+    # Get available years from surat_cuti for this ASN
+    from django.db.models import Min, Max
+    year_range = SuratCuti.objects.filter(pegawai=asn).aggregate(
+        min_year=Min('tanggal_awal__year'),
+        max_year=Max('tanggal_awal__year')
+    )
+    
+    # Generate list of years: current year (N), N-1, N-2
+    years = []
+    current_year = now().year
+    for i in range(3):
+        years.append(current_year - i)
+    
+    return render(request, 'asn_app/asn_detail.html', {'asn': asn, 'years': years})
 
 def asn_create(request):
     """Membuat ASN baru"""
@@ -696,6 +710,13 @@ class SuratCutiListView(ListView):
     context_object_name = 'surat_cuti_list'
     paginate_by = 10
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search_query = self.request.GET.get('nama', '')
+        if search_query:
+            queryset = queryset.filter(pegawai__nama__icontains=search_query)
+        return queryset
+
 class SuratCutiDetailView(DetailView):
     model = SuratCuti
     template_name = 'asn_app/surat_cuti_detail.html'
@@ -877,12 +898,29 @@ def laporan_cuti_pdf(request, pk):
     from weasyprint import HTML
 
     asn = get_object_or_404(ASN, pk=pk)
-    # Order by tanggal_awal to ensure correct running balance calculation
-    surat_cuti_queryset = SuratCuti.objects.filter(pegawai=asn).order_by('tanggal_awal')
+
+    # Get year parameters from request (supports multiple years)
+    years = request.GET.getlist('years')
+    
+    # If no years selected, default to current year
+    if not years:
+        years = [str(now().year)]
+    
+    # Convert to integers
+    try:
+        years = [int(y) for y in years]
+    except (ValueError, TypeError):
+        years = [now().year]
+
+    # Get all surat_cuti for selected years
+    surat_cuti_queryset = SuratCuti.objects.filter(
+        pegawai=asn,
+        tanggal_awal__year__in=years
+    ).order_by('tanggal_awal')
+
     sisa_cuti_obj = SisaCuti.objects.filter(pegawai=asn).first()
 
     # Initialize running balances with initial values
-    # These will represent the balance *before* the current leave is applied
     initial_sisa_tahun_n = sisa_cuti_obj.sisa_tahun_n if sisa_cuti_obj else 0
     initial_total_sisa_cuti = sisa_cuti_obj.total_sisa_cuti if sisa_cuti_obj else 0
 
@@ -890,8 +928,8 @@ def laporan_cuti_pdf(request, pk):
     processed_surat_cuti_list = []
 
     # Start with the initial balances for the first row's "before leave" state
-    current_sisa_tahun_n_balance = initial_sisa_tahun_n # This will be the running balance for sisa_tahun_n
-    current_total_sisa_cuti_balance = initial_total_sisa_cuti # This will be the running balance for total_sisa_cuti
+    current_sisa_tahun_n_balance = initial_sisa_tahun_n
+    current_total_sisa_cuti_balance = initial_total_sisa_cuti
 
     for surat_cuti in surat_cuti_queryset:
         lhc = surat_cuti.calculate_effective_leave_days()
@@ -909,8 +947,8 @@ def laporan_cuti_pdf(request, pk):
         processed_surat_cuti_list.append({
             'surat_cuti': surat_cuti,
             'lhc': lhc,
-            'atb_for_row': atb_for_row, # This is the ATB value to display in the current row
-            'stb_for_row': stb_for_row, # This is the STB value to display in the current row
+            'atb_for_row': atb_for_row,
+            'stb_for_row': stb_for_row,
         })
 
     # Default penandatangan if not found
@@ -920,10 +958,11 @@ def laporan_cuti_pdf(request, pk):
 
     html_string = render_to_string('asn_app/laporan_cuti_pdf_template.html', {
         'asn': asn,
-        'processed_surat_cuti_list': processed_surat_cuti_list, # Pass the processed list
-        'sisa_cuti': sisa_cuti_obj, # Still pass the original sisa_cuti for the summary below the table
+        'processed_surat_cuti_list': processed_surat_cuti_list,
+        'sisa_cuti': sisa_cuti_obj,
         'penandatangan': penandatangan,
         'request': request,
+        'years': years,  # Pass all selected years
     })
 
     try:
@@ -934,7 +973,8 @@ def laporan_cuti_pdf(request, pk):
         return HttpResponse(f"Error writing Laporan Cuti PDF: {e}", status=500)
 
     safe_name = "".join(c for c in asn.nama if c.isalnum() or c in (' ', '-', '_')).rstrip()
-    filename = f'laporan_cuti_{safe_name}.pdf'
+    years_str = '_'.join(str(y) for y in years)
+    filename = f'laporan_cuti_{safe_name}_{years_str}.pdf'
 
     response = HttpResponse(result, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
