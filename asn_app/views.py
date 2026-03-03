@@ -33,21 +33,96 @@ def asn_list(request):
 def asn_detail(request, pk):
     """Menampilkan detail ASN"""
     asn = get_object_or_404(ASN, pk=pk)
-    
+    current_year = now().year
+
     # Get available years from surat_cuti for this ASN
     from django.db.models import Min, Max
     year_range = SuratCuti.objects.filter(pegawai=asn).aggregate(
         min_year=Min('tanggal_awal__year'),
         max_year=Max('tanggal_awal__year')
     )
-    
+
     # Generate list of years: current year (N), N-1, N-2
     years = []
-    current_year = now().year
     for i in range(3):
         years.append(current_year - i)
+
+    # Calculate used leave days for each year (n, n-1, n-2)
+    leave_data = {}
+    total_remaining = 0
+    total_remaining_after_deduct = 0
+    for year in years:
+        # Get all surat cuti for this year
+        surat_cuti_qs = SuratCuti.objects.filter(
+            pegawai=asn,
+            tanggal_awal__year=year
+        )
+        
+        # Calculate total used days
+        used_days = sum(sc.calculate_effective_leave_days() for sc in surat_cuti_qs)
+        
+        # Get remaining balance from SisaCuti
+        try:
+            sisa_cuti = SisaCuti.objects.get(pegawai=asn)
+            if year == current_year:
+                remaining = sisa_cuti.sisa_tahun_n
+            elif year == current_year - 1:
+                remaining = sisa_cuti.sisa_tahun_n_1
+            else:  # current_year - 2
+                remaining = sisa_cuti.sisa_tahun_n_2
+        except SisaCuti.DoesNotExist:
+            remaining = 0
+        
+        # Calculate remaining after deducting used days
+        remaining_after_deduct = max(0, remaining - used_days)
+        
+        total_remaining += remaining
+        total_remaining_after_deduct += remaining_after_deduct
+        
+        leave_data[year] = {
+            'used': used_days,
+            'remaining': remaining,
+            'remaining_after_deduct': remaining_after_deduct
+        }
+
+    return render(request, 'asn_app/asn_detail.html', {
+        'asn': asn, 
+        'years': years,
+        'leave_data': leave_data,
+        'current_year': current_year,
+        'total_remaining': total_remaining,
+        'total_remaining_after_deduct': total_remaining_after_deduct
+    })
+
+def asn_leave_history(request, pk, year, leave_type):
+    """Menampilkan riwayat cuti ASN untuk tahun tertentu"""
+    asn = get_object_or_404(ASN, pk=pk)
     
-    return render(request, 'asn_app/asn_detail.html', {'asn': asn, 'years': years})
+    # Get surat cuti for the specified year
+    surat_cuti_list = SuratCuti.objects.filter(
+        pegawai=asn,
+        tanggal_awal__year=year
+    ).order_by('-tanggal_surat')
+    
+    # Calculate used days for each surat cuti
+    leave_details = []
+    for sc in surat_cuti_list:
+        leave_details.append({
+            'surat_cuti': sc,
+            'days': sc.calculate_effective_leave_days()
+        })
+    
+    total_days = sum(item['days'] for item in leave_details)
+    
+    context = {
+        'asn': asn,
+        'year': year,
+        'leave_type': leave_type,
+        'leave_details': leave_details,
+        'total_days': total_days
+    }
+    
+    return render(request, 'asn_app/asn_leave_history.html', context)
 
 def asn_create(request):
     """Membuat ASN baru"""

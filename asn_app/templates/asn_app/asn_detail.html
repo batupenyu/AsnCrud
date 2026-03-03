@@ -132,9 +132,57 @@
                 </div>
                 <div class="card-footer text-muted">
                     <small>
-                        Dibuat: {{ asn.created_at|indonesian_datetime:"%d %B %Y %H:%M" }} | 
+                        Dibuat: {{ asn.created_at|indonesian_datetime:"%d %B %Y %H:%M" }} |
                         Diupdate: {{ asn.updated_at|indonesian_datetime:"%d %B %Y %H:%M" }}
                     </small>
+                </div>
+            </div>
+
+            <!-- Leave Balance Card -->
+            <div class="card mt-4">
+                <div class="card-header bg-info text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-calendar-alt"></i> Data Cuti Tahunan</h5>
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-light text-dark fs-6">
+                                <i class="fas fa-archive"></i> Total Sisa Cuti: <strong>{{ total_remaining }} hari</strong>
+                            </span>
+                            <span class="badge bg-warning text-dark fs-6">
+                                <i class="fas fa-wallet"></i> Sisa Setelah Dipakai: <strong>{{ total_remaining_after_deduct }} hari</strong>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for year in years %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title mb-3">Tahun {{ year }}{% if forloop.first %} (N){% elif forloop.counter == 2 %} (N-1){% else %} (N-2){% endif %}</h5>
+                                    <div class="d-flex justify-content-center gap-3">
+                                        <div>
+                                            <span class="badge bg-danger fs-6 d-block mb-1">Terpakai</span>
+                                            <a href="{% url 'asn_leave_history' asn.pk year 'used' %}" class="text-decoration-none">
+                                                <span class="badge bg-danger fs-4">{{ leave_data|dict_get:year|dict_get:"used" }}</span>
+                                            </a>
+                                        </div>
+                                        <div>
+                                            <span class="badge bg-success fs-6 d-block mb-1">Sisa</span>
+                                            <a href="{% url 'asn_leave_history' asn.pk year 'remaining' %}" class="text-decoration-none">
+                                                <span class="badge bg-success fs-4">{{ leave_data|dict_get:year|dict_get:"remaining" }}</span>
+                                            </a>
+                                        </div>
+                                        <div>
+                                            <span class="badge bg-secondary fs-6 d-block mb-1">Sisa Setelah Dipakai</span>
+                                            <span class="badge bg-warning text-dark fs-4">{{ leave_data|dict_get:year|dict_get:"remaining_after_deduct" }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>

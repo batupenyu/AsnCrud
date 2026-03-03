@@ -8,5 +8,5 @@ from django.views.generic.base import RedirectView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('asn/', include('asn_app.urls')),
-    path('', RedirectView.as_view(url='/asn/', permanent=False)),
+    path('', RedirectView.as_view(url='/asn/', permanent=True)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

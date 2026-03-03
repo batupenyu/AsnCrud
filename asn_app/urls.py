@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     path('', views.asn_list, name='asn_list'),
     path('<int:pk>/', views.asn_detail, name='asn_detail'),
+    path('<int:pk>/leave/<int:year>/<str:leave_type>/', views.asn_leave_history, name='asn_leave_history'),
     path('create/', views.asn_create, name='asn_create'),
     path('<int:pk>/update/', views.asn_update, name='asn_update'),
     path('<int:pk>/delete/', views.asn_delete, name='asn_delete'),

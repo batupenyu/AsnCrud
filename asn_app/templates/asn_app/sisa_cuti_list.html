@@ -55,12 +55,19 @@
                     <tbody>
                         {% for sisa_cuti in sisa_cuti_list %}
                         <tr>
-                            <td>{{ sisa_cuti.pegawai.nama }}</td>
+                            <td>
+                                <a href="{% url 'asn_detail' sisa_cuti.pegawai.pk %}" class="text-decoration-none">
+                                    <i class="fas fa-user"></i> {{ sisa_cuti.pegawai.nama }}
+                                </a>
+                            </td>
                             <td>{{ sisa_cuti.sisa_tahun_n }}</td>
                             <td>{{ sisa_cuti.sisa_tahun_n_1 }}</td>
                             <td>{{ sisa_cuti.sisa_tahun_n_2 }}</td>
                             <td>{{ sisa_cuti.total_sisa_cuti }}</td>
                             <td>
+                                <a href="{% url 'asn_detail' sisa_cuti.pegawai.pk %}" class="btn btn-sm btn-info" title="Lihat Detail ASN">
+                                    <i class="fas fa-user"></i> Detail
+                                </a>
                                 <a href="{% url 'sisa_cuti_detail' sisa_cuti.pk %}" class="btn btn-sm btn-info">
                                     <i class="fas fa-eye"></i>
                                 </a>

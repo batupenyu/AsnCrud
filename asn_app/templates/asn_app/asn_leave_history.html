@@ -1,0 +1,82 @@
+{% extends 'asn_app/base.html' %}
+{% load i18n %}
+{% load indonesian_date_tags %}
+
+{% block title %}Riwayat Cuti {{ asn.nama }} - Tahun {{ year }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-calendar-alt"></i> Riwayat Cuti Tahun {{ year }}
+                        </h4>
+                        <a href="{% url 'asn_detail' asn.pk %}" class="btn btn-light btn-sm">
+                            <i class="fas fa-arrow-left"></i> Kembali
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5 class="mb-3">
+                            <i class="fas fa-user"></i> {{ asn.nama }}
+                            <span class="text-muted">({{ asn.nip }})</span>
+                        </h5>
+                        <div class="d-flex gap-3">
+                            <span class="badge bg-primary fs-6">Total Cuti: {{ total_days }} hari</span>
+                        </div>
+                    </div>
+
+                    {% if leave_details %}
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 5%;">No</th>
+                                    <th style="width: 15%;">Nomor Surat</th>
+                                    <th style="width: 15%;">Tanggal Surat</th>
+                                    <th style="width: 15%;">Tanggal Awal</th>
+                                    <th style="width: 15%;">Tanggal Akhir</th>
+                                    <th style="width: 10%;">Jumlah Hari</th>
+                                    <th style="width: 10%;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in leave_details %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ item.surat_cuti.nomor_surat|default:"-" }}</td>
+                                    <td>{{ item.surat_cuti.tanggal_surat|indonesian_date:"%d %B %Y" }}</td>
+                                    <td>{{ item.surat_cuti.tanggal_awal|indonesian_date:"%d %B %Y" }}</td>
+                                    <td>{{ item.surat_cuti.tanggal_akhir|indonesian_date:"%d %B %Y" }}</td>
+                                    <td><span class="badge bg-danger">{{ item.days }} hari</span></td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'surat_cuti_update' item.surat_cuti.pk %}" class="btn btn-sm btn-warning" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'surat_cuti_delete' item.surat_cuti.pk %}" class="btn btn-sm btn-danger" title="Hapus">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning text-center">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p class="mb-0">Tidak ada data cuti untuk tahun {{ year }}.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

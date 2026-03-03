@@ -54,7 +54,7 @@ def indonesian_date(value, arg="%d %B %Y"):
 def indonesian_datetime(value, arg="%d %B %Y %H:%M"):
     if not value:
         return ""
-    
+
     # Ensure it's a datetime object
     if isinstance(value, datetime.date):
         # Convert date to datetime if it's a date object to allow time formatting
@@ -89,7 +89,7 @@ def indonesian_datetime(value, arg="%d %B %Y %H:%M"):
     # Replace %b (Abbreviated month name)
     if '%b' in formatted_string:
         formatted_string = formatted_string.replace('%b', INDONESIAN_MONTHS_ABBR[month_num])
-    
+
     # Replace %A (Full weekday name)
     if '%A' in formatted_string:
         # Weekday() returns 0 for Monday, 6 for Sunday.
@@ -97,3 +97,11 @@ def indonesian_datetime(value, arg="%d %B %Y %H:%M"):
         formatted_string = formatted_string.replace('%A', INDONESIAN_DAYS_FULL[weekday_num])
 
     return formatted_string
+
+
+@register.filter
+def dict_get(dictionary, key):
+    """Get value from dictionary using a key"""
+    if dictionary and key in dictionary:
+        return dictionary[key]
+    return ""
