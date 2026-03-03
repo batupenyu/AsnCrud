@@ -750,6 +750,18 @@ class SisaCutiListView(ListView):
     context_object_name = 'sisa_cuti_list'
     paginate_by = 10
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search_query = self.request.GET.get('search', '')
+        if search_query:
+            queryset = queryset.filter(pegawai__nama__icontains=search_query)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search_query'] = self.request.GET.get('search', '')
+        return context
+
 class SisaCutiDetailView(DetailView):
     model = SisaCuti
     template_name = 'asn_app/sisa_cuti_detail.html'
