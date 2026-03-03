@@ -708,7 +708,7 @@ class SuratCutiListView(ListView):
     model = SuratCuti
     template_name = 'asn_app/surat_cuti_list.html'
     context_object_name = 'surat_cuti_list'
-    paginate_by = 10
+    paginate_by = 7
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -748,7 +748,7 @@ class SisaCutiListView(ListView):
     model = SisaCuti
     template_name = 'asn_app/sisa_cuti_list.html'
     context_object_name = 'sisa_cuti_list'
-    paginate_by = 10
+    paginate_by = 7
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -772,6 +772,27 @@ class SisaCutiCreateView(CreateView):
     form_class = SisaCutiForm
     template_name = 'asn_app/sisa_cuti_form.html'
     success_url = reverse_lazy('sisa_cuti_list')
+    
+    def get_initial(self):
+        """Pre-fill form with calculated values based on existing SuratCuti records."""
+        initial = super().get_initial()
+        pegawai_id = self.request.GET.get('pegawai_id')
+        
+        if pegawai_id:
+            from .models import ASN
+            try:
+                asn = ASN.objects.get(pk=pegawai_id)
+                # Check if SisaCuti already exists
+                sisa_cuti = SisaCuti.objects.filter(pegawai=asn).first()
+                if not sisa_cuti:
+                    # Create temporary SisaCuti instance to calculate values
+                    temp_sisa_cuti = SisaCuti(pegawai=asn)
+                    calculated = temp_sisa_cuti.calculate_sisa_cuti_from_surat()
+                    initial.update(calculated)
+            except ASN.DoesNotExist:
+                pass
+        
+        return initial
 
 class SisaCutiUpdateView(UpdateView):
     model = SisaCuti
@@ -781,6 +802,13 @@ class SisaCutiUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('sisa_cuti_detail', kwargs={'pk': self.object.pk})
+    
+    def form_valid(self, form):
+        """Recalculate sisa cuti from surat cuti before saving."""
+        # Force recalculation from surat cuti records
+        instance = form.save(commit=False)
+        instance.recalculate_and_save()
+        return super().form_valid(form)
 
 class SisaCutiDeleteView(DeleteView):
     model = SisaCuti
@@ -940,14 +968,22 @@ def laporan_cuti_pdf(request, pk):
     processed_surat_cuti_list = []
 
     # Start with the initial balances for the first row's "before leave" state
+    # First row ATB should show the full initial balance (not decreased)
     current_sisa_tahun_n_balance = initial_sisa_tahun_n
     current_total_sisa_cuti_balance = initial_total_sisa_cuti
 
-    for surat_cuti in surat_cuti_queryset:
+    for idx, surat_cuti in enumerate(surat_cuti_queryset):
         lhc = surat_cuti.calculate_effective_leave_days()
 
-        # ATB for this row is the total accumulated leave *before* this leave is taken
-        atb_for_row = current_total_sisa_cuti_balance
+        # ATB for this row:
+        # - First row: show the full initial balance (not decreased)
+        # - Subsequent rows: show the balance after previous leaves
+        if idx == 0:
+            # First row - ATB is the initial total (undecreased)
+            atb_for_row = initial_total_sisa_cuti
+        else:
+            # Subsequent rows - ATB is the running balance
+            atb_for_row = current_total_sisa_cuti_balance
 
         # STB for this row is ATB for this row minus LHC for this row
         stb_for_row = atb_for_row - lhc

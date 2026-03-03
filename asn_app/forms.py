@@ -218,15 +218,19 @@ class SisaCutiForm(forms.ModelForm):
         exclude = ('total_sisa_cuti',) # Exclude total_sisa_cuti as it's calculated automatically
         widgets = {
             'pegawai': forms.Select(attrs={'class': 'form-control'}),
-            'sisa_tahun_n': forms.NumberInput(attrs={'class': 'form-control'}),
-            'sisa_tahun_n_1': forms.NumberInput(attrs={'class': 'form-control'}),
-            'sisa_tahun_n_2': forms.NumberInput(attrs={'class': 'form-control'}),
+            'sisa_tahun_n': forms.NumberInput(attrs={'class': 'form-control', 'readonly': True}),
+            'sisa_tahun_n_1': forms.NumberInput(attrs={'class': 'form-control', 'readonly': True}),
+            'sisa_tahun_n_2': forms.NumberInput(attrs={'class': 'form-control', 'readonly': True}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['pegawai'].queryset = ASN.objects.all().order_by('nama')
         self.fields['pegawai'].label_from_instance = lambda obj: obj.nama
+        # Make fields read-only since they're auto-calculated
+        self.fields['sisa_tahun_n'].disabled = False  # Keep editable but show as calculated
+        self.fields['sisa_tahun_n_1'].disabled = False
+        self.fields['sisa_tahun_n_2'].disabled = False
 
 
 class SiswaForm(forms.ModelForm):

@@ -5,3 +5,6 @@ class AsnAppConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'asn_app'
     verbose_name = 'Manajemen ASN'
+    
+    def ready(self):
+        import asn_app.signals
