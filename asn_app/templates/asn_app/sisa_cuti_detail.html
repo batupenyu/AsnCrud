@@ -31,6 +31,22 @@
                                 <strong>Pegawai:</strong><br>
                                 {{ sisa_cuti.pegawai.nama }} ({{ sisa_cuti.pegawai.nip }})
                             </div>
+                            <hr>
+                            <h6 class="mb-3">Alokasi Awal (Editable)</h6>
+                            <div class="mb-3">
+                                <strong>Alokasi Awal Tahun N:</strong><br>
+                                {{ sisa_cuti.initial_tahun_n }} hari
+                            </div>
+                            <div class="mb-3">
+                                <strong>Alokasi Awal Tahun N-1:</strong><br>
+                                {{ sisa_cuti.initial_tahun_n_1 }} hari
+                            </div>
+                            <div class="mb-3">
+                                <strong>Alokasi Awal Tahun N-2:</strong><br>
+                                {{ sisa_cuti.initial_tahun_n_2 }} hari
+                            </div>
+                            <hr>
+                            <h6 class="mb-3">Sisa Cuti (Otomatis)</h6>
                             <div class="mb-3">
                                 <strong>Sisa Tahun N:</strong><br>
                                 {{ sisa_cuti.sisa_tahun_n }} hari

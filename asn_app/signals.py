@@ -14,12 +14,15 @@ def update_sisa_cuti_on_surat_cuti_save(sender, instance, created, **kwargs):
     sisa_cuti, created = SisaCuti.objects.get_or_create(
         pegawai=instance.pegawai,
         defaults={
+            'initial_tahun_n': 12,
+            'initial_tahun_n_1': 6,
+            'initial_tahun_n_2': 6,
             'sisa_tahun_n': 12,
             'sisa_tahun_n_1': 6,
             'sisa_tahun_n_2': 6,
         }
     )
-    
+
     # Recalculate and save
     sisa_cuti.recalculate_and_save()
 

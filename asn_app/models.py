@@ -189,6 +189,11 @@ class SuratCuti(models.Model):
 
 class SisaCuti(models.Model):
     pegawai = models.OneToOneField(ASN, on_delete=models.CASCADE, related_name='sisa_cuti', verbose_name='Pegawai')
+    # Initial allocation (editable manually)
+    initial_tahun_n = models.IntegerField(default=12, verbose_name='Alokasi Awal Tahun N')
+    initial_tahun_n_1 = models.IntegerField(default=6, verbose_name='Alokasi Awal Tahun N-1')
+    initial_tahun_n_2 = models.IntegerField(default=6, verbose_name='Alokasi Awal Tahun N-2')
+    # Calculated remaining balance (auto-calculated)
     sisa_tahun_n = models.IntegerField(default=12, verbose_name='Sisa Tahun N')
     sisa_tahun_n_1 = models.IntegerField(default=6, verbose_name='Sisa Tahun N-1')
     sisa_tahun_n_2 = models.IntegerField(default=6, verbose_name='Sisa Tahun N-2')
@@ -215,67 +220,68 @@ class SisaCuti(models.Model):
     def calculate_sisa_cuti_from_surat(self):
         """
         Calculate remaining leave (sisa cuti) for years N, N-1, N-2 based on approved SuratCuti records.
-        Default values: N = 12, N-1 = 6, N-2 = 6
-        
+        Uses initial allocation values (editable) and subtracts used leave.
+
         Dynamic Continuous Logic:
-        - Year N: Default 12 days - used in year N
-        - Year N-1: 6 days - used in year N-1, BUT if year N usage > 6, then N-1 = 0
-        - Year N-2: 6 days - used in year N-2, BUT if year N-1 usage > 6, then N-2 = 0
-        
-        This creates a chain effect where each year's usage affects the next year's available quota.
+        - Year N: Initial allocation - used in year N
+        - Year N-1: Initial allocation - used in year N-1, BUT if year N usage > initial N-1, then N-1 = 0
+        - Year N-2: Initial allocation - used in year N-2, BUT if year N-1 usage > initial N-2, then N-2 = 0
         """
         current_year = self.get_current_year()
         year_n = current_year
         year_n_1 = current_year - 1
         year_n_2 = current_year - 2
-        
-        # Default allocation
-        default_n = 12
-        default_n_1 = 6
-        default_n_2 = 6
-        
+
+        # Get initial allocation (editable values)
+        initial_n = self.initial_tahun_n
+        initial_n_1 = self.initial_tahun_n_1
+        initial_n_2 = self.initial_tahun_n_2
+
         # Get all approved surat cuti for this pegawai
         surat_cuti_list = SuratCuti.objects.filter(pegawai=self.pegawai)
-        
+
         # Calculate used leave days per year
         used_n = 0
         used_n_1 = 0
         used_n_2 = 0
-        
+
         for surat_cuti in surat_cuti_list:
             # Get the year from tanggal_awal
             leave_year = surat_cuti.tanggal_awal.year
             leave_days = surat_cuti.calculate_effective_leave_days()
-            
+
             if leave_year == year_n:
                 used_n += leave_days
             elif leave_year == year_n_1:
                 used_n_1 += leave_days
             elif leave_year == year_n_2:
                 used_n_2 += leave_days
-        
+
         # Calculate remaining leave for year N (current year)
-        self.sisa_tahun_n = max(0, default_n - used_n)
-        
+        self.sisa_tahun_n = max(0, initial_n - used_n)
+
         # Dynamic continuous logic for N-1:
-        # If year N usage > 6, then N-1 becomes 0
-        # Otherwise, N-1 = 6 - used in N-1
-        if used_n > 6:
+        # If year N usage > initial N-1, then N-1 becomes 0
+        # Otherwise, N-1 = initial - used in N-1
+        if used_n > initial_n_1:
             self.sisa_tahun_n_1 = 0
         else:
-            self.sisa_tahun_n_1 = max(0, default_n_1 - used_n_1)
-        
+            self.sisa_tahun_n_1 = max(0, initial_n_1 - used_n_1)
+
         # Dynamic continuous logic for N-2:
-        # If year N-1 usage > 6, then N-2 becomes 0
-        # Otherwise, N-2 = 6 - used in N-2
-        if used_n_1 > 6:
+        # If year N-1 usage > initial N-2, then N-2 becomes 0
+        # Otherwise, N-2 = initial - used in N-2
+        if used_n_1 > initial_n_2:
             self.sisa_tahun_n_2 = 0
         else:
-            self.sisa_tahun_n_2 = max(0, default_n_2 - used_n_2)
-        
+            self.sisa_tahun_n_2 = max(0, initial_n_2 - used_n_2)
+
         self.total_sisa_cuti = self.sisa_tahun_n + self.sisa_tahun_n_1 + self.sisa_tahun_n_2
-        
+
         return {
+            'initial_tahun_n': self.initial_tahun_n,
+            'initial_tahun_n_1': self.initial_tahun_n_1,
+            'initial_tahun_n_2': self.initial_tahun_n_2,
             'sisa_tahun_n': self.sisa_tahun_n,
             'sisa_tahun_n_1': self.sisa_tahun_n_1,
             'sisa_tahun_n_2': self.sisa_tahun_n_2,

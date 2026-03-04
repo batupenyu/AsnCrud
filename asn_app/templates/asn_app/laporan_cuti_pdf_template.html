@@ -173,7 +173,7 @@
           {% for item in processed_surat_cuti_list %}
           <tr>
             <td>{{ forloop.counter }}</td>
-            <td>{{ item.surat_cuti.nomor_surat }}</td>
+            <td>{{ item.surat_cuti.nomor_surat|default:"" }}</td>
             <!-- <td>{{ item.surat_cuti.tanggal_surat|indonesian_date:"%d-%m-%Y" }}</td> -->
             <td>-</td>
             <td>

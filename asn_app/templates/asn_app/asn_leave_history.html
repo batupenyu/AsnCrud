@@ -14,9 +14,14 @@
                         <h4 class="card-title mb-0">
                             <i class="fas fa-calendar-alt"></i> Riwayat Cuti Tahun {{ year }}
                         </h4>
-                        <a href="{% url 'asn_detail' asn.pk %}" class="btn btn-light btn-sm">
-                            <i class="fas fa-arrow-left"></i> Kembali
-                        </a>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'surat_cuti_create' %}?pegawai={{ asn.pk }}" class="btn btn-light btn-sm text-primary">
+                                <i class="fas fa-plus"></i> Tambah Surat Cuti
+                            </a>
+                            <a href="{% url 'asn_detail' asn.pk %}" class="btn btn-light btn-sm">
+                                <i class="fas fa-arrow-left"></i> Kembali
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body">
@@ -25,8 +30,10 @@
                             <i class="fas fa-user"></i> {{ asn.nama }}
                             <span class="text-muted">({{ asn.nip }})</span>
                         </h5>
-                        <div class="d-flex gap-3">
-                            <span class="badge bg-primary fs-6">Total Cuti: {{ total_days }} hari</span>
+                        <div class="d-flex gap-3 flex-wrap">
+                            <span class="badge bg-primary">Alokasi Awal: {{ initial }} hari</span>
+                            <span class="badge bg-danger">Terpakai: {{ total_days }} hari</span>
+                            <span class="badge bg-success">Sisa: {{ remaining }} hari</span>
                         </div>
                     </div>
 

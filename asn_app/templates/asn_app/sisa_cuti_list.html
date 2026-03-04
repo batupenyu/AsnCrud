@@ -14,13 +14,14 @@
         </div>
     </div>
 
+    <!-- Search Form -->
     <div class="card mb-4">
         <div class="card-body">
             <form method="get" action="{% url 'sisa_cuti_list' %}">
                 <div class="row align-items-end">
                     <div class="col-md-4">
                         <label for="search" class="form-label">Cari Pegawai</label>
-                        <input type="text" class="form-control" id="search" name="search" 
+                        <input type="text" class="form-control" id="search" name="search"
                                placeholder="Masukkan nama pegawai" value="{{ search_query }}">
                     </div>
                     <div class="col-md-2">
@@ -38,61 +39,92 @@
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Pegawai</th>
-                            <th>Sisa Tahun N</th>
-                            <th>Sisa Tahun N-1</th>
-                            <th>Sisa Tahun N-2</th>
-                            <th>Total Sisa Cuti</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for sisa_cuti in sisa_cuti_list %}
-                        <tr>
-                            <td>
-                                <a href="{% url 'asn_detail' sisa_cuti.pegawai.pk %}" class="text-decoration-none">
-                                    <i class="fas fa-user"></i> {{ sisa_cuti.pegawai.nama }}
-                                </a>
-                            </td>
-                            <td>{{ sisa_cuti.sisa_tahun_n }}</td>
-                            <td>{{ sisa_cuti.sisa_tahun_n_1 }}</td>
-                            <td>{{ sisa_cuti.sisa_tahun_n_2 }}</td>
-                            <td>{{ sisa_cuti.total_sisa_cuti }}</td>
-                            <td>
-                                <a href="{% url 'asn_detail' sisa_cuti.pegawai.pk %}" class="btn btn-sm btn-info" title="Lihat Detail ASN">
-                                    <i class="fas fa-user"></i> Detail
-                                </a>
-                                <a href="{% url 'sisa_cuti_detail' sisa_cuti.pk %}" class="btn btn-sm btn-info">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{% url 'sisa_cuti_update' sisa_cuti.pk %}" class="btn btn-sm btn-warning">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="{% url 'sisa_cuti_delete' sisa_cuti.pk %}" class="btn btn-sm btn-danger">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="6" class="text-center">
-                                <p class="text-muted">Belum ada data Sisa Cuti</p>
-                                <a href="{% url 'sisa_cuti_create' %}" class="btn btn-primary">Tambah Sisa Cuti Pertama</a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+    <!-- Sisa Cuti Cards -->
+    <div class="row">
+        {% for sisa_cuti in sisa_cuti_list %}
+        <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-user"></i> {{ sisa_cuti.pegawai.nama }}
+                        </h5>
+                    </div>
+                    <small class="text-white-50">{{ sisa_cuti.pegawai.nip }}</small>
+                </div>
+                <div class="card-body">
+                    <!-- Year N -->
+                    <div class="mb-3">
+                        <h6 class="border-bottom pb-2 mb-2">
+                            <span class="badge bg-primary">Tahun N ({{ sisa_cuti.initial_tahun_n }} hari)</span>
+                        </h6>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted">Sisa:</span>
+                            <span class="fw-bold text-success">{{ sisa_cuti.sisa_tahun_n }} hari</span>
+                        </div>
+                    </div>
+
+                    <!-- Year N-1 -->
+                    <div class="mb-3">
+                        <h6 class="border-bottom pb-2 mb-2">
+                            <span class="badge bg-secondary">Tahun N-1 ({{ sisa_cuti.initial_tahun_n_1 }} hari)</span>
+                        </h6>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted">Sisa:</span>
+                            <span class="fw-bold text-success">{{ sisa_cuti.sisa_tahun_n_1 }} hari</span>
+                        </div>
+                    </div>
+
+                    <!-- Year N-2 -->
+                    <div class="mb-3">
+                        <h6 class="border-bottom pb-2 mb-2">
+                            <span class="badge bg-secondary">Tahun N-2 ({{ sisa_cuti.initial_tahun_n_2 }} hari)</span>
+                        </h6>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted">Sisa:</span>
+                            <span class="fw-bold text-success">{{ sisa_cuti.sisa_tahun_n_2 }} hari</span>
+                        </div>
+                    </div>
+
+                    <!-- Total -->
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <strong><i class="fas fa-archive"></i> Total Sisa Cuti:</strong>
+                            <span class="fs-5 fw-bold text-primary">{{ sisa_cuti.total_sisa_cuti }} hari</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white">
+                    <div class="d-flex gap-2 justify-content-center">
+                        <a href="{% url 'asn_detail' sisa_cuti.pegawai.pk %}" class="btn btn-sm btn-outline-info" title="Detail ASN">
+                            <i class="fas fa-user"></i> ASN
+                        </a>
+                        <a href="{% url 'sisa_cuti_detail' sisa_cuti.pk %}" class="btn btn-sm btn-outline-primary" title="Detail Sisa Cuti">
+                            <i class="fas fa-eye"></i> Detail
+                        </a>
+                        <a href="{% url 'sisa_cuti_update' sisa_cuti.pk %}" class="btn btn-sm btn-outline-warning" title="Edit">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
+                    <p class="text-muted">Belum ada data Sisa Cuti</p>
+                    <a href="{% url 'sisa_cuti_create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Tambah Sisa Cuti Pertama
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 
+    <!-- Pagination -->
     {% if is_paginated %}
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">

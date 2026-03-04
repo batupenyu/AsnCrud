@@ -47,63 +47,71 @@ def asn_detail(request, pk):
     for i in range(3):
         years.append(current_year - i)
 
-    # Calculate used leave days for each year (n, n-1, n-2)
+    # Get SisaCuti for this ASN
+    try:
+        sisa_cuti = SisaCuti.objects.get(pegawai=asn)
+    except SisaCuti.DoesNotExist:
+        sisa_cuti = None
+
+    # Calculate used leave days and remaining balance for each year (n, n-1, n-2)
     leave_data = {}
-    total_remaining = 0
-    total_remaining_after_deduct = 0
+    total_initial = 0  # Total initial allocation (before deduct)
+    total_remaining_after_deduct = 0  # Total remaining after deduct
+    
     for year in years:
         # Get all surat cuti for this year
         surat_cuti_qs = SuratCuti.objects.filter(
             pegawai=asn,
             tanggal_awal__year=year
         )
-        
+
         # Calculate total used days
         used_days = sum(sc.calculate_effective_leave_days() for sc in surat_cuti_qs)
-        
-        # Get remaining balance from SisaCuti
-        try:
-            sisa_cuti = SisaCuti.objects.get(pegawai=asn)
+
+        # Get initial allocation and remaining balance from SisaCuti
+        if sisa_cuti:
             if year == current_year:
+                initial = sisa_cuti.initial_tahun_n
                 remaining = sisa_cuti.sisa_tahun_n
             elif year == current_year - 1:
+                initial = sisa_cuti.initial_tahun_n_1
                 remaining = sisa_cuti.sisa_tahun_n_1
             else:  # current_year - 2
+                initial = sisa_cuti.initial_tahun_n_2
                 remaining = sisa_cuti.sisa_tahun_n_2
-        except SisaCuti.DoesNotExist:
+        else:
+            initial = 0
             remaining = 0
-        
-        # Calculate remaining after deducting used days
-        remaining_after_deduct = max(0, remaining - used_days)
-        
-        total_remaining += remaining
-        total_remaining_after_deduct += remaining_after_deduct
-        
+
+        total_initial += initial
+        total_remaining_after_deduct += remaining
+
         leave_data[year] = {
             'used': used_days,
-            'remaining': remaining,
-            'remaining_after_deduct': remaining_after_deduct
+            'initial': initial,  # Initial allocation (before deduct)
+            'remaining': remaining  # Remaining after deduct
         }
 
     return render(request, 'asn_app/asn_detail.html', {
-        'asn': asn, 
+        'asn': asn,
         'years': years,
         'leave_data': leave_data,
         'current_year': current_year,
-        'total_remaining': total_remaining,
+        'total_initial': total_initial,
         'total_remaining_after_deduct': total_remaining_after_deduct
     })
 
 def asn_leave_history(request, pk, year, leave_type):
     """Menampilkan riwayat cuti ASN untuk tahun tertentu"""
     asn = get_object_or_404(ASN, pk=pk)
-    
+    current_year = now().year
+
     # Get surat cuti for the specified year
     surat_cuti_list = SuratCuti.objects.filter(
         pegawai=asn,
         tanggal_awal__year=year
     ).order_by('-tanggal_surat')
-    
+
     # Calculate used days for each surat cuti
     leave_details = []
     for sc in surat_cuti_list:
@@ -111,17 +119,35 @@ def asn_leave_history(request, pk, year, leave_type):
             'surat_cuti': sc,
             'days': sc.calculate_effective_leave_days()
         })
-    
+
     total_days = sum(item['days'] for item in leave_details)
-    
+
+    # Get initial allocation and remaining balance from SisaCuti
+    try:
+        sisa_cuti = SisaCuti.objects.get(pegawai=asn)
+        if year == current_year:
+            initial = sisa_cuti.initial_tahun_n
+            remaining = sisa_cuti.sisa_tahun_n
+        elif year == current_year - 1:
+            initial = sisa_cuti.initial_tahun_n_1
+            remaining = sisa_cuti.sisa_tahun_n_1
+        else:  # current_year - 2
+            initial = sisa_cuti.initial_tahun_n_2
+            remaining = sisa_cuti.sisa_tahun_n_2
+    except SisaCuti.DoesNotExist:
+        initial = 0
+        remaining = 0
+
     context = {
         'asn': asn,
         'year': year,
         'leave_type': leave_type,
         'leave_details': leave_details,
-        'total_days': total_days
+        'total_days': total_days,
+        'initial': initial,
+        'remaining': remaining
     }
-    
+
     return render(request, 'asn_app/asn_leave_history.html', context)
 
 def asn_create(request):
@@ -803,6 +829,13 @@ class SuratCutiCreateView(CreateView):
     template_name = 'asn_app/surat_cuti_form.html'
     success_url = reverse_lazy('surat_cuti_list')
 
+    def get_initial(self):
+        initial = super().get_initial()
+        pegawai_id = self.request.GET.get('pegawai')
+        if pegawai_id:
+            initial['pegawai'] = pegawai_id
+        return initial
+
 class SuratCutiUpdateView(UpdateView):
     model = SuratCuti
     form_class = SuratCutiForm
@@ -847,27 +880,40 @@ class SisaCutiCreateView(CreateView):
     form_class = SisaCutiForm
     template_name = 'asn_app/sisa_cuti_form.html'
     success_url = reverse_lazy('sisa_cuti_list')
-    
+
     def get_initial(self):
-        """Pre-fill form with calculated values based on existing SuratCuti records."""
+        """Pre-fill form with default initial allocation values."""
         initial = super().get_initial()
         pegawai_id = self.request.GET.get('pegawai_id')
-        
+
+        # Set default initial allocation values
+        initial['initial_tahun_n'] = 12
+        initial['initial_tahun_n_1'] = 6
+        initial['initial_tahun_n_2'] = 6
+
         if pegawai_id:
             from .models import ASN
             try:
                 asn = ASN.objects.get(pk=pegawai_id)
                 # Check if SisaCuti already exists
                 sisa_cuti = SisaCuti.objects.filter(pegawai=asn).first()
-                if not sisa_cuti:
-                    # Create temporary SisaCuti instance to calculate values
-                    temp_sisa_cuti = SisaCuti(pegawai=asn)
-                    calculated = temp_sisa_cuti.calculate_sisa_cuti_from_surat()
-                    initial.update(calculated)
+                if sisa_cuti:
+                    # Use existing values if SisaCuti exists
+                    initial['initial_tahun_n'] = sisa_cuti.initial_tahun_n
+                    initial['initial_tahun_n_1'] = sisa_cuti.initial_tahun_n_1
+                    initial['initial_tahun_n_2'] = sisa_cuti.initial_tahun_n_2
             except ASN.DoesNotExist:
                 pass
-        
+
         return initial
+
+    def form_valid(self, form):
+        """Save initial allocation and calculate sisa cuti."""
+        instance = form.save(commit=False)
+        # Recalculate sisa cuti based on initial allocation values
+        instance.calculate_sisa_cuti_from_surat()
+        instance.save()
+        return super().form_valid(form)
 
 class SisaCutiUpdateView(UpdateView):
     model = SisaCuti
@@ -877,12 +923,16 @@ class SisaCutiUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('sisa_cuti_detail', kwargs={'pk': self.object.pk})
-    
+
     def form_valid(self, form):
-        """Recalculate sisa cuti from surat cuti before saving."""
-        # Force recalculation from surat cuti records
+        """Save initial allocation and recalculate sisa cuti."""
+        # Save the form first
         instance = form.save(commit=False)
-        instance.recalculate_and_save()
+        
+        # Recalculate sisa cuti based on new initial allocation values
+        instance.calculate_sisa_cuti_from_surat()
+        instance.save()
+        
         return super().form_valid(form)
 
 class SisaCutiDeleteView(DeleteView):

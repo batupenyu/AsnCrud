@@ -57,7 +57,11 @@
                     <tbody>
                         {% for surat_cuti in surat_cuti_list %}
                         <tr>
-                            <td>{{ surat_cuti.pegawai.nama }}</td>
+                            <td>
+                                <a href="{% url 'laporan_cuti_pdf' surat_cuti.pegawai.pk %}" target="_blank" class="text-decoration-none">
+                                    {{ surat_cuti.pegawai.nama }}
+                                </a>
+                            </td>
                             <td>{{ surat_cuti.tanggal_surat|indonesian_date:"%d %B %Y" }}</td>
                             <td>{{ surat_cuti.tanggal_awal|indonesian_date:"%d %B %Y" }}</td>
                             <td>{{ surat_cuti.tanggal_akhir|indonesian_date:"%d %B %Y" }}</td>

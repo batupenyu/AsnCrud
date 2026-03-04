@@ -215,22 +215,18 @@ class SuratCutiForm(forms.ModelForm):
 class SisaCutiForm(forms.ModelForm):
     class Meta:
         model = SisaCuti
-        exclude = ('total_sisa_cuti',) # Exclude total_sisa_cuti as it's calculated automatically
+        exclude = ('total_sisa_cuti', 'sisa_tahun_n', 'sisa_tahun_n_1', 'sisa_tahun_n_2',) # Exclude calculated fields
         widgets = {
             'pegawai': forms.Select(attrs={'class': 'form-control'}),
-            'sisa_tahun_n': forms.NumberInput(attrs={'class': 'form-control', 'readonly': True}),
-            'sisa_tahun_n_1': forms.NumberInput(attrs={'class': 'form-control', 'readonly': True}),
-            'sisa_tahun_n_2': forms.NumberInput(attrs={'class': 'form-control', 'readonly': True}),
+            'initial_tahun_n': forms.NumberInput(attrs={'class': 'form-control'}),
+            'initial_tahun_n_1': forms.NumberInput(attrs={'class': 'form-control'}),
+            'initial_tahun_n_2': forms.NumberInput(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['pegawai'].queryset = ASN.objects.all().order_by('nama')
         self.fields['pegawai'].label_from_instance = lambda obj: obj.nama
-        # Make fields read-only since they're auto-calculated
-        self.fields['sisa_tahun_n'].disabled = False  # Keep editable but show as calculated
-        self.fields['sisa_tahun_n_1'].disabled = False
-        self.fields['sisa_tahun_n_2'].disabled = False
 
 
 class SiswaForm(forms.ModelForm):
