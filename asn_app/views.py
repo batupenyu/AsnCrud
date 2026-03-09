@@ -988,7 +988,7 @@ def surat_cuti_export_pdf(request, pk):
             end_date_str = end_date_str.replace(eng_month, indo_month)
 
         if surat_cuti.tanggal_awal == surat_cuti.tanggal_akhir:
-            leave_duration_text = f"selama {leave_days} ({written_number}) hari kerja, terhitung mulai tanggal {start_date_str}"
+            leave_duration_text = f"selama {leave_days} ({written_number}) hari kerja pada tanggal {start_date_str}"
         else:
             leave_duration_text = f"selama {leave_days} ({written_number}) hari kerja, terhitung mulai tanggal {start_date_str} sampai dengan tanggal {end_date_str}"
         logger.info(f"Leave duration: {leave_duration_text}")
@@ -1085,9 +1085,11 @@ def laporan_cuti_pdf(request, pk):
 
     sisa_cuti_obj = SisaCuti.objects.filter(pegawai=asn).first()
 
-    # Initialize running balances with initial values
-    initial_sisa_tahun_n = sisa_cuti_obj.sisa_tahun_n if sisa_cuti_obj else 0
-    initial_total_sisa_cuti = sisa_cuti_obj.total_sisa_cuti if sisa_cuti_obj else 0
+    # Initialize running balances with INITIAL allocation values (not remaining)
+    initial_sisa_tahun_n = sisa_cuti_obj.initial_tahun_n if sisa_cuti_obj else 0
+    initial_sisa_tahun_n_1 = sisa_cuti_obj.initial_tahun_n_1 if sisa_cuti_obj else 0
+    initial_sisa_tahun_n_2 = sisa_cuti_obj.initial_tahun_n_2 if sisa_cuti_obj else 0
+    initial_total_sisa_cuti = (initial_sisa_tahun_n + initial_sisa_tahun_n_1 + initial_sisa_tahun_n_2) if sisa_cuti_obj else 0
 
     # Create a list to hold processed leave data
     processed_surat_cuti_list = []

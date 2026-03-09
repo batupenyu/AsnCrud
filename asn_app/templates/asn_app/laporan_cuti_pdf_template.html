@@ -208,10 +208,10 @@
               ATB : Akumulasi Sisa Tahun Berjalan <br />
               LHC : Lama Hari Cuti <br />
               STB : Sisa Cuti Tahun Berjalan <br />
-              Sisa Cuti Tahun N: {{ sisa_cuti.sisa_tahun_n }} <br />
-              Sisa Cuti Tahun N-1: {{ sisa_cuti.sisa_tahun_n_1 }} <br />
-              Sisa Cuti Tahun N-2: {{ sisa_cuti.sisa_tahun_n_2 }} <br />
-              Total Sisa Cuti: {{ sisa_cuti.total_sisa_cuti }}
+              Alokasi Awal Tahun N: {{ sisa_cuti.initial_tahun_n }} <br />
+              Alokasi Awal Tahun N-1: {{ sisa_cuti.initial_tahun_n_1 }} <br />
+              Alokasi Awal Tahun N-2: {{ sisa_cuti.initial_tahun_n_2 }} <br />
+              Total Alokasi Awal: {{ sisa_cuti.initial_tahun_n|add:sisa_cuti.initial_tahun_n_1|add:sisa_cuti.initial_tahun_n_2 }}
             </p>
           </div>
         </div>

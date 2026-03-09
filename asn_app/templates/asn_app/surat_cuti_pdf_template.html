@@ -8,7 +8,7 @@
     <style>
       @page {
         size: A4;
-        margin: 0.5cm 2cm 1cm 2cm;
+        margin: 0.5cm 2cm 2cm 2cm;
       }
       body {
         font-family: "Helvetica", sans-serif;
@@ -108,7 +108,9 @@
         <tr>
           <td class="label-col valign-top">Perihal</td>
           <td class="colon-col valign-top">:</td>
-          <td class="value-col valign-top">{{ surat_cuti.perihal_surat }}</td>
+          <td class="value-col valign-top">
+            {{ surat_cuti.perihal_surat }} {{ surat_cuti.jenis_cuti }}
+          </td>
         </tr>
       </table>
 
@@ -160,8 +162,7 @@
       </table>
 
       <div style="margin-top: 0.5cm" class="left-align justify indent">
-        Dengan ini mengajukan permintaan Cuti Tahunan {{ leave_duration_text }}
-        dengan alasan {% if surat_cuti.alasan_cuti %}{{ surat_cuti.alasan_cuti|linebreaksbr }}{% else %}-{% endif %}.
+        Dengan ini mengajukan permintaan {{ surat_cuti.jenis_cuti }} {{ leave_duration_text }}{% if surat_cuti.alasan_cuti %}, dengan alasan {{ surat_cuti.alasan_cuti }}{% endif %}.
       </div>
 
       <div style="margin-top: 0.5cm" class="left-align justify indent">

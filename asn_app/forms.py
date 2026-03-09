@@ -188,6 +188,7 @@ class SuratCutiForm(forms.ModelForm):
             'tempat_ditetapkan': forms.TextInput(attrs={'class': 'form-control'}),
             'tanggal_surat': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'tujuan_surat': forms.TextInput(attrs={'class': 'form-control'}),
+            'jenis_cuti': forms.Select(attrs={'class': 'form-control'}),
             'pegawai': forms.Select(attrs={'class': 'form-control'}),
             'tanggal_awal': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'tanggal_akhir': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),

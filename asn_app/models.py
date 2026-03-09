@@ -149,6 +149,15 @@ class HariLibur(models.Model):
 from datetime import date, timedelta
 
 class SuratCuti(models.Model):
+    JENIS_CUTI_CHOICES = [
+        ('Cuti Tahunan', 'Cuti Tahunan'),
+        ('Cuti Sakit', 'Cuti Sakit'),
+        ('Cuti Alasan Penting', 'Cuti Alasan Penting'),
+        ('Cuti Diluar Tanggungan Negara', 'Cuti Diluar Tanggungan Negara'),
+        ('Cuti Melahirkan', 'Cuti Melahirkan'),
+        ('Cuti Besar', 'Cuti Besar'),
+    ]
+
     tempat_ditetapkan = models.CharField(max_length=100, verbose_name='Tempat Ditetapkan')
     tanggal_surat = models.DateField(verbose_name='Tanggal Surat')
     nomor_surat = models.CharField(max_length=100, blank=True, null=True, verbose_name='Nomor Surat')
@@ -156,6 +165,7 @@ class SuratCuti(models.Model):
     lampiran_surat = models.CharField(max_length=100, blank=True, null=True, verbose_name='Lampiran Surat')
     perihal_surat = models.CharField(max_length=255, blank=True, null=True, verbose_name='Perihal Surat')
     tujuan_surat = models.CharField(max_length=200, verbose_name='Tujuan Surat')
+    jenis_cuti = models.CharField(max_length=50, choices=JENIS_CUTI_CHOICES, default='Cuti Tahunan', verbose_name='Jenis Cuti')
     pegawai = models.ForeignKey(ASN, on_delete=models.CASCADE, related_name='surat_cuti_pegawai', verbose_name='Pegawai')
     tanggal_awal = models.DateField(verbose_name='Tanggal Awal Cuti')
     tanggal_akhir = models.DateField(verbose_name='Tanggal Akhir Cuti')
