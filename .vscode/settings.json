@@ -1,4 +1,22 @@
 {
-    "python-envs.defaultEnvManager": "ms-python.python:system",
-    "python-envs.pythonProjects": []
+  "editor.formatOnSave": false,
+  "editor.formatOnPaste": false,
+  "editor.wordWrap": "off",
+  "editor.autoIndent": "none",
+  "[html]": {
+    "editor.defaultFormatter": "none",
+    "editor.formatOnSave": false,
+    "editor.wordWrap": "off",
+    "html.format.enable": false,
+    "html.format.wrapLineLength": 0
+  },
+  "[django-html]": {
+    "editor.defaultFormatter": "none",
+    "editor.formatOnSave": false,
+    "editor.wordWrap": "off"
+  },
+  "djangoHtml.enable": false,
+  "djhtml.enable": false,
+  "prettier.enable": false,
+  "beautify.enable": false
 }

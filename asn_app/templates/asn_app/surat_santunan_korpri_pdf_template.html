@@ -55,10 +55,14 @@
       }
       .info-table .label {
         width: 150px;
+        white-space: nowrap;
       }
       .info-table .colon {
         width: 20px;
         text-align: center;
+      }
+      .info-table .value {
+        white-space: nowrap;
       }
       .no-border {
         border: none;
@@ -83,7 +87,8 @@
     </div>
 
     <div style="text-align: right">
-      {{ surat.tempat_ditetapkan }}, {{ surat.tanggal_surat|indonesian_date:"%d %B %Y" }}
+      {{ surat.tempat_ditetapkan }}, {{ surat.tanggal_surat|indonesian_date:"%d
+      %B %Y" }}
     </div>
     <table class="no-border" style="margin-top: 0.5cm">
       <tr>
@@ -215,3 +220,4 @@
     </div>
   </body>
 </html>
+

@@ -73,6 +73,7 @@
       }
       .value-col {
         width: 65%;
+        white-space: nowrap;
       }
     </style>
   </head>
@@ -85,7 +86,8 @@
       {% endif %}
 
       <div class="right-align">
-        {{ surat_cuti.tempat_ditetapkan }}, {{ surat_cuti.tanggal_surat|indonesian_date:"%d %B %Y" }}
+        {{ surat_cuti.tempat_ditetapkan }}, {{
+        surat_cuti.tanggal_surat|indonesian_date:"%d %B %Y" }}
       </div>
       <br />
       <br />
@@ -162,7 +164,9 @@
       </table>
 
       <div style="margin-top: 0.5cm" class="left-align justify indent">
-        Dengan ini mengajukan permintaan {{ surat_cuti.jenis_cuti }} {{ leave_duration_text }}{% if surat_cuti.alasan_cuti %}, dengan alasan {{ surat_cuti.alasan_cuti }}{% endif %}.
+        Dengan ini mengajukan permintaan {{ surat_cuti.jenis_cuti }} {{
+        leave_duration_text }}{% if surat_cuti.alasan_cuti %}, dengan alasan {{
+        surat_cuti.alasan_cuti }}{% endif %}.
       </div>
 
       <div style="margin-top: 0.5cm" class="left-align justify indent">
@@ -180,7 +184,8 @@
           <br /><br />
           <p>
             <u>{{ surat_cuti.penandatangan.nama }}</u><br />
-            {{ surat_cuti.penandatangan.pangkat }}/{{ surat_cuti.penandatangan.golongan }}
+            {{ surat_cuti.penandatangan.pangkat }}/{{
+            surat_cuti.penandatangan.golongan }}
             <br />
             NIP. {{ surat_cuti.penandatangan.nip }}
           </p>
@@ -206,3 +211,4 @@
     </div>
   </body>
 </html>
+
