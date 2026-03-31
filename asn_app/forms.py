@@ -1,9 +1,10 @@
 # asn_app/forms.py
 from django import forms
 from .models import (
-    ASN, SuratPerintahTugas, KopSurat, SuratSantunanKorpri, 
-    NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, 
-    SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum
+    ASN, SuratPerintahTugas, KopSurat, SuratSantunanKorpri,
+    NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa,
+    SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum,
+    SuratPanggilanSiswa
 )
 
 
@@ -456,3 +457,38 @@ class SuratUmumForm(forms.ModelForm):
         self.fields['kop_surat'].label_from_instance = lambda obj: obj.nama
         self.fields['pegawai'].label_from_instance = lambda obj: obj.nama
         self.fields['penandatangan'].label_from_instance = lambda obj: obj.nama
+
+
+class SuratPanggilanSiswaForm(forms.ModelForm):
+    class Meta:
+        model = SuratPanggilanSiswa
+        fields = '__all__'
+        widgets = {
+            'kop_surat': forms.Select(attrs={'class': 'form-control'}),
+            'nomor_surat': forms.TextInput(attrs={'class': 'form-control'}),
+            'siswa': forms.Select(attrs={'class': 'form-control'}),
+            'orang_tua': forms.TextInput(attrs={'class': 'form-control'}),
+            'keterangan_panggilan': forms.Select(attrs={'class': 'form-control'}),
+            'alasan_panggilan': forms.Textarea(attrs={'rows': 4, 'class': 'form-control'}),
+            'tempat_panggilan': forms.TextInput(attrs={'class': 'form-control'}),
+            'tanggal_panggilan': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'waktu_panggilan': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
+            'wali_kelas': forms.Select(attrs={'class': 'form-control'}),
+            'guru_bk': forms.Select(attrs={'class': 'form-control'}),
+            'wakasek_kesiswaan': forms.Select(attrs={'class': 'form-control'}),
+            'tempat_ditetapkan': forms.TextInput(attrs={'class': 'form-control'}),
+            'tanggal_ditetapkan': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['siswa'].queryset = Siswa.objects.all().order_by('nama')
+        self.fields['wali_kelas'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['guru_bk'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['wakasek_kesiswaan'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['kop_surat'].queryset = KopSurat.objects.all().order_by('nama')
+        self.fields['siswa'].label_from_instance = lambda obj: obj.nama
+        self.fields['wali_kelas'].label_from_instance = lambda obj: f'{obj.nama} - {obj.jabatan}'
+        self.fields['guru_bk'].label_from_instance = lambda obj: f'{obj.nama} - {obj.jabatan}'
+        self.fields['wakasek_kesiswaan'].label_from_instance = lambda obj: f'{obj.nama} - {obj.jabatan}'
+        self.fields['kop_surat'].label_from_instance = lambda obj: obj.nama

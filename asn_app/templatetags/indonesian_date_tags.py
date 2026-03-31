@@ -23,7 +23,7 @@ INDONESIAN_DAYS_FULL = [
 def indonesian_date(value, arg="%d %B %Y"):
     if not value:
         return ""
-    
+
     # Ensure it's a date object, not datetime for date-only formatting
     if isinstance(value, datetime.datetime):
         value = value.date()
@@ -31,6 +31,7 @@ def indonesian_date(value, arg="%d %B %Y"):
     day = value.day
     month_num = value.month
     year = value.year
+    weekday_num = value.weekday()  # Monday is 0, Sunday is 6
 
     formatted_string = arg
 
@@ -47,6 +48,10 @@ def indonesian_date(value, arg="%d %B %Y"):
     # Replace %b (Abbreviated month name)
     if '%b' in formatted_string:
         formatted_string = formatted_string.replace('%b', INDONESIAN_MONTHS_ABBR[month_num])
+
+    # Replace %A (Full weekday name)
+    if '%A' in formatted_string:
+        formatted_string = formatted_string.replace('%A', INDONESIAN_DAYS_FULL[weekday_num])
 
     return formatted_string
 

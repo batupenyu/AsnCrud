@@ -41,6 +41,34 @@
                 .sidebar a:hover {
                     background: #495057;
                 }
+
+                /* Nested submenu styling */
+                .sidebar .nav-link {
+                    font-size: 0.9rem;
+                    padding: 8px 15px;
+                }
+
+                .sidebar .nav-link .nav-link {
+                    padding-left: 30px;
+                    font-size: 0.85rem;
+                }
+
+                .sidebar .nav-link .nav-link .nav-link {
+                    padding-left: 45px;
+                    font-size: 0.85rem;
+                }
+
+                .sidebar ul.collapse ul.collapse {
+                    background: rgba(0, 0, 0, 0.2);
+                }
+
+                .sidebar ul.collapse ul.collapse .nav-link {
+                    padding-left: 35px;
+                }
+
+                .sidebar .ms-3 {
+                    margin-left: 0.75rem !important;
+                }
     
                 .content {
                     padding: 20px;
@@ -212,15 +240,54 @@
                                                                     <i class="fas fa-envelope"></i> Persuratan <i class="fas fa-caret-down float-end"></i>
                                                                 </a>
                                                                 <ul class="collapse list-unstyled" id="persuratanSubmenu">
-                                                                    <li><a class="nav-link" href="{% url 'spt_list' %}"><i class="fas fa-file-alt"></i> Daftar SPT</a></li>
-                                                                    <li><a class="nav-link" href="{% url 'surat_santunan_korpri_list' %}"><i class="fas fa-file-invoice-dollar"></i> Surat Santunan</a></li>
-                                                                    <li><a class="nav-link" href="{% url 'nota_dinas_list' %}"><i class="fas fa-sticky-note"></i> Nota Dinas</a></li>
-                                                                    <li><a class="nav-link" href="{% url 'surat_cuti_list' %}"><i class="fas fa-envelope"></i> Surat Cuti</a></li>
-                                                                    <li><a class="nav-link" href="{% url 'surat_keterangan_list' %}"><i class="fas fa-file-alt"></i> Surat Keterangan</a></li>
-                                                                    <li><a class="nav-link" href="{% url 'surat_resmi_list' %}"><i class="fas fa-file-invoice"></i> Surat Resmi</a></li>
-                                                                    <li><a class="nav-link" href="{% url 'sptjm_list' %}"><i class="fas fa-file"></i> SPTJM</a></li>
-                                                                    <li><a class="nav-link" href="{% url 'spmt_list' %}"><i class="fas fa-clipboard-list"></i> SPMT</a></li>
-                                                                    <li><a class="nav-link" href="{% url 'surat_umum_list' %}"><i class="fas fa-file-alt"></i> Surat Pernyataan</a></li>
+                                                                    <!-- Surat Tugas -->
+                                                                    <li>
+                                                                        <a class="nav-link" data-bs-toggle="collapse" href="#suratTugasSubmenu" role="button" aria-expanded="false" aria-controls="suratTugasSubmenu">
+                                                                            <i class="fas fa-clipboard-list"></i> Surat Tugas <i class="fas fa-caret-down float-end"></i>
+                                                                        </a>
+                                                                        <ul class="collapse list-unstyled ms-3" id="suratTugasSubmenu">
+                                                                            <li><a class="nav-link" href="{% url 'spt_list' %}"><i class="fas fa-file-alt"></i> SPT</a></li>
+                                                                            <li><a class="nav-link" href="{% url 'spmt_list' %}"><i class="fas fa-clipboard-check"></i> SPMT</a></li>
+                                                                        </ul>
+                                                                    </li>
+                                                                    <!-- Surat Keterangan -->
+                                                                    <li>
+                                                                        <a class="nav-link" data-bs-toggle="collapse" href="#suratKeteranganSubmenu" role="button" aria-expanded="false" aria-controls="suratKeteranganSubmenu">
+                                                                            <i class="fas fa-file-alt"></i> Surat Keterangan <i class="fas fa-caret-down float-end"></i>
+                                                                        </a>
+                                                                        <ul class="collapse list-unstyled ms-3" id="suratKeteranganSubmenu">
+                                                                            <li><a class="nav-link" href="{% url 'surat_keterangan_list' %}"><i class="fas fa-file-invoice"></i> Surat Keterangan</a></li>
+                                                                            <li><a class="nav-link" href="{% url 'surat_resmi_list' %}"><i class="fas fa-file-contract"></i> Surat Resmi</a></li>
+                                                                            <li><a class="nav-link" href="{% url 'sptjm_list' %}"><i class="fas fa-file-signature"></i> SPTJM</a></li>
+                                                                            <li><a class="nav-link" href="{% url 'surat_umum_list' %}"><i class="fas fa-file-alt"></i> Surat Pernyataan</a></li>
+                                                                        </ul>
+                                                                    </li>
+                                                                    <!-- Surat Internal -->
+                                                                    <li>
+                                                                        <a class="nav-link" data-bs-toggle="collapse" href="#suratInternalSubmenu" role="button" aria-expanded="false" aria-controls="suratInternalSubmenu">
+                                                                            <i class="fas fa-building"></i> Surat Internal <i class="fas fa-caret-down float-end"></i>
+                                                                        </a>
+                                                                        <ul class="collapse list-unstyled ms-3" id="suratInternalSubmenu">
+                                                                            <li><a class="nav-link" href="{% url 'nota_dinas_list' %}"><i class="fas fa-sticky-note"></i> Nota Dinas</a></li>
+                                                                            <li><a class="nav-link" href="{% url 'surat_panggilan_siswa_list' %}"><i class="fas fa-user-clock"></i> Surat Panggilan Siswa</a></li>
+                                                                        </ul>
+                                                                    </li>
+                                                                    <!-- Surat Cuti & Izin -->
+                                                                    <li>
+                                                                        <a class="nav-link" data-bs-toggle="collapse" href="#suratCutiSubmenu" role="button" aria-expanded="false" aria-controls="suratCutiSubmenu">
+                                                                            <i class="fas fa-calendar-check"></i> Cuti & Izin <i class="fas fa-caret-down float-end"></i>
+                                                                        </a>
+                                                                        <ul class="collapse list-unstyled ms-3" id="suratCutiSubmenu">
+                                                                            <li><a class="nav-link" href="{% url 'surat_cuti_list' %}"><i class="fas fa-envelope"></i> Surat Cuti</a></li>
+                                                                            <li><a class="nav-link" href="{% url 'sisa_cuti_list' %}"><i class="fas fa-calendar-alt"></i> Sisa Cuti</a></li>
+                                                                        </ul>
+                                                                    </li>
+                                                                    <!-- Surat Santunan -->
+                                                                    <li>
+                                                                        <a class="nav-link" href="{% url 'surat_santunan_korpri_list' %}">
+                                                                            <i class="fas fa-hand-holding-usd"></i> Surat Santunan
+                                                                        </a>
+                                                                    </li>
                                                                 </ul>
                                                             </li>
                                                             <!-- Kesiswaan Dropdown -->

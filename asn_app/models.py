@@ -431,3 +431,41 @@ class SuratUmum(models.Model):
 
     def __str__(self):
         return f"Surat Umum untuk {self.pegawai.nama}"
+
+
+class SuratPanggilanSiswa(models.Model):
+    """Model untuk Surat Panggilan Siswa"""
+    
+    KETERANGAN_PANGGILAN_CHOICES = [
+        ('1', 'ke-1 (Satu)'),
+        ('2', 'ke-2 (Dua)'),
+        ('3', 'ke-3 (Tiga)'),
+        ('4', 'ke-4 (Empat)'),
+    ]
+    
+    kop_surat = models.ForeignKey(KopSurat, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Kop Surat')
+    nomor_surat = models.CharField(max_length=100, verbose_name='Nomor Surat')
+    siswa = models.ForeignKey(Siswa, on_delete=models.CASCADE, related_name='surat_panggilan', verbose_name='Siswa')
+    orang_tua = models.CharField(max_length=100, blank=True, null=True, verbose_name='Nama Orang Tua')
+    keterangan_panggilan = models.CharField(max_length=1, choices=KETERANGAN_PANGGILAN_CHOICES, default='1', verbose_name='Panggilan Ke-')
+    alasan_panggilan = models.TextField(verbose_name='Alasan Panggilan')
+    tempat_panggilan = models.CharField(max_length=100, verbose_name='Tempat Panggilan')
+    tanggal_panggilan = models.DateField(verbose_name='Tanggal Panggilan')
+    waktu_panggilan = models.TimeField(verbose_name='Waktu Panggilan')
+    wali_kelas = models.ForeignKey(ASN, on_delete=models.SET_NULL, null=True, blank=True, related_name='wali_kelas_panggilan', verbose_name='Wali Kelas')
+    guru_bk = models.ForeignKey(ASN, on_delete=models.SET_NULL, null=True, blank=True, related_name='guru_bk_panggilan', verbose_name='Guru BK')
+    wakasek_kesiswaan = models.ForeignKey(ASN, on_delete=models.SET_NULL, null=True, blank=True, related_name='wakasek_kesiswaan_panggilan', verbose_name='Wakasek Kesiswaan')
+    tempat_ditetapkan = models.CharField(max_length=100, verbose_name='Tempat Ditetapkan')
+    tanggal_ditetapkan = models.DateField(verbose_name='Tanggal Ditetapkan')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Surat Panggilan Siswa"
+        ordering = ['-tanggal_ditetapkan']
+
+    def __str__(self):
+        return f"Surat Panggilan - {self.siswa.nama} - {self.nomor_surat}"
+
+    def get_absolute_url(self):
+        return reverse('surat_panggilan_siswa_detail', kwargs={'pk': self.pk})

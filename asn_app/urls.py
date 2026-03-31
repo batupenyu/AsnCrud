@@ -126,4 +126,12 @@ urlpatterns = [
     path('surat_umum/<int:pk>/update/', views.SuratUmumUpdateView.as_view(), name='surat_umum_update'),
     path('surat_umum/<int:pk>/delete/', views.SuratUmumDeleteView.as_view(), name='surat_umum_delete'),
     path('surat_umum/<int:pk>/pdf/', views.surat_umum_export_pdf, name='surat_umum_export_pdf'),
+
+    # Surat Panggilan Siswa routes
+    path('surat_panggilan_siswa/', views.surat_panggilan_siswa_list, name='surat_panggilan_siswa_list'),
+    path('surat_panggilan_siswa/create/', views.surat_panggilan_siswa_create, name='surat_panggilan_siswa_create'),
+    path('surat_panggilan_siswa/<int:pk>/', views.surat_panggilan_siswa_detail, name='surat_panggilan_siswa_detail'),
+    path('surat_panggilan_siswa/<int:pk>/update/', views.surat_panggilan_siswa_update, name='surat_panggilan_siswa_update'),
+    path('surat_panggilan_siswa/<int:pk>/delete/', views.surat_panggilan_siswa_delete, name='surat_panggilan_siswa_delete'),
+    path('surat_panggilan_siswa/<int:pk>/pdf/', views.surat_panggilan_siswa_export_pdf, name='surat_panggilan_siswa_export_pdf'),
 ]

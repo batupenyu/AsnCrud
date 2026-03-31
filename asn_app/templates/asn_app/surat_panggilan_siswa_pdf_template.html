@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Surat Panggilan Orang Tua Siswa</title>
+    <style>
+        /* Reset & Print Optimization */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @page {
+            size: A4;
+            margin: 0.5cm 2cm 0.5cm 2.5cm;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            line-height: 1.4;
+            color: #000;
+            background: white;
+        }
+
+        /* Kop surat image container */
+        .kop-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .kop-container img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 10px auto;
+        }
+
+        /* Letter header (nomor, lamp, perihal) */
+        .letter-header {
+            margin-top: 5px;
+            margin-bottom: 20px;
+        }
+        .header-details {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .header-details td {
+            padding: 3px 5px;
+            vertical-align: top;
+        }
+        .header-details td.label {
+            width: 80px;
+            font-weight: normal;
+        }
+        .header-details td.content {
+            font-weight: normal;
+        }
+
+        /* title surat */
+        .surat-title {
+            text-align: center;
+            margin: 15px 0 5px 0;
+        }
+        .surat-title strong {
+            font-size: 14pt;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* alamat tujuan */
+        .alamat-tujuan {
+            margin: 20px 0 10px 0;
+        }
+        .alamat-tujuan p {
+            margin: 4px 0;
+        }
+
+        /* student identity row */
+        .student-identity {
+            margin: 10px 0 15px 0;
+            background: #f9f9f9;
+            padding: 8px 12px;
+            border-left: 4px solid #2c3e66;
+            border-radius: 0 6px 6px 0;
+        }
+        .student-name-line {
+            font-weight: bold;
+            font-size: 12.5pt;
+            margin-bottom: 6px;
+        }
+        .student-details {
+            font-size: 11pt;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 5px;
+        }
+
+        /* tabel jadwal & acara */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+        }
+        .info-table td {
+            padding: 5px 8px 5px 0;
+            vertical-align: top;
+        }
+        .info-table td.label {
+            width: 110px;
+            font-weight: 500;
+        }
+        .acara-text, .bertemu-text {
+            text-align: justify;
+            margin-top: 6px;
+            margin-bottom: 8px;
+        }
+
+        /* paragraf penutup */
+        .closing-paragraph {
+            text-align: justify;
+            margin: 18px 0 25px 0;
+            line-height: 1.5;
+        }
+
+        /* signature area – gaya sesuai PDF (Wali Kelas, Guru BK, Wakasek) */
+        .signature-wrapper {
+            margin-top: 35px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-end;
+            position: relative;
+        }
+        .signature-left {
+            width: 45%;
+            text-align: center;
+        }
+        .signature-right {
+            width: 45%;
+            text-align: center;
+        }
+        .signature-item {
+            margin-bottom: 28px;
+        }
+        .signature-item .jabatan {
+            font-weight: 600;
+            margin-bottom: 35px;
+            font-size: 12pt;
+        }
+        .signature-item .nama {
+            margin-top: 5px;
+            font-weight: 600;
+            text-decoration: underline;
+            margin-bottom: 2px;
+        }
+        .signature-item .nip {
+            font-size: 11pt;
+        }
+        .mengetahui-wrapper {
+            margin-top: 20px;
+            clear: both;
+            width: 100%;
+            text-align: center;
+        }
+        .mengetahui-block {
+            margin-top: 10px;
+            display: inline-block;
+            text-align: center;
+        }
+        .mengetahui-block .jabatan-mengetahui {
+            font-weight: 600;
+            margin-bottom: 35px;
+        }
+        .mengetahui-block .nama-mengetahui {
+            font-weight: 600;
+            text-decoration: underline;
+            margin-top: 5px;
+        }
+        .signature-line {
+            margin-top: 5px;
+        }
+        hr.dotted {
+            border: none;
+            border-top: 1px dotted #333;
+            margin: 8px 0;
+        }
+
+        /* untuk spasi dan alignment */
+        .clearfix {
+            clear: both;
+        }
+        .text-justify {
+            text-align: justify;
+        }
+        .indent-text {
+            text-indent: 2.5cm;
+        }
+        .mt-2 {
+            margin-top: 8px;
+        }
+        .mb-1 {
+            margin-bottom: 4px;
+        }
+        .bold {
+            font-weight: bold;
+        }
+        .italic {
+            font-style: italic;
+        }
+
+        /* fallback jika tidak ada data */
+        .placeholder-sign {
+            color: #555;
+            font-style: normal;
+        }
+        hr {
+            border: 0.5px solid #aaa;
+            margin: 8px 0;
+        }
+        footer {
+            font-size: 9pt;
+            text-align: center;
+            margin-top: 35px;
+            color: #444;
+        }
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .signature-wrapper {
+                break-inside: avoid;
+            }
+        }
+    </style>
+    {% load indonesian_date_tags %}
+</head>
+<body>
+
+    <!-- Kop Surat (Base64 dari konteks) -->
+    {% if kop_surat_base64 %}
+    <div class="kop-container">
+        <img src="{{ kop_surat_base64 }}" alt="Kop Surat Sekolah">
+    </div>
+    {% endif %}
+
+    <!-- NOMOR, LAMPIRAN, PERIHAL -->
+    <div class="letter-header">
+        <table class="header-details">
+            <tr>
+                <td class="label">Nomor</td>
+                <td class="content">: {{ surat.nomor_surat|default:"___/___/___/____" }}</td>
+            </tr>
+            <tr>
+                <td class="label">Lamp.</td>
+                <td class="content">: -</td>
+            </tr>
+            <tr>
+                <td class="label">Perihal</td>
+                <td class="content">: <strong>Surat Panggilan Orang Tua Siswa {{ surat.get_keterangan_panggilan_display }}</strong></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Alamat / Kepada Yth. Bapak/Ibu Orang Tua -->
+    <div class="alamat-tujuan">
+        <p>Yth. Bapak/Ibu Orang Tua/Wali dari Siswa :</p>
+        <p><strong>{{ surat.siswa.nama|default:"(Nama Siswa)" }}</strong></p>
+        <p>di –</p>
+        <p><strong>{{ surat.tempat_panggilan|default:"SMK Negeri 2 Pelaihari" }}</strong></p>
+    </div>
+
+  <p style="text-indent: 1cm; margin-top: 15px; text-align: justify;">
+  Dengan ini kami mengharapkan kehadiran Bapak/Ibu orang tua/wali dari siswa yang namanya tersebut di atas pada:
+  </p>
+
+
+    <!-- Jadwal Panggilan: Hari/Tanggal, Waktu, Tempat -->
+    <table class="info-table">
+        <tr>
+            <td class="label">Hari/Tanggal</td>
+            <td>: {{ surat.tanggal_panggilan|indonesian_date:"%A, %d %B %Y"|default:"_________, __________" }}</td>
+        </tr>
+        <tr>
+            <td class="label">Waktu</td>
+            <td>: {{ surat.waktu_panggilan|default:"________ WITA" }} WITA</td>
+        </tr>
+        <tr>
+            <td class="label">Tempat</td>
+            <td>: {{ surat.tempat_panggilan|default:"SMK Negeri 2 Pelaihari, Jln. Husni Thamrin Rt.6 Desa Pemuda KNPI Kec. Pelaihari" }}</td>
+        </tr>
+    </table>
+
+    <!-- Paragraf penutup (mengikuti gaya PDF) -->
+    <p style="text-indent: 1cm; margin-top: 15px; text-align: justify;">
+        Mengingat pentingnya masalah tersebut, kehadiran Bapak/Ibu orang tua siswa sangat kami harapkan.
+    </p>
+
+    <p style="text-indent: 1cm; margin-top: 15px; text-align: justify;">
+        Demikian undangan ini kami sampaikan, atas perhatian dan kerja sama yang baik kami ucapkan terima kasih.
+    </p>
+
+    <!-- AREA TANDA TANGAN (Wali Kelas, Guru BK, Mengetahui Wakasek Kesiswaan) -->
+    <div class="signature-wrapper">
+        <!-- Kiri: Wali Kelas -->
+        <div class="signature-left">
+            <div class="signature-item">
+                <div class="jabatan">Wali Kelas,</div>
+                <!-- Spasi tanda tangan -->
+                <div style="margin-bottom: 25px;"></div>
+                {% if surat.wali_kelas %}
+                <div class="nama">
+                    {{ surat.wali_kelas.nama }}
+                </div>
+                <div class="nip">
+                    NIP. {{ surat.wali_kelas.nip }}
+                </div>
+                {% else %}
+                <div class="nama placeholder-sign">
+                    _________________________
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Kanan: Guru BK -->
+        <div class="signature-right">
+            <div class="signature-item">
+                <div class="jabatan">Guru Bimbingan Konseling,</div>
+                <div style="margin-bottom: 25px;"></div>
+                {% if surat.guru_bk %}
+                <div class="nama">
+                    {{ surat.guru_bk.nama }}
+                </div>
+                <div class="nip">
+                    NIP. {{ surat.guru_bk.nip }}
+                </div>
+                {% else %}
+                <div class="nama placeholder-sign">
+                    _________________________
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Mengetahui : Wakasek Kesiswaan (full width, sejajar kiri) -->
+    <div class="mengetahui-wrapper">
+        <div class="mengetahui-block">
+            <div class="jabatan-mengetahui">Mengetahui :<br>Wakil Kepala Sekolah Bidang Kesiswaan,</div>
+            <div style="margin-bottom: 30px;"></div>
+            {% if surat.wakasek_kesiswaan %}
+            <div class="nama-mengetahui">
+                {{ surat.wakasek_kesiswaan.nama }}
+            </div>
+            <div class="nip">
+                NIP. {{ surat.wakasek_kesiswaan.nip }}
+            </div>
+            {% else %}
+            <div class="nama-mengetahui placeholder-sign">
+                _________________________
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Catatan: apabila diperlukan tempat & tanggal penetapan, bisa diakomodir sesuai kebutuhan.
+         Namun struktur utama mencontoh PDF yang tidak mencantumkan tanggal di footer.
+         Untuk keperluan administrasi, opsional bisa ditambahkan namun tidak merusak struktur -->
+    {% if surat.tempat_ditetapkan and surat.tanggal_ditetapkan %}
+    <div style="margin-top: 25px; font-size: 10pt; text-align: right; border-top: 1px dashed #ccc; padding-top: 8px;">
+        <em>Dikeluarkan di : {{ surat.tempat_ditetapkan }}, {{ surat.tanggal_ditetapkan|indonesian_date:"%d %B %Y" }}</em>
+    </div>
+    {% endif %}
+
+    <!-- catatan teknis: informasi di bawah tidak mengganggu struktur utama -->
+    <footer>
+        * Surat ini bersifat resmi dan harap dibawa saat pertemuan.
+    </footer>
+</body>
+</html>

@@ -7,8 +7,8 @@ from django.utils.timezone import now
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.db.models import Q, Count 
-from .models import ASN, SuratPerintahTugas, KopSurat, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum
-from .forms import ASNForm, SPTForm, KopSuratForm, SuratSantunanKorpriForm, NotaDinasForm, HariLiburForm, SuratCutiForm, SisaCutiForm, SiswaForm, SuratKeteranganForm, SuratResmiForm, SPTJMForm, SPMTForm, FotoKegiatanForm, SuratUmumForm
+from .models import ASN, SuratPerintahTugas, KopSurat, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum, SuratPanggilanSiswa
+from .forms import ASNForm, SPTForm, KopSuratForm, SuratSantunanKorpriForm, NotaDinasForm, HariLiburForm, SuratCutiForm, SisaCutiForm, SiswaForm, SuratKeteranganForm, SuratResmiForm, SPTJMForm, SPMTForm, FotoKegiatanForm, SuratUmumForm, SuratPanggilanSiswaForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy, reverse
 import base64
@@ -1981,5 +1981,96 @@ def surat_umum_export_pdf(request, pk):
 
     response = HttpResponse(result, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename=surat_umum_{surat.pk}.pdf'
+
+    return response
+
+
+# Surat Panggilan Siswa Views
+def surat_panggilan_siswa_list(request):
+    """Menampilkan daftar semua Surat Panggilan Siswa"""
+    surat_list = SuratPanggilanSiswa.objects.all().order_by('-created_at')
+    return render(request, 'asn_app/surat_panggilan_siswa_list.html', {'surat_list': surat_list})
+
+def surat_panggilan_siswa_detail(request, pk):
+    """Menampilkan detail Surat Panggilan Siswa"""
+    surat = get_object_or_404(SuratPanggilanSiswa, pk=pk)
+    return render(request, 'asn_app/surat_panggilan_siswa_detail.html', {'surat': surat})
+
+def surat_panggilan_siswa_create(request):
+    """Membuat Surat Panggilan Siswa baru"""
+    if request.method == 'POST':
+        form = SuratPanggilanSiswaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('surat_panggilan_siswa_list')
+    else:
+        form = SuratPanggilanSiswaForm()
+    return render(request, 'asn_app/surat_panggilan_siswa_form.html', {'form': form, 'title': 'Tambah Surat Panggilan Siswa'})
+
+def surat_panggilan_siswa_update(request, pk):
+    """Mengupdate Surat Panggilan Siswa"""
+    surat = get_object_or_404(SuratPanggilanSiswa, pk=pk)
+    if request.method == 'POST':
+        form = SuratPanggilanSiswaForm(request.POST, instance=surat)
+        if form.is_valid():
+            form.save()
+            return redirect('surat_panggilan_siswa_detail', pk=surat.pk)
+    else:
+        form = SuratPanggilanSiswaForm(instance=surat)
+    return render(request, 'asn_app/surat_panggilan_siswa_form.html', {'form': form, 'title': 'Edit Surat Panggilan Siswa'})
+
+def surat_panggilan_siswa_delete(request, pk):
+    """Menghapus Surat Panggilan Siswa"""
+    surat = get_object_or_404(SuratPanggilanSiswa, pk=pk)
+    if request.method == 'POST':
+        surat.delete()
+        return redirect('surat_panggilan_siswa_list')
+    return render(request, 'asn_app/surat_panggilan_siswa_confirm_delete.html', {'surat': surat})
+
+def surat_panggilan_siswa_export_pdf(request, pk):
+    """Export Surat Panggilan Siswa ke PDF"""
+    import os
+    import base64
+    os.environ['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
+    from weasyprint import HTML, CSS
+
+    surat = get_object_or_404(SuratPanggilanSiswa, pk=pk)
+
+    kop_surat_base64 = None
+    if surat.kop_surat and surat.kop_surat.gambar:
+        if os.path.exists(surat.kop_surat.gambar.path):
+            try:
+                with open(surat.kop_surat.gambar.path, 'rb') as image_file:
+                    image_data = image_file.read()
+                    image_format = surat.kop_surat.gambar.name.split('.')[-1].lower()
+                    if image_format == 'jpg':
+                        image_format = 'jpeg'
+                    kop_surat_base64 = f"data:image/{image_format};base64,{base64.b64encode(image_data).decode('utf-8')}"
+            except Exception as e:
+                logging.error(f"Error encoding image to base64: {e}")
+
+    html_string = render_to_string('asn_app/surat_panggilan_siswa_pdf_template.html', {
+        'surat': surat,
+        'kop_surat_base64': kop_surat_base64,
+        'request': request,
+    })
+
+    css_string = """
+        body { font-family: 'Times New Roman', serif; font-size: 12pt; }
+        .center { text-align: center; }
+        .left { text-align: left; }
+        .justify { text-align: justify; }
+        .signature { padding-left: 250pt; }
+    """
+
+    try:
+        html = HTML(string=html_string, base_url=request.build_absolute_uri())
+        result = html.write_pdf(stylesheets=[CSS(string=css_string)])
+    except Exception as e:
+        logging.error(f"Error writing PDF: {e}")
+        return HttpResponse(f"Error writing PDF: {e}", status=500)
+
+    response = HttpResponse(result, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename=surat_panggilan_{surat.siswa.nama}_{surat.nomor_surat}.pdf'
 
     return response
