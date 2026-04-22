@@ -24,7 +24,7 @@
             <div class="header-item"><span class="header-label">Dari</span><span class="header-colon">:</span> {{ spt.peserta.first.jabatan|default:"-" }}</div>
             <div class="header-item"><span class="header-label">Tanggal</span><span class="header-colon">:</span> {{ spt.tanggal_dibuat_laporan|default:spt.created_at|indonesian_date:"%d %B %Y" }}</div>
             <!-- <div class="header-item"><span class="header-label">Nomor</span><span class="header-colon">:</span> {{ spt.nomor_spt }}, tanggal {{ spt.tanggal_ditetapkan|indonesian_date:"%d %B %Y" }}</div> -->
-            <div class="header-item"><span class="header-label">Nomor</span><span class="header-colon">:</span> {{ spt.nomor_spt }}</div>
+            <div class="header-item"><span class="header-label">Nomor</span><span class="header-colon">:</span> 421.5/ ......../SMKN 1 Kb/Dindik/2026</div>
             <div class="header-item"><span class="header-label">Sifat</span><span class="header-colon">:</span> {{ spt.sifat_surat }}</div>
             <div class="header-item"><span class="header-label">Hal</span><span class="header-colon">:</span> Laporan {{ spt.nama_kegiatan }}</div>
         </div>
@@ -43,7 +43,7 @@
                     <div class="subsection-number">1.</div>
                     <div class="subsection-content">
                         <div class="subsection-title">Umum/Latar Belakang</div>
-                        <p>{{ spt.latar_belakang|default:"-"|linebreaksbr }}</p>
+                        <p style="text-align: justify;">{{ spt.latar_belakang|default:"-"|linebreaksbr }}</p>
                     </div>
                 </div>
                 <div class="subsection">
