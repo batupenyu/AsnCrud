@@ -182,7 +182,7 @@
           <div style="padding-left: 15pt; text-indent: 0pt">
             <ol>
               <li>
-                Dalam rangka mengikuti {{ spt.nama_kegiatan }} yang akan dilaksanakan di
+                Dalam rangka  {{ spt.nama_kegiatan }} yang akan dilaksanakan di
                 {{ spt.tempat_pelaksanaan }} pada tanggal {{ spt.tanggal_pelaksanaan|indonesian_date:"%d %B %Y" }}{% if spt.tanggal_pelaksanaan != spt.tanggal_akhir_pelaksanaan %}
                 sampai dengan {{ spt.tanggal_akhir_pelaksanaan|indonesian_date:"%d %B %Y" }}{% endif %}.
               </li>
@@ -201,17 +201,34 @@
 
     <div class="penandatangan">
       {% if spt.tempat_ditetapkan and spt.tanggal_ditetapkan %}
-      <div>
-        {{ spt.tempat_ditetapkan }}, {{ spt.tanggal_ditetapkan|indonesian_date:"%d %B %Y" }}
-      </div>
-      {% endif %} {% if spt.penandatangan %}
-      <div>{{ spt.penandatangan.jabatan }}</div>
-      <br /><br />
-      <div>
-        {{ spt.penandatangan.nama }}<br />
-        {{ spt.penandatangan.pangkat }} {{ spt.penandatangan.golongan }}<br />
-        NIP. {{ spt.penandatangan.nip }}
-      </div>
+        <div>
+          {{ spt.tempat_ditetapkan }}, {{ spt.tanggal_ditetapkan|indonesian_date:"%d %B %Y" }}
+        </div>
+      {% endif %}
+
+      {% if spt.penandatangan %}
+        {% if spt.penandatangan.jabatan != "Kepala Sekolah" %}
+          <div>an. Kepala Sekolah</div>
+          <div>{{ spt.penandatangan.jabatan }}</div>
+          <br /><br />
+          <div>
+            {{ spt.penandatangan.nama }}<br />
+            {% if spt.penandatangan.pangkat and spt.penandatangan.golongan %}
+              {{ spt.penandatangan.pangkat }} {{ spt.penandatangan.golongan }}<br />
+            {% endif %}
+            NIP. {{ spt.penandatangan.nip }}
+          </div>
+        {% else %}
+          <div>{{ spt.penandatangan.jabatan }}</div>
+          <br /><br />
+          <div>
+            {{ spt.penandatangan.nama }}<br />
+            {% if spt.penandatangan.pangkat and spt.penandatangan.golongan %}
+              {{ spt.penandatangan.pangkat }} {{ spt.penandatangan.golongan }}<br />
+            {% endif %}
+            NIP. {{ spt.penandatangan.nip }}
+          </div>
+        {% endif %}
       {% endif %}
     </div>
     <div class="new-page" style="page-break-before: always; margin-top: 0cm">
