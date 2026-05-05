@@ -1,0 +1,173 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Data Siswa Keluar/DO</title>
+    <style>
+      @page {
+        size: A4 landscape;
+        margin: 0.5cm 2cm 1cm 2cm;
+      }
+      body {
+        font-family: "Helvetica", sans-serif;
+        font-size: 10pt;
+        line-height: 1.5;
+        color: #000;
+      }
+      .outer-container {
+        border: 1px solid black;
+        padding: 10px;
+        height: 98%;
+        box-sizing: border-box;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 15px;
+      }
+      .header h4 {
+        font-weight: bold;
+        margin: 0;
+        padding: 0;
+      }
+      .header h5 {
+        font-weight: normal;
+        margin: 5px 0;
+        padding: 0;
+      }
+      .summary {
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+      }
+      .summary p {
+        margin: 5px 0;
+        font-size: 11pt;
+      }
+      .summary .highlight {
+        font-weight: bold;
+        color: #c00;
+      }
+      .student-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      .student-table th,
+      .student-table td {
+        border: 1px solid black;
+        padding: 8px 5px;
+        text-align: left;
+        vertical-align: middle;
+      }
+      .student-table th {
+        background-color: #f2f2f2;
+        text-align: center;
+        font-weight: bold;
+      }
+      .student-table td:nth-child(1),
+      .student-table th:nth-child(1) {
+        text-align: center;
+        width: 40px;
+      }
+      .student-table td:nth-child(4),
+      .student-table td:nth-child(5) {
+        text-align: center;
+        width: 80px;
+      }
+      .student-table td:nth-child(6) {
+        text-align: center;
+        width: 100px;
+      }
+      .footer {
+        margin-top: 30px;
+        width: 100%;
+      }
+      .footer .info {
+        float: left;
+        font-size: 9pt;
+      }
+      .footer .signature {
+        float: right;
+        width: 200px;
+        text-align: center;
+        font-size: 10pt;
+      }
+      .footer .signature p {
+        margin: 0;
+        padding: 0;
+      }
+      .footer .signature .name {
+        margin-top: 60px;
+        text-decoration: underline;
+        font-weight: bold;
+      }
+      .footer .signature .nip {
+        margin-top: 5px;
+        font-size: 9pt;
+      }
+      .clear-float {
+        clear: both;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="outer-container">
+      <div class="header">
+        <h4>DATA SISWA KELUAR/DO</h4>
+        <h5>SMK NEGERI 1 KOBA - CABANG DINAS PENDIDIKAN WILAYAH I</h5>
+        <h5>DINAS PENDIDIKAN PROVINSI KEPULAUAN BANGKA BELITUNG</h5>
+      </div>
+
+      <div class="summary">
+      <p><strong>Total Siswa:</strong> {{ total_siswa }}</p>
+      <p><strong>Total Siswa Keluar/DO:</strong> <span class="highlight">{{ total_siswa_keluar }}</span></p>
+      <p><strong>Siswa Aktif:</strong> <strong>{{ total_siswa }} - {{ total_siswa_keluar }} = {{ sis_aktif }}</strong></p>
+        <p><strong>Dicetak pada:</strong> {{ generated_at|date:"d F Y H:i:s" }}</p>
+      </div>
+
+      <table class="student-table">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama Siswa</th>
+            <th>NIS</th>
+            <th>Kelas</th>
+            <th>Jurusan</th>
+            <th>Tanggal Keluar</th>
+            <th>Alasan Keluar</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in siswa_keluar_list %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ item.siswa.nama }}</td>
+            <td>{{ item.siswa.nis }}</td>
+            <td>{{ item.siswa.kelas }}</td>
+            <td>{{ item.siswa.jurusan|default:"-" }}</td>
+            <td>{{ item.tanggal_keluar|date:"d-m-Y" }}</td>
+            <td>{{ item.alasan_keluar|truncatewords:15 }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" style="text-align: center;">Tidak ada data siswa keluar</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="footer">
+        <div class="info">
+          <p>Dicetak oleh: ____________________</p>
+          <p>Tanggal cetak: {{ generated_at|date:"d F Y" }}</p>
+        </div>
+        <div class="signature">
+          <p>Mengetahui,</p>
+          <p class="name">KEPALA SMK NEGERI 1 KOBA</p>
+          <p class="nip">NIP. ____________________</p>
+        </div>
+        <div class="clear-float"></div>
+      </div>
+    </div>
+  </body>
+</html>

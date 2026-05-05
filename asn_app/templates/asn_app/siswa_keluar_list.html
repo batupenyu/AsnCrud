@@ -15,7 +15,15 @@
     </div>
 
     <div class="row mb-4">
-        <div class="col-md-3">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Siswa</h5>
+                    <p class="card-text fs-4">{{ total_siswa }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
             <div class="card text-white bg-danger mb-3">
                 <div class="card-body">
                     <h5 class="card-title">Total Siswa Keluar/DO</h5>
@@ -23,10 +31,29 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Siswa Aktif</h5>
+                    <p class="card-text fs-4">{{ sis_aktif }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <h5 class="alert-heading">Rekap Data</h5>
+                <p class="mb-0">
+                    <strong>{{ total_siswa }}</strong> siswa - <strong>{{ total_siswa_keluar }}</strong> siswa = <strong>{{ sis_aktif }}</strong> siswa aktif
+                </p>
+            </div>
+        </div>
     </div>
 
     <div class="mb-4">
-        <form method="get" action="{% url 'siswa_keluar_list' %}">
+        <form method="get" action="{% url 'siswa_keluar_list' %}" class="d-inline">
             <div class="input-group">
                 <input type="text" name="q" class="form-control" placeholder="Cari berdasarkan nama, NIS, kelas, atau jurusan..." value="{{ search_query|default:'' }}">
                 <button class="btn btn-outline-secondary" type="submit">
@@ -34,6 +61,14 @@
                 </button>
             </div>
         </form>
+        <div class="float-end">
+            <a href="{% url 'export_siswa_keluar_excel' %}" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Export Excel
+            </a>
+            <a href="{% url 'export_siswa_keluar_pdf' %}" class="btn btn-danger">
+                <i class="fas fa-file-pdf"></i> Export PDF
+            </a>
+        </div>
     </div>
 
     <div class="card">

@@ -1177,10 +1177,14 @@ def siswa_keluar_list(request):
     page_obj = paginator.get_page(page_number)
 
     total_siswa_keluar = SiswaKeluar.objects.count()
+    total_siswa = Siswa.objects.count()
+    sis_aktif = total_siswa - total_siswa_keluar
 
     context = {
         'page_obj': page_obj,
-        'total_siswa_keluar': SiswaKeluar.objects.count(),
+        'total_siswa_keluar': total_siswa_keluar,
+        'total_siswa': total_siswa,
+        'sis_aktif': sis_aktif,
         'search_query': search_query,
     }
     return render(request, 'asn_app/siswa_keluar_list.html', context)
@@ -1506,6 +1510,7 @@ def export_siswa_excel(request):
     workbook.save(response)
     return response
 
+
 def import_siswa_excel(request):
     """Import Siswa data from an Excel file."""
     if request.method == 'POST':
@@ -1530,6 +1535,74 @@ def import_siswa_excel(request):
             )
         return redirect('siswa_list')
     return render(request, 'asn_app/import_form.html')
+
+
+def export_siswa_keluar_excel(request):
+    """Export all SiswaKeluar data to an Excel file."""
+    import openpyxl
+    from openpyxl.utils import get_column_letter
+
+    siswa_keluar_list = SiswaKeluar.objects.all().order_by('-tanggal_keluar')
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    sheet.title = 'Siswa Keluar Data'
+
+    # Write headers
+    headers = [
+        'No', 'Nama Siswa', 'NIS', 'Kelas', 'Jurusan', 
+        'Tanggal Keluar', 'Alasan Keluar', 'Tanggal Dicatat'
+    ]
+    for col_num, header in enumerate(headers, 1):
+        col_letter = get_column_letter(col_num)
+        sheet[f'{col_letter}1'] = header
+
+    # Write data
+    for row_num, siswa_keluar in enumerate(siswa_keluar_list, 2):
+        sheet[f'A{row_num}'] = row_num - 1
+        sheet[f'B{row_num}'] = siswa_keluar.siswa.nama
+        sheet[f'C{row_num}'] = siswa_keluar.siswa.nis
+        sheet[f'D{row_num}'] = siswa_keluar.siswa.kelas
+        sheet[f'E{row_num}'] = siswa_keluar.siswa.jurusan
+        sheet[f'F{row_num}'] = siswa_keluar.tanggal_keluar
+        sheet[f'G{row_num}'] = siswa_keluar.alasan_keluar
+        sheet[f'H{row_num}'] = siswa_keluar.created_at.strftime('%Y-%m-%d %H:%M:%S')
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=siswa_keluar_data.xlsx'
+    workbook.save(response)
+    return response
+
+
+def export_siswa_keluar_pdf(request):
+    """Export all SiswaKeluar data to a PDF file."""
+    from weasyprint import HTML
+    import os
+
+    siswa_keluar_list = SiswaKeluar.objects.all().order_by('-tanggal_keluar')
+    total_siswa_keluar = siswa_keluar_list.count()
+    total_siswa = Siswa.objects.count()
+    sis_aktif = total_siswa - total_siswa_keluar
+    
+    html_string = render_to_string('asn_app/siswa_keluar_pdf_template.html', {
+        'siswa_keluar_list': siswa_keluar_list,
+        'total_siswa_keluar': total_siswa_keluar,
+        'total_siswa': total_siswa,
+        'sis_aktif': sis_aktif,
+        'generated_at': now(),
+    })
+
+    # Create PDF
+    try:
+        html = HTML(string=html_string, base_url=request.build_absolute_uri())
+        result = html.write_pdf()
+    except Exception as e:
+        logging.error(f"Error writing PDF: {e}")
+        return HttpResponse(f"Error writing PDF: {e}", status=500)
+
+    # Create HTTP response with PDF
+    response = HttpResponse(result, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename=siswa_keluar_data.pdf'
+    return response
 
 
 
