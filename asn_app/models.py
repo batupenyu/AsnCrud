@@ -322,6 +322,27 @@ class Siswa(models.Model):
         return reverse('siswa_detail', kwargs={'pk': self.pk})
 
 
+class SiswaKeluar(models.Model):
+    """Model untuk mencatat siswa yang keluar/drop out (DO)"""
+    
+    siswa = models.ForeignKey(Siswa, on_delete=models.CASCADE, related_name='keluar', verbose_name='Siswa')
+    tanggal_keluar = models.DateField(verbose_name='Tanggal Keluar')
+    alasan_keluar = models.TextField(verbose_name='Alasan Keluar')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'Siswa Keluar'
+        verbose_name_plural = 'Siswa Keluar'
+        ordering = ['-tanggal_keluar']
+    
+    def __str__(self):
+        return f"{self.siswa.nama} - Keluar {self.tanggal_keluar}"
+    
+    def get_absolute_url(self):
+        return reverse('siswa_keluar_detail', kwargs={'pk': self.pk})
+
+
 class SuratKeterangan(models.Model):
     nomor_surat = models.CharField(max_length=100, verbose_name='Nomor Surat')
     kop_surat = models.ForeignKey(KopSurat, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Kop Surat')

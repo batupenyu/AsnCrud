@@ -4,7 +4,7 @@ from .models import (
     ASN, SuratPerintahTugas, KopSurat, SuratSantunanKorpri,
     NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa,
     SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum,
-    SuratPanggilanSiswa
+    SuratPanggilanSiswa, SiswaKeluar
 )
 
 
@@ -492,3 +492,18 @@ class SuratPanggilanSiswaForm(forms.ModelForm):
         self.fields['guru_bk'].label_from_instance = lambda obj: f'{obj.nama} - {obj.jabatan}'
         self.fields['wakasek_kesiswaan'].label_from_instance = lambda obj: f'{obj.nama} - {obj.jabatan}'
         self.fields['kop_surat'].label_from_instance = lambda obj: obj.nama
+
+class SiswaKeluarForm(forms.ModelForm):
+    class Meta:
+        model = SiswaKeluar
+        fields = '__all__'
+        widgets = {
+            'siswa': forms.Select(attrs={'class': 'form-control'}),
+            'tanggal_keluar': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'alasan_keluar': forms.Textarea(attrs={'rows': 4, 'class': 'form-control', 'placeholder': 'Contoh: Pindah sekolah, Drop out, Kelulusan, dll'}),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['siswa'].queryset = Siswa.objects.all().order_by('nama')
+        self.fields['siswa'].label_from_instance = lambda obj: f'{obj.nama} - {obj.kelas} - {obj.jurusan if obj.jurusan else ""}'

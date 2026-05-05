@@ -7,8 +7,8 @@ from django.utils.timezone import now
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.db.models import Q, Count 
-from .models import ASN, SuratPerintahTugas, KopSurat, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum, SuratPanggilanSiswa
-from .forms import ASNForm, SPTForm, KopSuratForm, SuratSantunanKorpriForm, NotaDinasForm, HariLiburForm, SuratCutiForm, SisaCutiForm, SiswaForm, SuratKeteranganForm, SuratResmiForm, SPTJMForm, SPMTForm, FotoKegiatanForm, SuratUmumForm, SuratPanggilanSiswaForm
+from .models import ASN, SuratPerintahTugas, KopSurat, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum, SuratPanggilanSiswa, SiswaKeluar
+from .forms import ASNForm, SPTForm, KopSuratForm, SuratSantunanKorpriForm, NotaDinasForm, HariLiburForm, SuratCutiForm, SisaCutiForm, SiswaForm, SuratKeteranganForm, SuratResmiForm, SPTJMForm, SPMTForm, FotoKegiatanForm, SuratUmumForm, SuratPanggilanSiswaForm, SiswaKeluarForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy, reverse
 import base64
@@ -1157,23 +1157,102 @@ def laporan_cuti_pdf(request, pk):
     return response
 
 
+# Siswa Keluar Views
+def siswa_keluar_list(request):
+    """Menampilkan daftar semua siswa keluar/DO"""
+    search_query = request.GET.get('q', '')
+
+    siswa_keluar_list = SiswaKeluar.objects.all().order_by('-tanggal_keluar')
+
+    if search_query:
+        siswa_keluar_list = siswa_keluar_list.filter(
+            Q(siswa__nama__icontains=search_query) |
+            Q(siswa__nis__icontains=search_query) |
+            Q(siswa__kelas__icontains=search_query) |
+            Q(siswa__jurusan__icontains=search_query)
+        )
+
+    paginator = Paginator(siswa_keluar_list, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    total_siswa_keluar = SiswaKeluar.objects.count()
+
+    context = {
+        'page_obj': page_obj,
+        'total_siswa_keluar': SiswaKeluar.objects.count(),
+        'search_query': search_query,
+    }
+    return render(request, 'asn_app/siswa_keluar_list.html', context)
+
+def siswa_keluar_detail(request, pk):
+    """Menampilkan detail siswa keluar"""
+    siswa_keluar = get_object_or_404(SiswaKeluar, pk=pk)
+    return render(request, 'asn_app/siswa_keluar_detail.html', {'siswa_keluar': siswa_keluar})
+
+def siswa_keluar_create(request):
+    """Membuat catatan siswa keluar/DO baru"""
+    if request.method == 'POST':
+        form = SiswaKeluarForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Data siswa keluar berhasil ditambahkan.')
+            return redirect('siswa_keluar_list')
+    else:
+        form = SiswaKeluarForm()
+    return render(request, 'asn_app/siswa_keluar_form.html', {'form': form, 'title': 'Tambah Siswa Keluar'})
+
+def siswa_keluar_update(request, pk):
+    """Mengupdate data siswa keluar"""
+    siswa_keluar = get_object_or_404(SiswaKeluar, pk=pk)
+    if request.method == 'POST':
+        form = SiswaKeluarForm(request.POST, instance=siswa_keluar)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Data siswa keluar berhasil diupdate.')
+            return redirect('siswa_keluar_detail', pk=siswa_keluar.pk)
+    else:
+        form = SiswaKeluarForm(instance=siswa_keluar)
+    return render(request, 'asn_app/siswa_keluar_form.html', {'form': form, 'title': 'Edit Siswa Keluar'})
+
+def siswa_keluar_delete(request, pk):
+    """Menghapus data siswa keluar"""
+    siswa_keluar = get_object_or_404(SiswaKeluar, pk=pk)
+    if request.method == 'POST':
+        siswa_keluar.delete()
+        messages.success(request, 'Data siswa keluar berhasil dihapus.')
+        return redirect('siswa_keluar_list')
+    return render(request, 'asn_app/siswa_keluar_confirm_delete.html', {'siswa_keluar': siswa_keluar})
+
 # Siswa Views
 def siswa_list(request):
     """Menampilkan daftar semua Siswa"""
     query = request.GET.get('q')
+    filter_jurusan = request.GET.get('jurusan')
+    
     if query:
         siswa_queryset = Siswa.objects.filter(nama__icontains=query).order_by('nama')
+    elif filter_jurusan:
+        siswa_queryset = Siswa.objects.filter(jurusan=filter_jurusan).order_by('jurusan', 'nama')
     else:
         siswa_queryset = Siswa.objects.all().order_by('nama')
 
     # Dashboard data
-    total_siswa = Siswa.objects.count() # Corrected: Count all students
+    total_siswa = Siswa.objects.count()
     
-    # Counts by jurusan, excluding null/blank
-    siswa_by_jurusan = Siswa.objects.filter(jurusan__isnull=False).exclude(jurusan__exact='').values('jurusan').annotate(count=Count('jurusan')).order_by('jurusan')
-    
-    # Counts by kelas, excluding null/blank
-    siswa_by_kelas = Siswa.objects.filter(kelas__isnull=False).exclude(kelas__exact='').values('kelas').annotate(count=Count('kelas')).order_by('kelas')
+    # Counts by combined kelas_jurusan
+    siswa_by_kelas_jurusan = Siswa.objects.filter(
+        kelas__isnull=False, 
+        jurusan__isnull=False
+    ).exclude(
+        kelas__exact=''
+    ).exclude(
+        jurusan__exact=''
+    ).values(
+        'kelas', 'jurusan'
+    ).annotate(
+        count=Count('id')
+    ).order_by('kelas', 'jurusan')
 
 
     paginator = Paginator(siswa_queryset, 10)  # 10 items per page
@@ -1183,9 +1262,9 @@ def siswa_list(request):
     context = {
         'page_obj': page_obj,
         'query': query,
+        'filter_jurusan': filter_jurusan,
         'total_siswa': total_siswa,
-        'siswa_by_jurusan': siswa_by_jurusan,
-        'siswa_by_kelas': siswa_by_kelas,
+        'siswa_by_kelas_jurusan': siswa_by_kelas_jurusan,
     }
 
     return render(request, 'asn_app/siswa_list.html', context)

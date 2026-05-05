@@ -1,0 +1,63 @@
+<!-- asn_app/templates/asn_app/siswa_keluar_confirm_delete.html -->
+{% extends 'asn_app/base.html' %}
+
+{% block title %}Hapus Data Siswa Keluar{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-user-minus"></i> Hapus Data Siswa Keluar</h2>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="text-center py-4">
+                <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                <h4>Konfirmasi Penghapusan</h4>
+                <p class="text-muted">Apakah Anda yakin ingin menghapus data siswa keluar berikut?</p>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th width="40%">Nama Siswa</th>
+                            <td>{{ siswa_keluar.siswa.nama }}</td>
+                        </tr>
+                        <tr>
+                            <th>NIS</th>
+                            <td>{{ siswa_keluar.siswa.nis|default:"-" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Kelas</th>
+                            <td>{{ siswa_keluar.siswa.kelas|default:"-" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Jurusan</th>
+                            <td>{{ siswa_keluar.siswa.jurusan|default:"-" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Tanggal Keluar</th>
+                            <td>{{ siswa_keluar.tanggal_keluar|date:"d F Y" }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> <strong>Perhatian:</strong> Tindakan ini tidak dapat dibatalkan.
+            </div>
+
+            <form method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Ya, Hapus
+                </button>
+                <a href="{% url 'siswa_keluar_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Batal
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

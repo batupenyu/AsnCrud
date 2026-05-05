@@ -85,6 +85,13 @@ urlpatterns = [
     path('siswa/import/excel/', views.import_siswa_excel, name='import_siswa_excel'),
     path('siswa/delete_all/', views.siswa_delete_all, name='siswa_delete_all'),
 
+    # Siswa Keluar routes
+    path('siswa-keluar/', views.siswa_keluar_list, name='siswa_keluar_list'),
+    path('siswa-keluar/create/', views.siswa_keluar_create, name='siswa_keluar_create'),
+    path('siswa-keluar/<int:pk>/', views.siswa_keluar_detail, name='siswa_keluar_detail'),
+    path('siswa-keluar/<int:pk>/update/', views.siswa_keluar_update, name='siswa_keluar_update'),
+    path('siswa-keluar/<int:pk>/delete/', views.siswa_keluar_delete, name='siswa_keluar_delete'),
+
     # Surat Keterangan routes
     path('surat_keterangan/', views.surat_keterangan_list, name='surat_keterangan_list'),
     path('surat_keterangan/create/', views.surat_keterangan_create, name='surat_keterangan_create'),

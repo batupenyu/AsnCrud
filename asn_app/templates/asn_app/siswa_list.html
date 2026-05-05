@@ -51,44 +51,36 @@
         </div>
     </div>
 
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="card text-white bg-primary mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Total Siswa</h5>
-                    <p class="card-text fs-4">{{ total_siswa }}</p>
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Siswa</h5>
+                        <p class="card-text fs-4">{{ total_siswa }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Siswa Berdasarkan Kombinasi Kelas_Jurusan</h5>
+                        {% if filter_jurusan %}
+                        <p class="card-text mb-3">
+                            Menampilkan siswa dari jurusan: <strong>{{ filter_jurusan }}</strong> 
+                            <a href="{% if query %}?q={{ query }}{% else %}?{% endif %}" class="btn btn-sm btn-light ms-2">Bersihkan Filter</a>
+                        </p>
+                        {% endif %}
+                        <ul class="list-unstyled two-column-list">
+{% for item in siswa_by_kelas_jurusan %}
+                             <li class="list-item-dashboard"><a href="?jurusan={{ item.jurusan }}" class="label" style="color: inherit; text-decoration: none;">{{ item.kelas }}_{{ item.jurusan }}</a> <span class="value">{{ item.count }}</span></li>
+{% empty %}
+                             <li>Tidak ada data kelas/jurusan</li>
+{% endfor %}
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-success mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Siswa Berdasarkan Jurusan</h5>
-                    <ul class="list-unstyled two-column-list">
-                        {% for jurusan_data in siswa_by_jurusan %}
-                            <li class="list-item-dashboard"><span class="label">{{ jurusan_data.jurusan }}:</span> <span class="value">{{ jurusan_data.count }}</span></li>
-                        {% empty %}
-                            <li>Tidak ada data jurusan</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-info mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Siswa Berdasarkan Kelas</h5>
-                    <ul class="list-unstyled">
-                        {% for kelas_data in siswa_by_kelas %}
-                            <li class="list-item-dashboard"><span class="label">{{ kelas_data.kelas }}:</span> <span class="value">{{ kelas_data.count }}</span></li>
-                        {% empty %}
-                            <li>Tidak ada data kelas</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div class="modal fade" id="confirmDeleteAllModal" tabindex="-1" aria-labelledby="confirmDeleteAllModalLabel" aria-hidden="true">
         <div class="modal-dialog">
