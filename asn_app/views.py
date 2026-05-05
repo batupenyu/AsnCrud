@@ -1178,11 +1178,18 @@ def siswa_keluar_list(request):
     total_siswa = Siswa.objects.count()
     sis_aktif = total_siswa - total_siswa_keluar
 
+    # Calculate percentage
+    if total_siswa > 0:
+        percentage = (total_siswa_keluar / total_siswa) * 100
+    else:
+        percentage = 0
+
     context = {
         'page_obj': page_obj,
         'total_siswa_keluar': total_siswa_keluar,
         'total_siswa': total_siswa,
         'sis_aktif': sis_aktif,
+        'percentage': percentage,
         'search_query': search_query,
     }
     return render(request, 'asn_app/siswa_keluar_list.html', context)

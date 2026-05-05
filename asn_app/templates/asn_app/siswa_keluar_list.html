@@ -41,24 +41,32 @@
         </div>
     </div>
 
-     <div class="row mb-4">
-         <div class="col-12">
-             <div class="alert alert-info">
-                 <h5 class="alert-heading">Rekap Data</h5>
-                 <p class="mb-0">
-                     <strong>{{ total_siswa }}</strong> siswa - <strong>{{ total_siswa_keluar }}</strong> siswa = <strong>{{ sis_aktif }}</strong> siswa aktif
-                 </p>
-                 <div class="mt-2">
-                     <a href="{% url 'export_siswa_keluar_excel' %}" class="btn btn-success btn-sm">
-                         <i class="fas fa-file-excel"></i> Export Excel
-                     </a>
-                     <a href="{% url 'export_siswa_keluar_pdf' %}" class="btn btn-danger btn-sm">
-                         <i class="fas fa-file-pdf"></i> Export PDF
-                     </a>
-                 </div>
-             </div>
-         </div>
-     </div>
+      <div class="row mb-4">
+          <div class="col-12">
+              <div class="alert alert-info">
+                  <h5 class="alert-heading">Rekap Data</h5>
+                  <p class="mb-0">
+                      <strong>{{ total_siswa }}</strong> siswa - <strong>{{ total_siswa_keluar }}</strong> siswa = <strong>{{ sis_aktif }}</strong> siswa aktif
+                  </p>
+                  <p class="mb-0">
+                      <strong>Prosentase Keluar:</strong> 
+                      {% if total_siswa > 0 %}
+                          {{ total_siswa_keluar|floatformat:2 }} / {{ total_siswa }} * 100 = <strong>{{ percentage|floatformat:2 }}%</strong>
+                      {% else %}
+                          N/A
+                      {% endif %}
+                  </p>
+                  <div class="mt-2">
+                      <a href="{% url 'export_siswa_keluar_excel' %}" class="btn btn-success btn-sm">
+                          <i class="fas fa-file-excel"></i> Export Excel
+                      </a>
+                      <a href="{% url 'export_siswa_keluar_pdf' %}" class="btn btn-danger btn-sm">
+                          <i class="fas fa-file-pdf"></i> Export PDF
+                      </a>
+                  </div>
+              </div>
+          </div>
+      </div>
  
      <div class="mb-4">
          <form method="get" action="{% url 'siswa_keluar_list' %}" class="d-inline">
