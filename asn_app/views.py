@@ -183,8 +183,6 @@ def asn_delete(request, pk):
 
 def asn_export_pdf(request, pk):
     """Export profil ASN ke PDF"""
-    import os
-    os.environ['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
     from weasyprint import HTML
 
     asn = get_object_or_404(ASN, pk=pk)
@@ -287,7 +285,6 @@ def cetak_foto_kegiatan_pdf(request, spt_pk):
     """Export activity photos to PDF"""
     import os
     import base64
-    os.environ['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
     from weasyprint import HTML
 
     spt = get_object_or_404(SuratPerintahTugas, pk=spt_pk)
@@ -372,7 +369,6 @@ def spt_export_pdf(request, pk):
     """Export SPT ke PDF"""
     import os
     import base64
-    os.environ['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
     from weasyprint import HTML
 
     spt = get_object_or_404(SuratPerintahTugas, pk=pk)
@@ -443,7 +439,6 @@ def spt_export_pdf_large(request, pk):
     """Export SPT ke PDF dengan daftar peserta lengkap"""
     import os
     import base64
-    os.environ['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
     from weasyprint import HTML
 
     spt = get_object_or_404(SuratPerintahTugas, pk=pk)
@@ -658,7 +653,6 @@ def surat_santunan_korpri_delete(request, pk):
 def surat_santunan_korpri_export_pdf(request, pk):
     import os
     import base64
-    os.environ['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
     from weasyprint import HTML
 
     surat = get_object_or_404(SuratSantunanKorpri, pk=pk)
@@ -734,7 +728,6 @@ def nota_dinas_delete(request, pk):
 def nota_dinas_export_pdf(request, pk):
     import os
     import base64
-    os.environ['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
     from weasyprint import HTML
 
     nota_dinas = get_object_or_404(NotaDinas, pk=pk)
@@ -945,7 +938,6 @@ def surat_cuti_export_pdf(request, pk):
     import os
     import base64
     from datetime import date, timedelta
-    os.environ['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
     from weasyprint import HTML
 
     surat_cuti = get_object_or_404(SuratCuti, pk=pk)
@@ -956,20 +948,6 @@ def surat_cuti_export_pdf(request, pk):
     # Calculate leave duration
     try:
         leave_days = surat_cuti.calculate_effective_leave_days()
-
-        # Convert number to Indonesian words
-        number_words = {
-            1: "satu", 2: "dua", 3: "tiga", 4: "empat", 5: "lima",
-            6: "enam", 7: "tujuh", 8: "delapan", 9: "sembilan", 10: "sepuluh",
-            11: "sebelas", 12: "dua belas", 13: "tiga belas", 14: "empat belas",
-            15: "lima belas", 16: "enam belas", 17: "tujuh belas", 18: "delapan belas",
-            19: "sembilan belas", 20: "dua puluh"
-        }
-
-        if leave_days in number_words:
-            written_number = number_words[leave_days]
-        else:
-            written_number = str(leave_days)  # fallback for larger numbers
 
         # Define Indonesian month names
         month_names = {
@@ -987,9 +965,30 @@ def surat_cuti_export_pdf(request, pk):
             start_date_str = start_date_str.replace(eng_month, indo_month)
             end_date_str = end_date_str.replace(eng_month, indo_month)
 
-        if surat_cuti.tanggal_awal == surat_cuti.tanggal_akhir:
+        # Convert number to Indonesian words
+        number_words = {
+            1: "satu", 2: "dua", 3: "tiga", 4: "empat", 5: "lima",
+            6: "enam", 7: "tujuh", 8: "delapan", 9: "sembilan", 10: "sepuluh",
+            11: "sebelas", 12: "dua belas", 13: "tiga belas", 14: "empat belas",
+            15: "lima belas", 16: "enam belas", 17: "tujuh belas", 18: "delapan belas",
+            19: "sembilan belas", 20: "dua puluh"
+        }
+
+        # For leave > 30 days, show as "3 (tiga) bulan"
+        if leave_days > 30:
+            written_number = "tiga"
+            leave_duration_text = f"selama 3 ({written_number}) bulan, terhitung mulai tanggal {start_date_str} sampai dengan tanggal {end_date_str}"
+        elif surat_cuti.tanggal_awal == surat_cuti.tanggal_akhir:
+            if leave_days in number_words:
+                written_number = number_words[leave_days]
+            else:
+                written_number = str(leave_days)
             leave_duration_text = f"selama {leave_days} ({written_number}) hari kerja pada tanggal {start_date_str}"
         else:
+            if leave_days in number_words:
+                written_number = number_words[leave_days]
+            else:
+                written_number = str(leave_days)
             leave_duration_text = f"selama {leave_days} ({written_number}) hari kerja, terhitung mulai tanggal {start_date_str} sampai dengan tanggal {end_date_str}"
         logger.info(f"Leave duration: {leave_duration_text}")
     except Exception as e:
@@ -1059,7 +1058,6 @@ def surat_cuti_export_pdf(request, pk):
 def laporan_cuti_pdf(request, pk):
     import os
     import base64
-    os.environ['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
     from weasyprint import HTML
 
     asn = get_object_or_404(ASN, pk=pk)
@@ -1365,7 +1363,6 @@ def surat_keterangan_delete(request, pk):
 def surat_keterangan_export_pdf(request, pk):
     import os
     import base64
-    os.environ['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
     from weasyprint import HTML
 
     surat = get_object_or_404(SuratKeterangan, pk=pk)
@@ -1441,7 +1438,6 @@ def surat_resmi_delete(request, pk):
 def surat_resmi_export_pdf(request, pk):
     import os
     import base64
-    os.environ['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
     from weasyprint import HTML
 
     surat = get_object_or_404(SuratResmi, pk=pk)
@@ -1720,7 +1716,6 @@ def sptjm_export_pdf(request, pk):
     import os
     import base64
     import logging # Import logging
-    os.environ['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
     from weasyprint import HTML, CSS
 
     logger = logging.getLogger(__name__) # Get logger instance
@@ -1867,7 +1862,6 @@ class SPMTDeleteView(DeleteView):
 def spmt_export_pdf(request, pk):
     import os
     import base64
-    os.environ['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
     from weasyprint import HTML, CSS
 
     spmt = get_object_or_404(SPMT, pk=pk)
@@ -2093,7 +2087,6 @@ class SuratUmumDeleteView(DeleteView):
 def surat_umum_export_pdf(request, pk):
     import os
     import base64
-    os.environ['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
     from weasyprint import HTML, CSS
 
     surat = get_object_or_404(SuratUmum, pk=pk)
@@ -2183,7 +2176,6 @@ def surat_panggilan_siswa_export_pdf(request, pk):
     """Export Surat Panggilan Siswa ke PDF"""
     import os
     import base64
-    os.environ['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
     from weasyprint import HTML, CSS
 
     surat = get_object_or_404(SuratPanggilanSiswa, pk=pk)
