@@ -41,35 +41,35 @@
         </div>
     </div>
 
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="alert alert-info">
-                <h5 class="alert-heading">Rekap Data</h5>
-                <p class="mb-0">
-                    <strong>{{ total_siswa }}</strong> siswa - <strong>{{ total_siswa_keluar }}</strong> siswa = <strong>{{ sis_aktif }}</strong> siswa aktif
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <div class="mb-4">
-        <form method="get" action="{% url 'siswa_keluar_list' %}" class="d-inline">
-            <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Cari berdasarkan nama, NIS, kelas, atau jurusan..." value="{{ search_query|default:'' }}">
-                <button class="btn btn-outline-secondary" type="submit">
-                    <i class="fas fa-search"></i> Cari
-                </button>
-            </div>
-        </form>
-        <div class="float-end">
-            <a href="{% url 'export_siswa_keluar_excel' %}" class="btn btn-success">
-                <i class="fas fa-file-excel"></i> Export Excel
-            </a>
-            <a href="{% url 'export_siswa_keluar_pdf' %}" class="btn btn-danger">
-                <i class="fas fa-file-pdf"></i> Export PDF
-            </a>
-        </div>
-    </div>
+     <div class="row mb-4">
+         <div class="col-12">
+             <div class="alert alert-info">
+                 <h5 class="alert-heading">Rekap Data</h5>
+                 <p class="mb-0">
+                     <strong>{{ total_siswa }}</strong> siswa - <strong>{{ total_siswa_keluar }}</strong> siswa = <strong>{{ sis_aktif }}</strong> siswa aktif
+                 </p>
+                 <div class="mt-2">
+                     <a href="{% url 'export_siswa_keluar_excel' %}" class="btn btn-success btn-sm">
+                         <i class="fas fa-file-excel"></i> Export Excel
+                     </a>
+                     <a href="{% url 'export_siswa_keluar_pdf' %}" class="btn btn-danger btn-sm">
+                         <i class="fas fa-file-pdf"></i> Export PDF
+                     </a>
+                 </div>
+             </div>
+         </div>
+     </div>
+ 
+     <div class="mb-4">
+         <form method="get" action="{% url 'siswa_keluar_list' %}" class="d-inline">
+             <div class="input-group">
+                 <input type="text" name="q" class="form-control" placeholder="Cari berdasarkan nama, NIS, kelas, atau jurusan..." value="{{ search_query|default:'' }}">
+                 <button class="btn btn-outline-secondary" type="submit">
+                     <i class="fas fa-search"></i> Cari
+                 </button>
+             </div>
+         </form>
+     </div>
 
     <div class="card">
         <div class="card-body">
