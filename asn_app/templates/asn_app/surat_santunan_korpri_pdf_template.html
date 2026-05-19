@@ -86,32 +86,31 @@
       {% endif %}
     </div>
 
-    <div style="text-align: right">
-      {{ surat.tempat_ditetapkan }}, {{ surat.tanggal_surat|indonesian_date:"%d
-      %B %Y" }}
-    </div>
-    <table class="no-border" style="margin-top: 0.5cm">
-      <tr>
-        <td class="label-col valign-top">Nomor</td>
-        <td class="colon-col valign-top">:</td>
-        <td class="value-col valign-top">{{ surat.nomor_surat }}</td>
-      </tr>
-      <tr>
-        <td class="label-col valign-top">Sifat</td>
-        <td class="colon-col valign-top">:</td>
-        <td class="value-col valign-top">{{ surat.sifat_surat }}</td>
-      </tr>
-      <tr>
-        <td class="label-col valign-top">Lampiran</td>
-        <td class="colon-col valign-top">:</td>
-        <td class="value-col valign-top">{{ surat.lampiran_surat }}</td>
-      </tr>
-      <tr>
-        <td class="label-col valign-top">Perihal</td>
-        <td class="colon-col valign-top">:</td>
-        <td class="value-col valign-top">{{ surat.perihal_surat }}</td>
-      </tr>
-    </table>
+      <div style="text-align: right">
+        {{ surat.tempat_ditetapkan }}, {{ surat.tanggal_surat|indonesian_date:"%d %B %Y" }}
+      </div>
+      <table class="info-table">
+        <tr>
+          <td class="label">Nomor</td>
+          <td class="colon">:</td>
+          <td>{{ surat.nomor_surat }}</td>
+        </tr>
+        <tr>
+          <td class="label">Sifat</td>
+          <td class="colon">:</td>
+          <td>{{ surat.sifat_surat }}</td>
+        </tr>
+        <tr>
+          <td class="label">Lampiran</td>
+          <td class="colon">:</td>
+          <td>{{ surat.lampiran_surat }}</td>
+        </tr>
+        <tr>
+          <td class="label">Perihal</td>
+          <td class="colon">:</td>
+          <td>{{ surat.perihal_surat }}</td>
+        </tr>
+      </table>
     <br /><br />
     <div class="address-block">
       Kepada<br />
