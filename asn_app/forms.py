@@ -59,6 +59,14 @@ class ASNForm(forms.ModelForm):
             raise forms.ValidationError("NIP harus terdiri dari 18 digit")
         return nip
 
+    def clean_pangkat(self):
+        val = self.cleaned_data.get('pangkat', '')
+        return '' if val == '-' else val
+
+    def clean_golongan(self):
+        val = self.cleaned_data.get('golongan', '')
+        return '' if val == '-' else val
+
 
 class KopSuratForm(forms.ModelForm):
     class Meta:

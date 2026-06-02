@@ -183,17 +183,34 @@ class SuratCuti(models.Model):
         return f"Surat Cuti {self.pegawai.nama} - {self.tanggal_surat}"
 
     def calculate_effective_leave_days(self):
+        """
+        Hitung jumlah hari cuti efektif (hari kerja).
+        
+        Logic:
+        - Hari Sabtu dan Minggu TIDAK dihitung (bukan hari kerja)
+        - Hari libur nasional/resmi TIDAK dihitung (dari tabel HariLibur)
+        - Hanya hari Senin-Jumat yang bukan hari libur yang dihitung
+        
+        Returns:
+            int: Jumlah hari kerja efektif
+        """
         if not self.tanggal_awal or not self.tanggal_akhir:
             return 0
+
+        # Fetch all holidays in range once (avoid N+1 queries)
+        holidays = set(
+            HariLibur.objects.filter(
+                tanggal__gte=self.tanggal_awal,
+                tanggal__lte=self.tanggal_akhir
+            ).values_list('tanggal', flat=True)
+        )
 
         total_days = 0
         current_date = self.tanggal_awal
         while current_date <= self.tanggal_akhir:
-            # Check if it's a weekend (Saturday = 5, Sunday = 6)
-            if current_date.weekday() < 5:  # Monday to Friday
-                # Check if it's a holiday
-                if not HariLibur.objects.filter(tanggal=current_date).exists():
-                    total_days += 1
+            # Skip weekend (Sabtu=5, Minggu=6) dan hari libur
+            if current_date.weekday() < 5 and current_date not in holidays:
+                total_days += 1
             current_date += timedelta(days=1)
         return total_days
 

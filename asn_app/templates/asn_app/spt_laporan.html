@@ -32,7 +32,7 @@
             <div class="report-section">
                 <div>
                     <p style="text-align: justify;">
-                        Bersama ini disampaikan laporan hasil perjalanan dinas dalam rangka Orientasi Penyusunan Renja 2027 dengan rincian sebagai berikut :
+                        Bersama ini disampaikan laporan hasil perjalanan dinas dalam rangka {{ spt.nama_kegiatan }} dengan rincian sebagai berikut :
                     </p>
                 </div>
                 <div class="section-title">
@@ -127,7 +127,7 @@
                                     {{ first_peserta.nama }} <br>
                                   <p>{% if first_peserta.golongan == "IX" %}
                                         Golongan IX <br>
-                                    {% else %}
+                                    {% elif first_peserta.pangkat and first_peserta.pangkat != "-" and first_peserta.golongan and first_peserta.golongan != "-" %}
                                         {{ first_peserta.pangkat }}/{{ first_peserta.golongan }} <br>
                                     {% endif %}
                                     NIP. {{ first_peserta.nip }}</p>

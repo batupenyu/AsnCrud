@@ -1133,6 +1133,7 @@ def laporan_cuti_pdf(request, pk):
         'asn': asn,
         'processed_surat_cuti_list': processed_surat_cuti_list,
         'sisa_cuti': sisa_cuti_obj,
+        'initial_total_sisa_cuti': initial_total_sisa_cuti,
         'penandatangan': penandatangan,
         'request': request,
         'years': years,  # Pass all selected years
