@@ -1,5 +1,6 @@
 from django.conf import settings
 import logging
+import re
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.template.loader import render_to_string
@@ -329,7 +330,8 @@ def cetak_foto_kegiatan_pdf(request, spt_pk):
 
     # Create HTTP response dgn PDF
     response = HttpResponse(result, content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename=foto_kegiatan_{spt.nomor_spt}.pdf'
+    safe_nomor = re.sub(r'[^\w\-]', '_', spt.nomor_spt)
+    response['Content-Disposition'] = f'attachment; filename="foto_kegiatan_{safe_nomor}.pdf"'
 
     return response
 
@@ -423,7 +425,9 @@ def spt_export_pdf(request, pk):
 
     # Create HTTP response dgn PDF
     response = HttpResponse(result, content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename=spt_{spt.nomor_spt}_{spt.nama_kegiatan}.pdf'
+    safe_nomor = re.sub(r'[^\w\-]', '_', spt.nomor_spt)
+    safe_nama = re.sub(r'[^\w\-]', '_', spt.nama_kegiatan)
+    response['Content-Disposition'] = f'attachment; filename="spt_{safe_nomor}_{safe_nama}.pdf"'
 
     return response
 
@@ -474,7 +478,9 @@ def spt_export_pdf_large(request, pk):
         return HttpResponse(f"Error writing large PDF: {e}", status=500)
 
     response = HttpResponse(result, content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename=spt_lengkap_{spt.nomor_spt}_{spt.nama_kegiatan}.pdf'
+    safe_nomor = re.sub(r'[^\w\-]', '_', spt.nomor_spt)
+    safe_nama = re.sub(r'[^\w\-]', '_', spt.nama_kegiatan)
+    response['Content-Disposition'] = f'attachment; filename="spt_lengkap_{safe_nomor}_{safe_nama}.pdf"'
 
     return response
 
