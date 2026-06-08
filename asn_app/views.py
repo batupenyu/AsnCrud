@@ -833,6 +833,8 @@ class SuratCutiCreateView(CreateView):
         pegawai_id = self.request.GET.get('pegawai')
         if pegawai_id:
             initial['pegawai'] = pegawai_id
+        initial['alasan_cuti'] = 'Keperluan keluarga'
+        initial['perihal_surat'] = 'Permohonan Cuti'
         return initial
 
 class SuratCutiUpdateView(UpdateView):
