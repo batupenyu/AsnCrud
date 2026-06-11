@@ -89,10 +89,20 @@ class SuratPerintahTugas(models.Model):
 
     @property
     def jumlah_hari(self):
+        from .models import HariLibur
         if self.tanggal_pelaksanaan and self.tanggal_akhir_pelaksanaan:
-            return (self.tanggal_akhir_pelaksanaan - self.tanggal_pelaksanaan).days + 1
-        elif self.tanggal_pelaksanaan and self.waktu_pelaksanaan:
-            return 1
+            total = 0
+            d = self.tanggal_pelaksanaan
+            while d <= self.tanggal_akhir_pelaksanaan:
+                if d.weekday() < 5 and not HariLibur.objects.filter(tanggal=d).exists():
+                    total += 1
+                d += timedelta(days=1)
+            return total
+        elif self.tanggal_pelaksanaan:
+            d = self.tanggal_pelaksanaan
+            if d.weekday() < 5 and not HariLibur.objects.filter(tanggal=d).exists():
+                return 1
+            return 0
         return 1
 
 
