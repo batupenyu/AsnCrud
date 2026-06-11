@@ -87,6 +87,14 @@ class SuratPerintahTugas(models.Model):
     def __str__(self):
         return f"SPT {self.nomor_spt} - {self.nama_kegiatan}"
 
+    @property
+    def jumlah_hari(self):
+        if self.tanggal_pelaksanaan and self.tanggal_akhir_pelaksanaan:
+            return (self.tanggal_akhir_pelaksanaan - self.tanggal_pelaksanaan).days + 1
+        elif self.tanggal_pelaksanaan and self.waktu_pelaksanaan:
+            return 1
+        return 1
+
 
 class FotoKegiatan(models.Model):
     spt = models.ForeignKey(SuratPerintahTugas, related_name='foto_kegiatan', on_delete=models.CASCADE)

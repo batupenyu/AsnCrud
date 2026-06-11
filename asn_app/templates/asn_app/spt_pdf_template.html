@@ -182,12 +182,23 @@
           <div style="padding-left: 15pt; text-indent: 0pt">
             <ol>
               <li>
-                Dalam rangka  {{ spt.nama_kegiatan }} yang akan dilaksanakan di
+                <!-- Dalam rangka  {{ spt.nama_kegiatan }} yang akan dilaksanakan di
                 {{ spt.tempat_pelaksanaan }} pada tanggal {{ spt.tanggal_pelaksanaan|indonesian_date:"%d %B %Y" }}{% if spt.tanggal_pelaksanaan != spt.tanggal_akhir_pelaksanaan %}
-                sampai dengan {{ spt.tanggal_akhir_pelaksanaan|indonesian_date:"%d %B %Y" }}{% endif %}.
+                sampai dengan {{ spt.tanggal_akhir_pelaksanaan|indonesian_date:"%d %B %Y" }}{% endif %}. -->
+                Dalam rangka {{ spt.nama_kegiatan }}
               </li>
               <li>
-                Membuat laporan hasil pelaksanaan perintah tugas kepada {% if spt.penandatangan %}{{ spt.penandatangan.jabatan|split:" "|first }} {{ spt.penandatangan.unit_kerja }}{% endif %}
+                <!-- Membuat laporan hasil pelaksanaan perintah tugas kepada {% if spt.penandatangan %}{{ spt.penandatangan.jabatan|split:" "|first }} {{ spt.penandatangan.unit_kerja }}{% endif %} -->
+                Perjalanan dinas ini dilaksanakan selama {{ spt.jumlah_hari }} ({{ spt.jumlah_hari|terbilang_filter }}) hari pada hari/tanggal : {{ spt.waktu_pelaksanaan|indonesian_datetime:"%A, %d %B %Y" }}, pukul : {{ spt.waktu_pelaksanaan|indonesian_datetime:"%H:%M" }} WIB, bertempat di {{ spt.tempat_pelaksanaan }};
+              </li>
+              <li>
+                Melapor pada instansi yang dikunjungi dan penandatanganan SPPD;
+              </li>
+              <li>
+                Membuat laporan hasil pelaksanaan perintah tugas kepada kepala sekolah SMKN 1 Koba;
+              </li>
+              <li>
+                Perjalanan dinas ini dibiaya dari dana APBD Tahun anggaran 2026;
               </li>
               <li>
                 Dilaksanakan dengan sebaik-baiknya dan penuh rasa tanggung
