@@ -10,6 +10,8 @@
         }
         body {
             font-family: sans-serif;
+            margin: 0;
+            padding: 0;
         }
         .main-header-p { /* New class for the main header paragraph */
             text-align: center;
@@ -18,22 +20,16 @@
             font-size: 1.2em; /* Slightly smaller than h1, but still prominent */
             font-weight: bold;
         }
-        .page-break {
-            page-break-after: always;
-        }
         .photo-grid {
             display: grid;
             grid-template-columns: 1fr 1fr; /* Two columns */
-            grid-template-rows: repeat(2, minmax(0, 1fr)); /* Two rows, flexible height */
+            grid-template-rows: repeat(2, 1fr); /* Two rows, equal height */
             gap: 10px; /* Space between photos */
             width: 100%;
-            /* Calculate height based on A4 and margins, accounting for headers/footers */
-            /* Usable height: 28.7cm. Headers ~1.5cm. Remainder ~27.2cm. Each row ~13.6cm. */
-            height: calc((28.7cm - 1.5cm - 10px) / 2 * 2); /* Total height for 2 rows in the grid */
-            max-height: calc(100vh - 1.5cm - 10px); /* Fallback for display, 1.5cm for headers + 10px gap*/
+            height: 23.7cm; /* Fit 4 photos per A4 page (29.7cm - margins 0.5cm*2 - headers ~4cm) */
             box-sizing: border-box;
-            padding-bottom: 5px; /* Small space at the bottom of the grid */
-            margin-bottom: 5px; /* Margin after the grid before potential page break */
+            padding-bottom: 5px;
+            margin-bottom: 0;
         }
         .foto-item {
             display: flex;
@@ -43,37 +39,42 @@
             border: 1px solid #ccc;
             padding: 5px;
             box-sizing: border-box;
-            page-break-inside: avoid; /* Keep photo and title together */
-            min-height: 0; /* Allow item to shrink */
+            page-break-inside: avoid;
+            min-height: 0;
+            overflow: hidden;
         }
         .foto-item img {
             max-width: 100%;
-            max-height: 80%; /* Leave more space for caption/title relative to item height */
+            max-height: 75%;
             width: auto;
             height: auto;
             object-fit: contain;
-            display: block; /* Remove extra space below image */
+            display: block;
         }
         .foto-item h5 {
-            font-size: 1em;
+            font-size: 0.95em;
             text-align: center;
-            margin: 5px 0 0 0;
+            margin: 4px 0 0 0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 100%;
             font-weight: bold;
-            flex-shrink: 0; /* Prevent title from shrinking */
+            flex-shrink: 0;
+        }
+        .page-start {
+            page-break-before: always;
         }
     </style>
 </head>
 <body>
-    <p class="main-header-p">Dokumentasi Foto Kegiatan</p>
-    <p class="main-header-p">SPT: {{ spt.nomor_spt }}</p>
-    <p class="main-header-p">Kegiatan: {{ spt.nama_kegiatan }}</p>
-    <hr>
-
     {% for foto_group in grouped_fotos %}
+        {% if forloop.first %}
+            <p class="main-header-p">Dokumentasi Foto Kegiatan</p>
+            <p class="main-header-p">SPT: {{ spt.nomor_spt }}</p>
+            <p class="main-header-p">Kegiatan: {{ spt.nama_kegiatan }}</p>
+            <hr>
+        {% endif %}
         <div class="photo-grid">
             {% for foto in foto_group %}
                 <div class="foto-item">
@@ -85,11 +86,14 @@
             {% endfor %}
         </div>
         {% if not forloop.last %}
-            <div class="page-break"></div>
+            <div class="page-start"></div>
         {% endif %}
     {% empty %}
+        <p class="main-header-p">Dokumentasi Foto Kegiatan</p>
+        <p class="main-header-p">SPT: {{ spt.nomor_spt }}</p>
+        <p class="main-header-p">Kegiatan: {{ spt.nama_kegiatan }}</p>
+        <hr>
         <p>Tidak ada foto kegiatan yang di-upload untuk SPT ini.</p>
     {% endfor %}
-
 </body>
 </html>
