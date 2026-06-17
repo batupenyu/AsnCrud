@@ -64,6 +64,15 @@
         text-align: center;
         vertical-align: middle;
       }
+      .report-page {
+        break-before: page;
+        page-break-before: always;
+      }
+      .report-page:first-child,
+      .report-page-first {
+        break-before: auto;
+        page-break-before: auto;
+      }
       .leave-table th {
         background-color: #f2f2f2;
       }
@@ -149,60 +158,92 @@
         </table>
       </div>
 
-      <table class="leave-table">
-        <thead>
-          <tr>
-            <th rowspan="2">No.</th>
-            <th colspan="2">Surat Izin/Surat Keputusan</th>
-            <th colspan="2">Lamanya</th>
-            <th rowspan="2">Jenis Cuti</th>
-            <th rowspan="2">
-              Paraf Pegawai <br />
-              Kepegawaian
-            </th>
-            <th colspan="3">Keterangan</th>
-          </tr>
-          <tr>
-            <th>Nomor</th>
-            <th>Tanggal</th>
-            <th>Dari Tanggal</th>
-            <th>Sampai Tanggal</th>
-            <th>ATB</th>
-            <th>LHC</th>
-            <th>STB</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for item in processed_surat_cuti_list %}
-          <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ item.surat_cuti.nomor_surat|default:"" }}</td>
-            <!-- <td>{{ item.surat_cuti.tanggal_surat|indonesian_date:"%d-%m-%Y" }}</td> -->
-            <td>-</td>
-            <td>
-              {{ item.surat_cuti.tanggal_awal|indonesian_date:"%d-%m-%Y" }}
-            </td>
-            <td>
-              {{ item.surat_cuti.tanggal_akhir|indonesian_date:"%d-%m-%Y" }}
-            </td>
-            <td>{{ item.surat_cuti.get_jenis_cuti_display }}</td>
-            <td></td>
-            {# Paraf Pegawai Kepegawaian - This might be a manual field #}
-            <td>{{ item.atb_for_row|default:"0" }}</td>
-            {# ATB #}
-            <td>{{ item.lhc }}</td>
-            {# LHC #}
-            <td>{{ item.stb_for_row|default:"0" }}</td>
-            {# STB #}
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="10">Tidak ada data cuti.</td>
-            {# Updated colspan #}
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      {% if pages %}
+        {% for page in pages %}
+        <div class="report-page{% if forloop.first %} report-page-first{% endif %}">
+          <table class="leave-table">
+            <thead>
+              <tr>
+                <th rowspan="2">No.</th>
+                <th colspan="2">Surat Izin/Surat Keputusan</th>
+                <th colspan="2">Lamanya</th>
+                <th rowspan="2">Jenis Cuti</th>
+                <th rowspan="2">
+                  Paraf Pegawai <br />
+                  Kepegawaian
+                </th>
+                <th colspan="3">Keterangan</th>
+              </tr>
+              <tr>
+                <th>Nomor</th>
+                <th>Tanggal</th>
+                <th>Dari Tanggal</th>
+                <th>Sampai Tanggal</th>
+                <th>ATB</th>
+                <th>LHC</th>
+                <th>STB</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in page.rows %}
+              <tr>
+                <td>{{ item.number }}</td>
+                <td>{{ item.surat_cuti.nomor_surat|default:"" }}</td>
+                <!-- <td>{{ item.surat_cuti.tanggal_surat|indonesian_date:"%d-%m-%Y" }}</td> -->
+                <td>-</td>
+                <td>
+                  {{ item.surat_cuti.tanggal_awal|indonesian_date:"%d-%m-%Y" }}
+                </td>
+                <td>
+                  {{ item.surat_cuti.tanggal_akhir|indonesian_date:"%d-%m-%Y" }}
+                </td>
+                <td>{{ item.surat_cuti.get_jenis_cuti_display }}</td>
+                <td></td>
+                {# Paraf Pegawai Kepegawaian - This might be a manual field #}
+                <td>{{ item.atb_for_row|default:"0" }}</td>
+                {# ATB #}
+                <td>{{ item.lhc }}</td>
+                {# LHC #}
+                <td>{{ item.stb_for_row|default:"0" }}</td>
+                {# STB #}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endfor %}
+      {% else %}
+        <table class="leave-table">
+          <thead>
+            <tr>
+              <th rowspan="2">No.</th>
+              <th colspan="2">Surat Izin/Surat Keputusan</th>
+              <th colspan="2">Lamanya</th>
+              <th rowspan="2">Jenis Cuti</th>
+              <th rowspan="2">
+                Paraf Pegawai <br />
+                Kepegawaian
+              </th>
+              <th colspan="3">Keterangan</th>
+            </tr>
+            <tr>
+              <th>Nomor</th>
+              <th>Tanggal</th>
+              <th>Dari Tanggal</th>
+              <th>Sampai Tanggal</th>
+              <th>ATB</th>
+              <th>LHC</th>
+              <th>STB</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="10">Tidak ada data cuti.</td>
+              {# Updated colspan #}
+            </tr>
+          </tbody>
+        </table>
+      {% endif %}
 
       <div style="width: 100%">
         <div class="left-section">

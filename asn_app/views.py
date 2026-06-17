@@ -1132,6 +1132,19 @@ def laporan_cuti_pdf(request, pk):
             'stb_for_row': stb_for_row,
         })
 
+    rows_per_page = 22
+    pages = []
+    for start_index in range(0, len(processed_surat_cuti_list), rows_per_page):
+        page_rows = []
+        for row_index, item in enumerate(
+            processed_surat_cuti_list[start_index:start_index + rows_per_page],
+            start=start_index + 1,
+        ):
+            row = item.copy()
+            row['number'] = row_index
+            page_rows.append(row)
+        pages.append({'rows': page_rows})
+
     # Default penandatangan if not found
     penandatangan = ASN.objects.filter(jabatan__icontains="kepala sekolah").first()
     if not penandatangan:
@@ -1139,6 +1152,7 @@ def laporan_cuti_pdf(request, pk):
 
     html_string = render_to_string('asn_app/laporan_cuti_pdf_template.html', {
         'asn': asn,
+        'pages': pages,
         'processed_surat_cuti_list': processed_surat_cuti_list,
         'sisa_cuti': sisa_cuti_obj,
         'initial_total_sisa_cuti': initial_total_sisa_cuti,
