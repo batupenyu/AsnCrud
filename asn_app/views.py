@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 from django.utils.timezone import now
 from django.core.paginator import Paginator
 from django.contrib import messages
-from django.db.models import Q, Count 
+from django.db.models import Q, Count
 from .models import ASN, SuratPerintahTugas, KopSurat, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum, SuratPanggilanSiswa, SiswaKeluar
 from .forms import ASNForm, SPTForm, KopSuratForm, SuratSantunanKorpriForm, NotaDinasForm, HariLiburForm, SuratCutiForm, SisaCutiForm, SiswaForm, SuratKeteranganForm, SuratResmiForm, SPTJMForm, SPMTForm, FotoKegiatanForm, SuratUmumForm, SuratPanggilanSiswaForm, SiswaKeluarForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -58,7 +58,7 @@ def asn_detail(request, pk):
     leave_data = {}
     total_initial = 0  # Total initial allocation (before deduct)
     total_remaining_after_deduct = 0  # Total remaining after deduct
-    
+
     for year in years:
         # Get all surat cuti for this year
         surat_cuti_qs = SuratCuti.objects.filter(
@@ -240,7 +240,7 @@ def spt_laporan(request, pk):
     grouped_fotos = []
     for i in range(0, len(fotos), 4):
         grouped_fotos.append(fotos[i:i + 4])
-        
+
     return render(request, 'asn_app/spt_laporan.html', {'spt': spt, 'grouped_fotos': grouped_fotos})
 
 
@@ -248,10 +248,10 @@ def upload_foto_kegiatan(request, spt_pk):
     spt = get_object_or_404(SuratPerintahTugas, pk=spt_pk)
     if request.method == 'POST':
         # Form ini sekarang hanya berisi 'keterangan'
-        form = FotoKegiatanForm(request.POST) 
+        form = FotoKegiatanForm(request.POST)
         if form.is_valid():
             files = request.FILES.getlist('foto')
-            
+
             # Cek jika tidak ada file yang di-upload
             if not files:
                 messages.error(request, 'Tidak ada file foto yang dipilih untuk diupload.')
@@ -265,7 +265,7 @@ def upload_foto_kegiatan(request, spt_pk):
                     keterangan=form.cleaned_data['keterangan']
                 )
                 instance.save()
-            
+
             messages.success(request, f'{len(files)} foto berhasil diupload.')
             return redirect('spt_detail', pk=spt.pk)
     else:
@@ -662,7 +662,7 @@ def surat_santunan_korpri_export_pdf(request, pk):
     from weasyprint import HTML
 
     surat = get_object_or_404(SuratSantunanKorpri, pk=pk)
-    
+
     kop_surat_base64 = None
     if surat.kop_surat and surat.kop_surat.gambar:
         if os.path.exists(surat.kop_surat.gambar.path):
@@ -737,7 +737,7 @@ def nota_dinas_export_pdf(request, pk):
     from weasyprint import HTML
 
     nota_dinas = get_object_or_404(NotaDinas, pk=pk)
-    
+
     kop_surat_base64 = None
     if nota_dinas.kop_surat and nota_dinas.kop_surat.gambar:
         if os.path.exists(nota_dinas.kop_surat.gambar.path):
@@ -834,7 +834,9 @@ class SuratCutiCreateView(CreateView):
         if pegawai_id:
             initial['pegawai'] = pegawai_id
         initial['alasan_cuti'] = 'Keperluan keluarga'
-        initial['perihal_surat'] = 'Permohonan Cuti'
+        initial['perihal_surat'] = 'Permohonan'
+        initial['tujuan_surat'] = 'Kepala SMK Negeri 1 Koba'
+        initial['tempat_ditetapkan'] = 'Koba'
         return initial
 
 class SuratCutiUpdateView(UpdateView):
@@ -929,11 +931,11 @@ class SisaCutiUpdateView(UpdateView):
         """Save initial allocation and recalculate sisa cuti."""
         # Save the form first
         instance = form.save(commit=False)
-        
+
         # Recalculate sisa cuti based on new initial allocation values
         instance.calculate_sisa_cuti_from_surat()
         instance.save()
-        
+
         return super().form_valid(form)
 
 class SisaCutiDeleteView(DeleteView):
@@ -1072,11 +1074,11 @@ def laporan_cuti_pdf(request, pk):
 
     # Get year parameters from request (supports multiple years)
     years = request.GET.getlist('years')
-    
+
     # If no years selected, default to current year
     if not years:
         years = [str(now().year)]
-    
+
     # Convert to integers
     try:
         years = [int(y) for y in years]
@@ -1261,7 +1263,7 @@ def siswa_list(request):
     """Menampilkan daftar semua Siswa"""
     query = request.GET.get('q')
     filter_jurusan = request.GET.get('jurusan')
-    
+
     if query:
         siswa_queryset = Siswa.objects.filter(nama__icontains=query).order_by('nama')
     elif filter_jurusan:
@@ -1271,10 +1273,10 @@ def siswa_list(request):
 
     # Dashboard data
     total_siswa = Siswa.objects.count()
-    
+
     # Counts by combined kelas_jurusan
     siswa_by_kelas_jurusan = Siswa.objects.filter(
-        kelas__isnull=False, 
+        kelas__isnull=False,
         jurusan__isnull=False
     ).exclude(
         kelas__exact=''
@@ -1575,7 +1577,7 @@ def export_siswa_keluar_excel(request):
 
     # Write headers
     headers = [
-        'No', 'Nama Siswa', 'NIS', 'Kelas', 'Jurusan', 
+        'No', 'Nama Siswa', 'NIS', 'Kelas', 'Jurusan',
         'Tanggal Keluar', 'Alasan Keluar', 'Tanggal Dicatat'
     ]
     for col_num, header in enumerate(headers, 1):
@@ -1608,7 +1610,7 @@ def export_siswa_keluar_pdf(request):
     total_siswa_keluar = siswa_keluar_list.count()
     total_siswa = Siswa.objects.count()
     sis_aktif = total_siswa - total_siswa_keluar
-    
+
     html_string = render_to_string('asn_app/siswa_keluar_pdf_template.html', {
         'siswa_keluar_list': siswa_keluar_list,
         'total_siswa_keluar': total_siswa_keluar,
@@ -1637,7 +1639,7 @@ class SuratResmiListView(ListView):
     template_name = 'asn_app/surat_resmi_list.html'
     context_object_name = 'surat_resmi_list'
     paginate_by = 10
-    
+
     def get_queryset(self):
         queryset = super().get_queryset()
         query = self.request.GET.get('q')
@@ -1660,7 +1662,7 @@ class SuratResmiCreateView(CreateView):
     model = SuratResmi
     form_class = SuratResmiForm
     template_name = 'asn_app/surat_resmi_form.html'
-    
+
     def get_success_url(self):
         messages.success(self.request, 'Surat Resmi berhasil dibuat.')
         return reverse_lazy('surat_resmi_detail', kwargs={'pk': self.object.pk})
@@ -1670,7 +1672,7 @@ class SuratResmiUpdateView(UpdateView):
     model = SuratResmi
     form_class = SuratResmiForm
     template_name = 'asn_app/surat_resmi_form.html'
-    
+
     def get_success_url(self):
         messages.success(self.request, 'Surat Resmi berhasil diperbarui.')
         return reverse_lazy('surat_resmi_detail', kwargs={'pk': self.object.pk})
@@ -1681,7 +1683,7 @@ class SuratResmiDeleteView(DeleteView):
     template_name = 'asn_app/surat_resmi_confirm_delete.html'
     success_url = reverse_lazy('surat_resmi_list')
     context_object_name = 'surat_resmi'
-    
+
     def delete(self, request, *args, **kwargs):
         messages.success(request, 'Surat Resmi berhasil dihapus.')
         return super().delete(request, *args, **kwargs)
@@ -1952,7 +1954,7 @@ def spmt_export_excel(request):
 
     # Write headers
     headers = [
-        'Nomor Surat', 'Tempat Ditetapkan', 'Tanggal Surat', 
+        'Nomor Surat', 'Tempat Ditetapkan', 'Tanggal Surat',
         'Penandatangan (Nama)', 'Penandatangan (NIP)', 'Pegawai (Nama)', 'Pegawai (NIP)',
         'Peraturan', 'Nomor Peraturan', 'Tahun Peraturan', 'Tentang',
         'Tanggal Terhitung Mulai', 'Sebagai', 'Tempat Tugas',
@@ -1968,7 +1970,7 @@ def spmt_export_excel(request):
         penandatangan_nip = spmt.penandatangan.nip if spmt.penandatangan else ''
         pegawai_nama = spmt.pegawai.nama if spmt.pegawai else ''
         pegawai_nip = spmt.pegawai.nip if spmt.pegawai else ''
-        
+
         sheet[f'A{row_num}'] = spmt.nomor_surat
         sheet[f'B{row_num}'] = spmt.tempat_ditetapkan
         sheet[f'C{row_num}'] = spmt.tanggal_surat.strftime('%Y-%m-%d') if spmt.tanggal_surat else ''
@@ -2067,7 +2069,7 @@ def spmt_import_excel(request):
 
         messages.success(request, f'Successfully imported {success_count} SPMT records. {error_count} errors.')
         return redirect('spmt_list')
-    
+
     return render(request, 'asn_app/spmt_import_form.html')
 
 
