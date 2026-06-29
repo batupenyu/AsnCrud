@@ -837,6 +837,12 @@ class SuratCutiCreateView(CreateView):
         initial['perihal_surat'] = 'Permohonan'
         initial['tujuan_surat'] = 'Kepala SMK Negeri 1 Koba'
         initial['tempat_ditetapkan'] = 'Koba'
+        penandatangan = ASN.objects.filter(nama__icontains="SYAHRYANTO,S.T.,M.Pd").first()
+        if penandatangan:
+            initial['penandatangan'] = penandatangan.pk
+        kop_surat = KopSurat.objects.filter(gambar__icontains="kop_smk1_koba.png").first()
+        if kop_surat:
+            initial['kop_surat'] = kop_surat.pk
         return initial
 
 class SuratCutiUpdateView(UpdateView):
