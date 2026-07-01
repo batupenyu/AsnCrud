@@ -52,7 +52,7 @@ class ASNForm(forms.ModelForm):
             'foto': forms.FileInput(attrs={'class': 'form-control'}),
             'nama_istri_suami': forms.TextInput(attrs={'class': 'form-control'}),
         }
-    
+
     def clean_nip(self):
         nip = self.cleaned_data.get('nip')
         if nip and len(nip) != 18:
@@ -181,9 +181,9 @@ class NotaDinasForm(forms.ModelForm):
         self.fields['pegawai'].label_from_instance = lambda obj: obj.nama
         self.fields['penanda_tangan'].label_from_instance = lambda obj: obj.nama
         if not self.instance.pk:
-            self.fields['kepada'].initial = 'Gubernur Kepulauan Bangka Belitung'
+            self.fields['kepada'].initial = 'Yth. Gubernur Kepulauan Bangka Belitung'
             self.fields['dari'].initial = 'Kepala SMK Negeri 1 Koba'
-            self.fields['lampiran'].initial = '1 Lembar'
+            self.fields['lampiran'].initial = '1 (satu) Lembar'
             self.fields['hal'].initial = 'Permohonan penerbitan Surat Tugas dan Surat Perintah Perjalanan Dinas (SPPD)'
             self.fields['penutup_surat'].initial = 'Demikian nota dinas ini kami sampaikan untuk menjadi periksa dan persetujuan lebih lanjut, atas perhatian Bapak, kami ucapkan terima kasih'
             last_nd = NotaDinas.objects.exclude(nomor__isnull=True).exclude(nomor='').order_by('-pk').first()
@@ -311,7 +311,7 @@ class SuratKeteranganForm(forms.ModelForm):
                 self.fields['person'].initial = f'pegawai_{self.instance.pegawai.id}'
             elif self.instance.siswa:
                 self.fields['person'].initial = f'siswa_{self.instance.siswa.id}'
-    
+
     def clean_person(self):
         person_value = self.cleaned_data.get('person')
         if not person_value:
@@ -531,7 +531,7 @@ class SiswaKeluarForm(forms.ModelForm):
             'tanggal_keluar': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'alasan_keluar': forms.Textarea(attrs={'rows': 4, 'class': 'form-control', 'placeholder': 'Contoh: Pindah sekolah, Drop out, Kelulusan, dll'}),
         }
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['siswa'].queryset = Siswa.objects.all().order_by('nama')

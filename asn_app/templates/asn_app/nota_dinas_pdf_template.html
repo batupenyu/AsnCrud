@@ -13,8 +13,8 @@
         body {
             /* font-family: 'Times New Roman', Times, serif; */
             font-family: 'Helvetica', Arial, sans-serif;
-            font-size: 12pt;
-            line-height: 1.5;
+            font-size: 11pt;
+            line-height: 1.2;
         }
         .kop-surat-container {
             text-align: center;
@@ -96,7 +96,7 @@
         
         .penandatangan .nama {
             margin: 40px 0 20px 0; /* memberi jarak untuk tanda tangan */
-            font-weight: bold;
+            /* font-weight: bold; */
         }
 
         hr {
@@ -171,24 +171,40 @@
         <table>
             {% for p in nota_dinas.pegawai.all %}
             <tr>
+                {% if nota_dinas.pegawai.all|length > 1 %}
+                <td class="label">{{ forloop.counter }}. Nama</td>
+                {% else %}
                 <td class="label">Nama</td>
+                {% endif %}
                 <td class="colon">:</td>
                 <td>{{ p.nama }}</td>
             </tr>
             <tr>
+                {% if nota_dinas.pegawai.all|length > 1 %}
+                <td class="label" style="padding-left: 18px;">NIP</td>
+                {% else %}
                 <td class="label">NIP</td>
+                {% endif %}
                 <td class="colon">:</td>
                 <td>{{ p.nip }}</td>
             </tr>
             <tr>
+                {% if nota_dinas.pegawai.all|length > 1 %}
+                <td class="label" style="padding-left: 18px;">Jabatan</td>
+                {% else %}
                 <td class="label">Jabatan</td>
+                {% endif %}
                 <td class="colon">:</td>
                 <td>{{ p.jabatan }}</td>
             </tr>
             <tr>
+                {% if nota_dinas.pegawai.all|length > 1 %}
+                <td class="label" style="padding-left: 18px;">Pangkat/Gol</td>
+                {% else %}
                 <td class="label">Pangkat/Gol</td>
+                {% endif %}
                 <td class="colon">:</td>
-                <td>{{ p.pangkat }} / {{ p.golongan }}</td>
+                <td>{{ p.pangkat }},{{ p.golongan }}</td>
             </tr>
             {% if not forloop.last %}
             <tr><td colspan="3" style="padding-top: 10px;"></td></tr>
@@ -202,26 +218,17 @@
         {{ nota_dinas.penutup_surat|linebreaksbr }}
     </div>
 
-    <div class="penandatangan-container">
+    <div class="penandatangan-container" style="padding-left: 300px;">
         <div class="penandatangan">
-            <!-- <div>Mengetahui;<br>{{ nota_dinas.penanda_tangan.jabatan }} </div>
-            <br>
-            <div class="nama">{{ nota_dinas.penanda_tangan.nama }} <br>
-                {{ nota_dinas.penanda_tangan.pangkat }} / {{ nota_dinas.penanda_tangan.golongan }} <br>
-                NIP. {{ nota_dinas.penanda_tangan.nip }}</div> -->
-        </div>
-        <div class="penandatangan">
-        {% if nota_dinas.pegawai.all %}
-                {% for p in nota_dinas.pegawai.all %}
-                {% if forloop.last %}
-                    <div>Pemohon, <br> {{ p.jabatan }} </div>
-                    <br>
-                    <div class="nama">{{ p.nama }} <br> 
-                        {{ p.pangkat }} / {{ p.golongan }} <br>
-                        NIP. {{ p.nip }}</div>
-                {% endif %}
-                {% endfor %}
-        {% endif %}
+            {% if nota_dinas.penanda_tangan %}
+                <div>{{ nota_dinas.penanda_tangan.jabatan }}</div>
+                <br>
+                <div class="nama">{{ nota_dinas.penanda_tangan.nama }} <br>
+                    {% if nota_dinas.penanda_tangan.pangkat and nota_dinas.penanda_tangan.pangkat != '-' %}
+                        {{ nota_dinas.penanda_tangan.pangkat }},{{ nota_dinas.penanda_tangan.golongan }} <br>
+                    {% endif %}
+                    NIP. {{ nota_dinas.penanda_tangan.nip }}</div>
+            {% endif %}
         </div>
     </div>
 
