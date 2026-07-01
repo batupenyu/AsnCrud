@@ -152,6 +152,12 @@ class SuratSantunanKorpriForm(forms.ModelForm):
         self.fields['penandatangan'].label_from_instance = lambda obj: obj.nama
 
 class NotaDinasForm(forms.ModelForm):
+    SIFAT_CHOICES = [
+        ('Penting', 'Penting'),
+        ('Biasa', 'Biasa'),
+        ('Segera', 'Segera'),
+    ]
+    sifat = forms.ChoiceField(choices=SIFAT_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
     class Meta:
         model = NotaDinas
         fields = '__all__'
@@ -160,7 +166,6 @@ class NotaDinasForm(forms.ModelForm):
             'dari': forms.TextInput(attrs={'class': 'form-control'}),
             'tanggal': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'nomor': forms.TextInput(attrs={'class': 'form-control'}),
-            'sifat': forms.TextInput(attrs={'class': 'form-control'}),
             'lampiran': forms.TextInput(attrs={'class': 'form-control'}),
             'hal': forms.TextInput(attrs={'class': 'form-control'}),
             'isi_surat': forms.Textarea(attrs={'rows': 5, 'class': 'form-control'}),
@@ -175,6 +180,22 @@ class NotaDinasForm(forms.ModelForm):
         self.fields['penanda_tangan'].queryset = ASN.objects.all().order_by('nama')
         self.fields['pegawai'].label_from_instance = lambda obj: obj.nama
         self.fields['penanda_tangan'].label_from_instance = lambda obj: obj.nama
+        if not self.instance.pk:
+            self.fields['kepada'].initial = 'Gubernur Kepulauan Bangka Belitung'
+            self.fields['dari'].initial = 'Kepala SMK Negeri 1 Koba'
+            self.fields['lampiran'].initial = '1 Lembar'
+            self.fields['hal'].initial = 'Permohonan penerbitan Surat Tugas dan Surat Perintah Perjalanan Dinas (SPPD)'
+            self.fields['penutup_surat'].initial = 'Demikian nota dinas ini kami sampaikan untuk menjadi periksa dan persetujuan lebih lanjut, atas perhatian Bapak, kami ucapkan terima kasih'
+            last_nd = NotaDinas.objects.exclude(nomor__isnull=True).exclude(nomor='').order_by('-pk').first()
+            if last_nd and last_nd.nomor:
+                parts = last_nd.nomor.split('/')
+                for i, part in enumerate(parts):
+                    if i > 0 and part.isdigit():
+                        parts[i] = str(int(part) + 1).zfill(len(part))
+                        break
+                self.fields['nomor'].initial = '/'.join(parts)
+            else:
+                self.fields['nomor'].initial = '800.1.11.1/001/SMKN1KB/2026'
 
 class HariLiburForm(forms.ModelForm):
     class Meta:
