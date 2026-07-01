@@ -204,7 +204,13 @@
                 <td class="label">Pangkat/Gol</td>
                 {% endif %}
                 <td class="colon">:</td>
-                <td>{{ p.pangkat }},{{ p.golongan }}</td>
+                <td>
+                    {% if p.pangkat and p.pangkat != '-' and p.golongan and p.golongan != '-' %}
+                        {{ p.pangkat }},{{ p.golongan }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
             </tr>
             {% if not forloop.last %}
             <tr><td colspan="3" style="padding-top: 10px;"></td></tr>
@@ -224,8 +230,10 @@
                 <div>{{ nota_dinas.penanda_tangan.jabatan }}</div>
                 <br>
                 <div class="nama">{{ nota_dinas.penanda_tangan.nama }} <br>
-                    {% if nota_dinas.penanda_tangan.pangkat and nota_dinas.penanda_tangan.pangkat != '-' %}
+                    {% if nota_dinas.penanda_tangan.pangkat and nota_dinas.penanda_tangan.pangkat != '-' and nota_dinas.penanda_tangan.golongan and nota_dinas.penanda_tangan.golongan != '-' %}
                         {{ nota_dinas.penanda_tangan.pangkat }},{{ nota_dinas.penanda_tangan.golongan }} <br>
+                    {% else %}
+                        - <br>
                     {% endif %}
                     NIP. {{ nota_dinas.penanda_tangan.nip }}</div>
             {% endif %}
