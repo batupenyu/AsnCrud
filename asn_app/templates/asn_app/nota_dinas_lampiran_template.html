@@ -10,10 +10,15 @@
             margin: 20px;
             font-size: 14px;
         }
+        @page {
+            size: A4 landscape;
+            margin: 1cm 1cm 1cm 1cm;
+        }
         .header-info {
             margin-bottom: 20px;
             line-height: 1.0;
-            padding-left: 200px;
+            padding-left: 500px;
+            font-style: italic;
         }
         .header-info table {
             width: 100%;
@@ -107,7 +112,7 @@
         <tbody>
             {% for peserta in nota_dinas.peserta_nota_dinas.all %}
             <tr>
-                <td class="text-center">{{ forloop.counter }}</td>
+                <td class="text-center">{{ forloop.counter }}.</td>
                 <td>
                     {% if peserta.pegawai %}
                         {{ peserta.pegawai.nama }}
@@ -156,7 +161,7 @@
         </tbody>
     </table>
 
-    <div class="footer">
+    <div class="footer" style="text-align: center;">
         Kepala SMKN 1 Koba<br><br><br><br>
         <strong>SYAHRYANTO, S.T., M.Pd</strong><br>
         Pembina Tk. I, IV/b<br>

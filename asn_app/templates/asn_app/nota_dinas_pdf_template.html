@@ -104,6 +104,14 @@
             border-top: 1px solid black;
             margin: 20px 0;
         }
+        .catatan-kaki {
+            margin-top: 20px;
+            font-size: 10pt;
+        }
+        .catatan-kaki a {
+            color: #000;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -149,12 +157,7 @@
             <tr>
                 <td class="label">Lampiran</td>
                 <td class="colon">:</td>
-                <td>
-                    {{ nota_dinas.lampiran }}
-                    {% if show_lampiran_link %}
-                        <br><a href="{{ lampiran_url }}">Lihat Daftar Peserta dan Pendamping Kegiatan LKS</a>
-                    {% endif %}
-                </td>
+                <td>{{ nota_dinas.lampiran }}</td>
             </tr>
             <tr>
                 <td class="label">Hal</td>
@@ -169,6 +172,11 @@
     <div class="content isi-surat">
         <!-- Yang bertanda tangan di bawah ini: -->
         {{ nota_dinas.isi_surat|linebreaksbr }}
+        {% if show_lampiran_link %}
+        <!-- <div class="catatan-kaki"> -->
+            <a style="text-decoration: none;" href="{{ lampiran_url }}">daftar terlampir;</a>
+        <!-- </div> -->
+        {% endif %}
     </div>
 
     {% if jumlah_peserta <= 3 %}
@@ -287,6 +295,8 @@
     <div class="content penutup-surat">
         {{ nota_dinas.penutup_surat|linebreaksbr }}
     </div>
+
+
 
     <div class="penandatangan-container" style="padding-left: 300px;">
         <div class="penandatangan">
