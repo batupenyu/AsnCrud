@@ -442,7 +442,7 @@ class SuratKP4(models.Model):
     penandatangan = models.ForeignKey(ASN, on_delete=models.SET_NULL, null=True, blank=True, related_name='kp4_penandatangan', verbose_name='Kepala (Mengetahui)')
     status_kepegawaian = models.CharField(max_length=100, blank=True, null=True, verbose_name='Status Kepegawaian')
     masa_kerja_golongan = models.CharField(max_length=100, blank=True, null=True, verbose_name='Masa Kerja Golongan')
-    digaji_menurut = models.CharField(max_length=255, blank=True, null=True, verbose_name='Digaji Menurut')
+    digaji_menurut = models.CharField(max_length=255, blank=True, null=True, default='PP Nomor 05 Tahun 2024 (CPNS dan PNS), Perpres Nomor 11 Tahun 2024 (PPPK)', verbose_name='Digaji Menurut')
     tempat_ditetapkan = models.CharField(max_length=100, verbose_name='Tempat Ditetapkan')
     tanggal_ditetapkan = models.DateField(verbose_name='Tanggal Ditetapkan')
     created_at = models.DateTimeField(auto_now_add=True)
