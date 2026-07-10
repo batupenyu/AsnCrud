@@ -54,7 +54,7 @@
         vertical-align: top;
       }
       .info-table .label {
-        width: 150px;
+        width: 70px;
         white-space: nowrap;
       }
       .info-table .colon {
@@ -98,17 +98,17 @@
         <tr>
           <td class="label">Sifat</td>
           <td class="colon">:</td>
-          <td>{{ surat.sifat_surat }}</td>
+          <td>{{ surat.sifat }}</td>
         </tr>
         <tr>
           <td class="label">Lampiran</td>
           <td class="colon">:</td>
-          <td>{{ surat.lampiran_surat }}</td>
+          <td>{{ surat.lampiran }}</td>
         </tr>
         <tr>
           <td class="label">Perihal</td>
           <td class="colon">:</td>
-          <td>{{ surat.perihal_surat }}</td>
+          <td>{{ surat.perihal }}</td>
         </tr>
       </table>
     <br /><br />
@@ -133,10 +133,10 @@
         <td>{{ surat.penandatangan.nama }}</td>
       </tr>
       <tr>
-        <td class="label">Pangkat/Golongan</td>
+        <td class="label">Pangkat/Gol.</td>
         <td class="colon">:</td>
         <td>
-          {{ surat.penandatangan.pangkat }} / {{ surat.penandatangan.golongan }}
+          {{ surat.penandatangan.pangkat }},{{ surat.penandatangan.golongan }}
         </td>
       </tr>
       <tr>
@@ -164,7 +164,7 @@
         <td>{{ surat.pegawai.nip }}</td>
       </tr>
       <tr>
-        <td class="label">Pangkat/Gol.Ruang</td>
+        <td class="label">Pangkat/Gol.</td>
         <td class="colon">:</td>
         <td>{{ surat.pegawai.pangkat }},{{ surat.pegawai.golongan }}</td>
       </tr>
