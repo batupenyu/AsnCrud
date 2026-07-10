@@ -341,6 +341,12 @@ class SisaCuti(models.Model):
 
 
 class Siswa(models.Model):
+    STATUS_CHOICES = [
+        ('Aktif', 'Aktif'),
+        ('Lulus', 'Lulus'),
+        ('Keluar', 'Keluar'),
+        ('DO', 'DO'),
+    ]
     nama = models.CharField(max_length=100, null=True, blank=True)
     nis = models.CharField(max_length=20, null=True, blank=True)
     kelas = models.CharField(max_length=20)
@@ -349,6 +355,7 @@ class Siswa(models.Model):
     no_hp = models.CharField(max_length=15, blank=True, null=True)
     nama_orang_tua = models.CharField(max_length=100, blank=True, null=True, verbose_name='Nama Orang Tua')
     foto = models.ImageField(upload_to='siswa_fotos/', blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Aktif')
 
     def __str__(self):
         return self.nama

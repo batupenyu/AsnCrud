@@ -181,7 +181,7 @@ class NotaDinasForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['pegawai'].queryset = ASN.objects.all().order_by('nama')
         self.fields['penanda_tangan'].queryset = ASN.objects.all().order_by('nama')
-        self.fields['siswa'].queryset = Siswa.objects.all().order_by('nama')
+        self.fields['siswa'].queryset = Siswa.objects.all().order_by('kelas', 'jurusan', 'nama')
         self.fields['pegawai'].label_from_instance = lambda obj: obj.nama
         self.fields['penanda_tangan'].label_from_instance = lambda obj: obj.nama
         self.fields['siswa'].label_from_instance = lambda obj: f"{obj.nama} - {obj.kelas}"
@@ -655,7 +655,7 @@ class PesertaNotaDinasForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['pegawai'].queryset = ASN.objects.all().order_by('nama')
-        self.fields['siswa'].queryset = Siswa.objects.all().order_by('nama')
+        self.fields['siswa'].queryset = Siswa.objects.all().order_by('kelas', 'jurusan', 'nama')
         self.fields['pegawai'].label_from_instance = lambda obj: obj.nama
         self.fields['siswa'].label_from_instance = lambda obj: f'{obj.nama} - {obj.kelas}'
         self.fields['pegawai'].empty_label = '-- Pilih Pegawai --'

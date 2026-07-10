@@ -91,6 +91,7 @@ urlpatterns = [
     path('siswa/export/excel/', views.export_siswa_excel, name='export_siswa_excel'),
     path('siswa/import/excel/', views.import_siswa_excel, name='import_siswa_excel'),
     path('siswa/delete_all/', views.siswa_delete_all, name='siswa_delete_all'),
+    path('siswa/promosi-kelas/', views.siswa_kelas_promosi, name='siswa_kelas_promosi'),
 
      # Siswa Keluar routes
      path('siswa-keluar/', views.siswa_keluar_list, name='siswa_keluar_list'),

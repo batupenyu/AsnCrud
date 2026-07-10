@@ -42,6 +42,9 @@
             <a href="{% url 'siswa_create' %}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Tambah Siswa
             </a>
+            <a href="{% url 'siswa_kelas_promosi' %}" class="btn btn-warning">
+                <i class="fas fa-arrow-up"></i> Promosi Kelas
+            </a>
             <form id="deleteAllSiswaForm" action="{% url 'siswa_delete_all' %}" method="post" class="d-inline">
                 {% csrf_token %}
                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteAllModal">
@@ -158,23 +161,43 @@
     </div>
 
     {% if page_obj.has_other_pages %}
+    {% load pagination_tags %}
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">
             {% if page_obj.has_previous %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Previous</a>
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&laquo;</span>
                 </li>
             {% endif %}
 
-            {% for num in page_obj.paginator.page_range %}
-                <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-                    <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}">{{ num }}</a>
-                </li>
+            {% get_compact_page_range as compact_pages %}
+            {% for item in compact_pages %}
+                {% if item.ellipsis %}
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                {% else %}
+                    <li class="page-item {% if page_obj.number == item.num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ item.num }}{% if query %}&q={{ query }}{% endif %}">{{ item.num }}</a>
+                    </li>
+                {% endif %}
             {% endfor %}
 
             {% if page_obj.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Next</a>
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&raquo;</span>
                 </li>
             {% endif %}
         </ul>

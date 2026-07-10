@@ -87,17 +87,35 @@
 
                 <div class="mb-3">
                     <label class="form-label">Siswa</label>
-                    <div class="row">
-                    {% for choice in form.siswa %}
+                    <div class="row mb-2">
                         <div class="col-md-4">
+                            <select id="filter-kelas" class="form-control">
+                                <option value="">-- Semua Kelas --</option>
+                                {% for k in kelas_list %}
+                                <option value="{{ k }}">{{ k }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select id="filter-jurusan" class="form-control">
+                                <option value="">-- Semua Jurusan --</option>
+                                {% for j in jurusan_list %}
+                                <option value="{{ j }}">{{ j }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row" id="siswa-list">
+                        {% for siswa in form.siswa.field.queryset %}
+                        <div class="col-md-4 siswa-item" data-kelas="{{ siswa.kelas|default:'' }}" data-jurusan="{{ siswa.jurusan|default:'' }}">
                             <div class="form-check">
-                                {{ choice.tag }}
-                                <label class="form-check-label" for="{{ choice.id_for_label }}">
-                                    {{ choice.choice_label }}
+                                <input class="form-check-input" type="checkbox" name="{{ form.siswa.html_name }}" value="{{ siswa.pk }}" id="id_{{ form.siswa.html_name }}_{{ siswa.pk }}" {% if siswa.pk|stringformat:"s" in form.siswa.value %}checked{% endif %}>
+                                <label class="form-check-label" for="id_{{ form.siswa.html_name }}_{{ siswa.pk }}">
+                                    {{ siswa.nama }} - {{ siswa.kelas }}{% if siswa.jurusan %} - {{ siswa.jurusan }}{% endif %}
                                 </label>
                             </div>
                         </div>
-                    {% endfor %}
+                        {% endfor %}
                     </div>
                 </div>
 
@@ -182,4 +200,36 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterKelas = document.getElementById('filter-kelas');
+    const filterJurusan = document.getElementById('filter-jurusan');
+    const siswaItems = document.querySelectorAll('.siswa-item');
+
+    function filterSiswa() {
+        const selectedKelas = filterKelas.value;
+        const selectedJurusan = filterJurusan.value;
+
+        siswaItems.forEach(function(item) {
+            const itemKelas = item.getAttribute('data-kelas') || '';
+            const itemJurusan = item.getAttribute('data-jurusan') || '';
+
+            const matchKelas = selectedKelas === '' || itemKelas === selectedKelas;
+            const matchJurusan = selectedJurusan === '' || itemJurusan === selectedJurusan;
+
+            if (matchKelas && matchJurusan) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    if (filterKelas && filterJurusan) {
+        filterKelas.addEventListener('change', filterSiswa);
+        filterJurusan.addEventListener('change', filterSiswa);
+    }
+});
+</script>
 {% endblock %}

@@ -715,8 +715,13 @@ def nota_dinas_create(request):
     else:
         form = NotaDinasForm()
         formset = PesertaNotaDinasFormSet()
+    
+    kelas_list = Siswa.objects.exclude(kelas__isnull=True).exclude(kelas__exact='').values_list('kelas', flat=True).distinct().order_by('kelas')
+    jurusan_list = Siswa.objects.exclude(jurusan__isnull=True).exclude(jurusan__exact='').values_list('jurusan', flat=True).distinct().order_by('jurusan')
+    
     return render(request, 'asn_app/nota_dinas_form.html', {
-        'form': form, 'formset': formset, 'title': 'Tambah Nota Dinas'
+        'form': form, 'formset': formset, 'title': 'Tambah Nota Dinas',
+        'kelas_list': kelas_list, 'jurusan_list': jurusan_list
     })
 
 def nota_dinas_update(request, pk):
@@ -731,8 +736,13 @@ def nota_dinas_update(request, pk):
     else:
         form = NotaDinasForm(instance=nota_dinas)
         formset = PesertaNotaDinasFormSet(instance=nota_dinas)
+    
+    kelas_list = Siswa.objects.exclude(kelas__isnull=True).exclude(kelas__exact='').values_list('kelas', flat=True).distinct().order_by('kelas')
+    jurusan_list = Siswa.objects.exclude(jurusan__isnull=True).exclude(jurusan__exact='').values_list('jurusan', flat=True).distinct().order_by('jurusan')
+    
     return render(request, 'asn_app/nota_dinas_form.html', {
-        'form': form, 'formset': formset, 'title': 'Edit Nota Dinas'
+        'form': form, 'formset': formset, 'title': 'Edit Nota Dinas',
+        'kelas_list': kelas_list, 'jurusan_list': jurusan_list
     })
 
 def nota_dinas_delete(request, pk):
@@ -1463,6 +1473,50 @@ def siswa_delete_all(request):
         messages.success(request, f'{count} data Siswa berhasil dihapus.')
         return redirect('siswa_list')
     return redirect('siswa_list') # Redirect to list if GET request
+
+def siswa_kelas_promosi(request):
+    if request.method == 'POST':
+        promosi_type = request.POST.get('promosi_type')
+        if promosi_type == 'ix_to_x':
+            qs = Siswa.objects.filter(
+                Q(kelas__iexact='IX') | Q(kelas__istartswith='IX ')
+            )
+            updated_count = 0
+            for siswa in qs:
+                siswa.kelas = siswa.kelas.replace('IX', 'X', 1)
+                siswa.status = 'Aktif'
+                siswa.save()
+                updated_count += 1
+            messages.success(request, f'{updated_count} siswa berhasil dipromosikan dari Kelas IX ke Kelas X.')
+        elif promosi_type == 'xii_to_lulus':
+            qs = Siswa.objects.filter(
+                Q(kelas__iexact='XII') | Q(kelas__istartswith='XII ')
+            )
+            updated_count = 0
+            for siswa in qs:
+                siswa.status = 'Lulus'
+                siswa.save()
+                updated_count += 1
+            messages.success(request, f'{updated_count} siswa Kelas XII berhasil ditandai sebagai Lulus.')
+        elif promosi_type == 'x_to_xii':
+            qs = Siswa.objects.filter(
+                Q(kelas__iexact='X') | Q(kelas__istartswith='X ')
+            ).exclude(
+                Q(kelas__istartswith='XI') | Q(kelas__istartswith='XII')
+            )
+            updated_count = 0
+            for siswa in qs:
+                siswa.kelas = siswa.kelas.replace('X', 'XII', 1)
+                siswa.status = 'Aktif'
+                siswa.save()
+                updated_count += 1
+            messages.success(request, f'{updated_count} siswa berhasil dipromosikan dari Kelas X ke Kelas XII.')
+        return redirect('siswa_list')
+    
+    context = {
+        'title': 'Promosi Kelas Siswa',
+    }
+    return render(request, 'asn_app/siswa_kelas_promosi.html', context)
 
 # Surat Keterangan Views
 def surat_keterangan_list(request):
