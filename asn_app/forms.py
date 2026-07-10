@@ -376,7 +376,7 @@ class SuratKP4Form(forms.ModelForm):
             'penandatangan': forms.Select(attrs={'class': 'form-control'}),
             'status_kepegawaian': forms.TextInput(attrs={'class': 'form-control'}),
             'masa_kerja_golongan': forms.TextInput(attrs={'class': 'form-control'}),
-            'digaji_menurut': forms.TextInput(attrs={'class': 'form-control'}),
+            'digaji_menurut': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'tempat_ditetapkan': forms.TextInput(attrs={'class': 'form-control'}),
             'tanggal_ditetapkan': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         }
