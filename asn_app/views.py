@@ -8,8 +8,8 @@ from django.utils.timezone import now
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.db.models import Q, Count
-from .models import ASN, SuratPerintahTugas, KopSurat, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum, SuratPanggilanSiswa, SiswaKeluar, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4
-from .forms import ASNForm, SPTForm, KopSuratForm, SuratSantunanKorpriForm, NotaDinasForm, HariLiburForm, SuratCutiForm, SisaCutiForm, SiswaForm, SuratKeteranganForm, SuratResmiForm, SPTJMForm, SPMTForm, FotoKegiatanForm, SuratUmumForm, SuratPanggilanSiswaForm, SiswaKeluarForm, SuratRekomendasiStudiLanjutForm, SuratKP4Form, AnggotaKeluargaKP4FormSet
+from .models import ASN, SuratPerintahTugas, KopSurat, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum, SuratPanggilanSiswa, SiswaKeluar, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4, SuratUndanganSiswa
+from .forms import ASNForm, SPTForm, KopSuratForm, SuratSantunanKorpriForm, NotaDinasForm, HariLiburForm, SuratCutiForm, SisaCutiForm, SiswaForm, SuratKeteranganForm, SuratResmiForm, SPTJMForm, SPMTForm, FotoKegiatanForm, SuratUmumForm, SuratPanggilanSiswaForm, SiswaKeluarForm, SuratRekomendasiStudiLanjutForm, SuratKP4Form, AnggotaKeluargaKP4FormSet, SuratUndanganSiswaForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy, reverse
 import base64
@@ -2423,5 +2423,95 @@ def surat_panggilan_siswa_export_pdf(request, pk):
 
     response = HttpResponse(result, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename=surat_panggilan_{surat.siswa.nama}_{surat.nomor_surat}.pdf'
+
+    return response
+
+
+def surat_undangan_siswa_list(request):
+    """Menampilkan daftar semua Surat Undangan Siswa"""
+    surat_list = SuratUndanganSiswa.objects.all().order_by('-created_at')
+    return render(request, 'asn_app/surat_undangan_siswa_list.html', {'surat_list': surat_list})
+
+def surat_undangan_siswa_detail(request, pk):
+    """Menampilkan detail Surat Undangan Siswa"""
+    surat = get_object_or_404(SuratUndanganSiswa, pk=pk)
+    return render(request, 'asn_app/surat_undangan_siswa_detail.html', {'surat': surat})
+
+def surat_undangan_siswa_create(request):
+    """Membuat Surat Undangan Siswa baru"""
+    if request.method == 'POST':
+        form = SuratUndanganSiswaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('surat_undangan_siswa_list')
+    else:
+        form = SuratUndanganSiswaForm()
+    return render(request, 'asn_app/surat_undangan_siswa_form.html', {'form': form, 'title': 'Tambah Surat Undangan Siswa'})
+
+def surat_undangan_siswa_update(request, pk):
+    """Mengupdate Surat Undangan Siswa"""
+    surat = get_object_or_404(SuratUndanganSiswa, pk=pk)
+    if request.method == 'POST':
+        form = SuratUndanganSiswaForm(request.POST, instance=surat)
+        if form.is_valid():
+            form.save()
+            return redirect('surat_undangan_siswa_detail', pk=surat.pk)
+    else:
+        form = SuratUndanganSiswaForm(instance=surat)
+    return render(request, 'asn_app/surat_undangan_siswa_form.html', {'form': form, 'title': 'Edit Surat Undangan Siswa'})
+
+def surat_undangan_siswa_delete(request, pk):
+    """Menghapus Surat Undangan Siswa"""
+    surat = get_object_or_404(SuratUndanganSiswa, pk=pk)
+    if request.method == 'POST':
+        surat.delete()
+        return redirect('surat_undangan_siswa_list')
+    return render(request, 'asn_app/surat_undangan_siswa_confirm_delete.html', {'surat': surat})
+
+def surat_undangan_siswa_export_pdf(request, pk):
+    """Export Surat Undangan Siswa ke PDF"""
+    import os
+    import base64
+    from weasyprint import HTML, CSS
+
+    surat = get_object_or_404(SuratUndanganSiswa, pk=pk)
+
+    kop_surat_base64 = None
+    if surat.kop_surat and surat.kop_surat.gambar:
+        if os.path.exists(surat.kop_surat.gambar.path):
+            try:
+                with open(surat.kop_surat.gambar.path, 'rb') as image_file:
+                    image_data = image_file.read()
+                    image_format = surat.kop_surat.gambar.name.split('.')[-1].lower()
+                    if image_format == 'jpg':
+                        image_format = 'jpeg'
+                    kop_surat_base64 = f"data:image/{image_format};base64,{base64.b64encode(image_data).decode('utf-8')}"
+            except Exception as e:
+                logging.error(f"Error encoding image to base64: {e}")
+
+    html_string = render_to_string('asn_app/surat_undangan_siswa_pdf_template.html', {
+        'surat': surat,
+        'kop_surat_base64': kop_surat_base64,
+        'request': request,
+    })
+
+    css_string = """
+        body { font-family: 'Times New Roman', serif; font-size: 12pt; }
+        .center { text-align: center; }
+        .left { text-align: left; }
+        .justify { text-align: justify; }
+        .signature { padding-left: 250pt; }
+    """
+
+    try:
+        html = HTML(string=html_string, base_url=request.build_absolute_uri())
+        result = html.write_pdf(stylesheets=[CSS(string=css_string)])
+    except Exception as e:
+        logging.error(f"Error writing PDF: {e}")
+        return HttpResponse(f"Error writing PDF: {e}", status=500)
+
+    response = HttpResponse(result, content_type='application/pdf')
+    siswa_nama = surat.siswa.nama if surat.siswa else ''
+    response['Content-Disposition'] = f'attachment; filename=surat_undangan_{siswa_nama}_{surat.nomor_surat}.pdf'
 
     return response

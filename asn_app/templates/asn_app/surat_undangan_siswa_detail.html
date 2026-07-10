@@ -1,0 +1,110 @@
+{% extends 'asn_app/base.html' %}
+{% load i18n %}
+{% load indonesian_date_tags %}
+
+{% block title %}Detail Surat Undangan Siswa - {{ surat.nomor_surat }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-file-alt"></i> Detail Surat Undangan Siswa
+                        </h4>
+                        <div>
+                            <a href="{% url 'surat_undangan_siswa_export_pdf' surat.pk %}" class="btn btn-success btn-sm" target="_blank">
+                                <i class="fas fa-print"></i> Cetak
+                            </a>
+                            <a href="{% url 'surat_undangan_siswa_update' surat.pk %}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="{% url 'surat_undangan_siswa_list' %}" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-arrow-left"></i> Kembali
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Nomor Surat:</strong><br>
+                                    {{ surat.nomor_surat }}
+                                </div>
+                                {% if surat.kop_surat %}
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Kop Surat:</strong><br>
+                                    {{ surat.kop_surat.nama }}
+                                </div>
+                                {% endif %}
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Tanggal Ditetapkan:</strong><br>
+                                    {{ surat.tanggal_ditetapkan|indonesian_date:"%d %B %Y" }}
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Tempat Ditetapkan:</strong><br>
+                                    {{ surat.tempat_ditetapkan }}
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Siswa:</strong><br>
+                                    {% if surat.siswa %}{{ surat.siswa.nama }}{% else %}-{% endif %}
+                                </div>
+                                {% if surat.siswa and surat.siswa.nis %}
+                                <div class="col-sm-6 mb-3">
+                                    <strong>NIS:</strong><br>
+                                    {{ surat.siswa.nis }}
+                                </div>
+                                {% endif %}
+                                {% if surat.orang_tua %}
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Orang Tua:</strong><br>
+                                    {{ surat.orang_tua }}
+                                </div>
+                                {% endif %}
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Perihal:</strong><br>
+                                    {{ surat.perihal }}
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Tanggal Undangan:</strong><br>
+                                    {{ surat.tanggal|indonesian_date:"%d %B %Y" }}
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Waktu Undangan:</strong><br>
+                                    {{ surat.waktu }}
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Tempat:</strong><br>
+                                    {{ surat.tempat }}
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Kepala Sekolah:</strong><br>
+                                    {% if surat.kepala_sekolah %}
+                                        {{ surat.kepala_sekolah.nama }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <strong>Isi/Maksud Undangan:</strong><br>
+                                    {{ surat.isi_undangan|linebreaksbr }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    <small>
+                        Dibuat: {{ surat.created_at|indonesian_datetime:"%d %B %Y %H:%M" }} |
+                        Diupdate: {{ surat.updated_at|indonesian_datetime:"%d %B %Y %H:%M" }}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

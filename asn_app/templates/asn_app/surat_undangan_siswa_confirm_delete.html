@@ -1,0 +1,26 @@
+{% extends 'asn_app/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Konfirmasi Hapus</h4>
+                </div>
+                <div class="card-body">
+                    <p>Apakah Anda yakin ingin menghapus Surat Undangan Siswa <strong>{{ surat.nomor_surat }}</strong>{% if surat.siswa %} untuk <strong>{{ surat.siswa.nama }}</strong>{% endif %}?</p>
+                    <p class="text-muted">Tindakan ini tidak dapat dibatalkan.</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'surat_undangan_siswa_detail' surat.pk %}" class="btn btn-secondary">Batal</a>
+                            <button type="submit" class="btn btn-danger">Hapus</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

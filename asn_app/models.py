@@ -600,3 +600,32 @@ class SuratPanggilanSiswa(models.Model):
 
     def get_absolute_url(self):
         return reverse('surat_panggilan_siswa_detail', kwargs={'pk': self.pk})
+
+
+class SuratUndanganSiswa(models.Model):
+    """Model untuk Surat Undangan Siswa (hanya ditandatangani Kepala Sekolah)"""
+
+    kop_surat = models.ForeignKey(KopSurat, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Kop Surat')
+    nomor_surat = models.CharField(max_length=100, verbose_name='Nomor Surat')
+    siswa = models.ForeignKey(Siswa, on_delete=models.CASCADE, null=True, blank=True, related_name='surat_undangan', verbose_name='Siswa')
+    orang_tua = models.CharField(max_length=100, blank=True, null=True, verbose_name='Nama Orang Tua')
+    perihal = models.CharField(max_length=200, default='Undangan Orang Tua Siswa', verbose_name='Perihal')
+    isi_undangan = models.TextField(verbose_name='Isi/Maksud Undangan')
+    tempat = models.CharField(max_length=100, verbose_name='Tempat')
+    tanggal = models.DateField(verbose_name='Tanggal Undangan')
+    waktu = models.TimeField(verbose_name='Waktu Undangan')
+    kepala_sekolah = models.ForeignKey(ASN, on_delete=models.SET_NULL, null=True, blank=True, related_name='kepala_sekolah_undangan', verbose_name='Kepala Sekolah')
+    tempat_ditetapkan = models.CharField(max_length=100, verbose_name='Tempat Ditetapkan')
+    tanggal_ditetapkan = models.DateField(verbose_name='Tanggal Ditetapkan')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Surat Undangan Siswa"
+        ordering = ['-tanggal_ditetapkan']
+
+    def __str__(self):
+        return f"Surat Undangan - {self.siswa.nama} - {self.nomor_surat}"
+
+    def get_absolute_url(self):
+        return reverse('surat_undangan_siswa_detail', kwargs={'pk': self.pk})
