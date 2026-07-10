@@ -1,6 +1,6 @@
 # asn_app/admin.py
 from django.contrib import admin
-from .models import ASN, KopSurat, SuratPerintahTugas, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi
+from .models import ASN, KopSurat, SuratPerintahTugas, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4
 
 
 @admin.register(ASN)
@@ -69,6 +69,25 @@ class SuratKeteranganAdmin(admin.ModelAdmin):
     list_filter = ('tanggal_ditetapkan',)
     search_fields = ('nomor_surat', 'pegawai__nama', 'siswa__nama')
     raw_id_fields = ('penandatangan', 'pegawai', 'siswa')
+
+@admin.register(SuratRekomendasiStudiLanjut)
+class SuratRekomendasiStudiLanjutAdmin(admin.ModelAdmin):
+    list_display = ('nomor_surat', 'pegawai', 'nama_universitas', 'program_studi', 'tanggal_ditetapkan', 'created_at')
+    list_filter = ('tanggal_ditetapkan',)
+    search_fields = ('nomor_surat', 'pegawai__nama', 'nama_universitas', 'program_studi')
+    raw_id_fields = ('penandatangan', 'pegawai', 'kop_surat')
+
+@admin.register(SuratKP4)
+class SuratKP4Admin(admin.ModelAdmin):
+    list_display = ('pegawai', 'penandatangan', 'tanggal_ditetapkan', 'created_at')
+    list_filter = ('tanggal_ditetapkan',)
+    search_fields = ('pegawai__nama', 'penandatangan__nama')
+    raw_id_fields = ('pegawai', 'penandatangan', 'kop_surat')
+
+@admin.register(AnggotaKeluargaKP4)
+class AnggotaKeluargaKP4Admin(admin.ModelAdmin):
+    list_display = ('nama', 'surat', 'pekerjaan', 'keterangan', 'mendapat_tunjangan')
+    search_fields = ('nama', 'surat__pegawai__nama')
 
 @admin.register(SuratResmi)
 class SuratResmiAdmin(admin.ModelAdmin):

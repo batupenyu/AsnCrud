@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>KP4 - Surat Keterangan Tunjangan Keluarga</title>
+    <style>
+        @page { size: A4; margin: 1.5cm; }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #000;
+            background-color: #fff;
+            margin: 0;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .text-right { text-align: right; font-weight: bold; margin-bottom: 20px; }
+        .header { text-align: center; font-weight: bold; text-transform: uppercase; margin-bottom: 30px; }
+        .header h2 { font-size: 16px; margin: 0 0 5px 0; text-decoration: underline; }
+        .header h1 { font-size: 16px; margin: 0; }
+        .data-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+        .data-table td { vertical-align: top; padding: 3px 0; }
+        .data-table td.num { width: 4%; }
+        .data-table td.label { width: 32%; }
+        .data-table td.colon { width: 3%; text-align: center; }
+        .data-table td.value { width: 61%; }
+        .statement { text-align: justify; margin-bottom: 15px; }
+        .family-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+        .family-table th, .family-table td { border: 1.5px solid #000; padding: 6px; font-size: 13px; }
+        .family-table th { background-color: #e6e6e6; text-align: center; font-weight: bold; }
+        .text-center { text-align: center; }
+        .footer-table { width: 100%; margin-top: 30px; border-collapse: collapse; }
+        .footer-table td { width: 50%; vertical-align: top; }
+        .signature-space { height: 90px; }
+        .signature-name { font-weight: bold; text-decoration: underline; }
+    </style>
+</head>
+<body>
+{% load indonesian_date_tags %}
+<div class="container">
+    <div class="text-right">KP4</div>
+
+    <div class="header">
+        <h2>SURAT KETERANGAN</h2>
+        <h1>UNTUK MENDAPATKAN PEMBAYARAN TUNJANGAN KELUARGA</h1>
+    </div>
+
+    <table class="data-table">
+        <tr>
+            <td class="num">1.</td>
+            <td class="label">Nama Lengkap</td>
+            <td class="colon">:</td>
+            <td class="value"><strong>{{ surat.pegawai.nama|default:"" }}</strong></td>
+        </tr>
+        <tr>
+            <td class="num">2.</td>
+            <td class="label">NIP/NRK</td>
+            <td class="colon">:</td>
+            <td class="value">{{ surat.pegawai.nip|default:"" }}</td>
+        </tr>
+        <tr>
+            <td class="num">3.</td>
+            <td class="label">Tempat / Tanggal Lahir</td>
+            <td class="colon">:</td>
+            <td class="value">{{ surat.pegawai.tempat_lahir|default:"" }}{% if surat.pegawai.tanggal_lahir %}/{{ surat.pegawai.tanggal_lahir|indonesian_date:"%d %B %Y" }}{% endif %}</td>
+        </tr>
+        <tr>
+            <td class="num">4.</td>
+            <td class="label">Jenis Kelamin</td>
+            <td class="colon">:</td>
+            <td class="value">{% if surat.pegawai %}{{ surat.pegawai.get_jenis_kelamin_display }}{% endif %}</td>
+        </tr>
+        <tr>
+            <td class="num">5.</td>
+            <td class="label">Agama</td>
+            <td class="colon">:</td>
+            <td class="value">{{ surat.pegawai.agama|default:"" }}</td>
+        </tr>
+        <tr>
+            <td class="num">6.</td>
+            <td class="label">Status Kepegawaian</td>
+            <td class="colon">:</td>
+            <td class="value">{{ surat.status_kepegawaian|default:"" }}</td>
+        </tr>
+        <tr>
+            <td class="num">7.</td>
+            <td class="label">Jabatan Struktural/Fungsional</td>
+            <td class="colon">:</td>
+            <td class="value">{{ surat.pegawai.jabatan|default:"" }}</td>
+        </tr>
+        <tr>
+            <td class="num">8.</td>
+            <td class="label">Pangkat/Golongan</td>
+            <td class="colon">:</td>
+            <td class="value">{% if surat.pegawai.pangkat %}{{ surat.pegawai.pangkat }}{% if surat.pegawai.golongan %} / {{ surat.pegawai.golongan }}{% endif %}{% endif %}</td>
+        </tr>
+        <tr>
+            <td class="num">9.</td>
+            <td class="label">Pada Unit Kerja</td>
+            <td class="colon">:</td>
+            <td class="value">{{ surat.pegawai.unit_kerja|default:"" }}</td>
+        </tr>
+        <tr>
+            <td class="num">10.</td>
+            <td class="label">Masa Kerja Golongan</td>
+            <td class="colon">:</td>
+            <td class="value">{{ surat.masa_kerja_golongan|default:"" }}</td>
+        </tr>
+        <tr>
+            <td class="num">11.</td>
+            <td class="label">Digaji menurut</td>
+            <td class="colon">:</td>
+            <td class="value">{{ surat.digaji_menurut|default:"" }}</td>
+        </tr>
+        <tr>
+            <td class="num">12.</td>
+            <td class="label">Alamat / Tempat Tinggal</td>
+            <td class="colon">:</td>
+            <td class="value">{{ surat.pegawai.alamat|default:"" }}</td>
+        </tr>
+    </table>
+
+    <div class="statement">
+        Menerangkan dengan sesungguhnya bahwa saya mempunyai susunan keluarga sebagai berikut :
+    </div>
+
+    <table class="family-table">
+        <thead>
+            <tr>
+                <th rowspan="2" style="width: 5%;">No.</th>
+                <th rowspan="2" style="width: 25%;">Nama Istri / Suami<br>Tanggungan</th>
+                <th colspan="2" style="width: 30%;">Tanggal</th>
+                <th rowspan="2" style="width: 15%;">Pekerjaan</th>
+                <th rowspan="2" style="width: 15%;">Keterangan</th>
+                <th rowspan="2" style="width: 10%;">Mendapat<br>tunjangan</th>
+            </tr>
+            <tr>
+                <th>Kelahiran</th>
+                <th>Perkawinan</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for anggota in surat.anggota_keluarga.all %}
+            <tr>
+                <td class="text-center">{{ forloop.counter }}.</td>
+                <td>{{ anggota.nama }}</td>
+                <td class="text-center">{{ anggota.tanggal_kelahiran|default:"" }}</td>
+                <td class="text-center">{{ anggota.tanggal_perkawinan|default:"" }}</td>
+                <td class="text-center">{{ anggota.pekerjaan|default:"" }}</td>
+                <td class="text-center">{{ anggota.keterangan|default:"" }}</td>
+                <td class="text-center">{% if anggota.mendapat_tunjangan %}&check;{% endif %}</td>
+            </tr>
+            {% empty %}
+            <tr><td class="text-center" colspan="7">-</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="statement" style="font-size: 13px;">
+        Keterangan ini saya buat dengan sesungguhnya dan apabila keterangan ini ternyata tidak benar (palsu), saya bersedia dituntut dimuka Pengadilan berdasarkan undang-undang yang berlaku, dan bersedia mengembalikan semua uang tunjangan anak yang telah saya terima yang seharusnya bukan menjadi hak saya.
+    </div>
+
+    <table class="footer-table">
+        <tr>
+            <td>
+                Mengetahui,<br>
+                {% if surat.penandatangan %}{{ surat.penandatangan.jabatan }}{% else %}Kepala{% endif %}
+                <div class="signature-space"></div>
+                <div class="signature-name">{% if surat.penandatangan %}{{ surat.penandatangan.nama }}{% endif %}</div>
+                {% if surat.penandatangan %}NIP. {{ surat.penandatangan.nip }}{% endif %}
+            </td>
+            <td>
+                {{ surat.tempat_ditetapkan }}, {{ surat.tanggal_ditetapkan|indonesian_date:"%d %B %Y" }}<br>
+                Yang menerangkan,
+                <div class="signature-space"></div>
+                <div class="signature-name">{% if surat.pegawai %}{{ surat.pegawai.nama }}{% endif %}</div>
+                {% if surat.pegawai %}NIP. {{ surat.pegawai.nip }}{% endif %}
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

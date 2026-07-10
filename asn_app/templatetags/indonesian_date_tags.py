@@ -110,3 +110,19 @@ def dict_get(dictionary, key):
     if dictionary and key in dictionary:
         return dictionary[key]
     return ""
+
+import re
+
+@register.filter
+def strip_list_prefix(value):
+    """Hapus awalan penomoran (mis. '1. ', '2) ') pada setiap baris."""
+    if not value:
+        return value
+    return re.sub(r'^\s*\d+[\.\)]\s*', '', str(value))
+
+@register.filter
+def strip(value):
+    """Hapus spasi di awal dan akhir string."""
+    if value is None:
+        return value
+    return str(value).strip()

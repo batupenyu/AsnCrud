@@ -1,10 +1,11 @@
 # asn_app/forms.py
 from django import forms
+from django.forms import inlineformset_factory
 from .models import (
     ASN, SuratPerintahTugas, KopSurat, SuratSantunanKorpri,
     NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa,
     SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum,
-    SuratPanggilanSiswa, SiswaKeluar
+    SuratPanggilanSiswa, SiswaKeluar, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4
 )
 
 
@@ -338,6 +339,76 @@ class SuratKeteranganForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+
+
+class SuratRekomendasiStudiLanjutForm(forms.ModelForm):
+    class Meta:
+        model = SuratRekomendasiStudiLanjut
+        fields = '__all__'
+        widgets = {
+            'nomor_surat': forms.TextInput(attrs={'class': 'form-control'}),
+            'kop_surat': forms.Select(attrs={'class': 'form-control'}),
+            'penandatangan': forms.Select(attrs={'class': 'form-control'}),
+            'instansi': forms.TextInput(attrs={'class': 'form-control'}),
+            'pegawai': forms.Select(attrs={'class': 'form-control'}),
+            'nama_universitas': forms.TextInput(attrs={'class': 'form-control'}),
+            'program_studi': forms.TextInput(attrs={'class': 'form-control'}),
+            'pertimbangan': forms.Textarea(attrs={'rows': 6, 'class': 'form-control'}),
+            'tempat_ditetapkan': forms.TextInput(attrs={'class': 'form-control'}),
+            'tanggal_ditetapkan': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['penandatangan'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['penandatangan'].label_from_instance = lambda obj: obj.nama
+        self.fields['pegawai'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['pegawai'].label_from_instance = lambda obj: obj.nama
+
+
+class SuratKP4Form(forms.ModelForm):
+    class Meta:
+        model = SuratKP4
+        fields = ['kop_surat', 'pegawai', 'penandatangan', 'status_kepegawaian', 'masa_kerja_golongan', 'digaji_menurut', 'tempat_ditetapkan', 'tanggal_ditetapkan']
+        widgets = {
+            'kop_surat': forms.Select(attrs={'class': 'form-control'}),
+            'pegawai': forms.Select(attrs={'class': 'form-control'}),
+            'penandatangan': forms.Select(attrs={'class': 'form-control'}),
+            'status_kepegawaian': forms.TextInput(attrs={'class': 'form-control'}),
+            'masa_kerja_golongan': forms.TextInput(attrs={'class': 'form-control'}),
+            'digaji_menurut': forms.TextInput(attrs={'class': 'form-control'}),
+            'tempat_ditetapkan': forms.TextInput(attrs={'class': 'form-control'}),
+            'tanggal_ditetapkan': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['pegawai'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['pegawai'].label_from_instance = lambda obj: obj.nama
+        self.fields['penandatangan'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['penandatangan'].label_from_instance = lambda obj: obj.nama
+
+
+class AnggotaKeluargaKP4Form(forms.ModelForm):
+    class Meta:
+        model = AnggotaKeluargaKP4
+        fields = ['nama', 'tanggal_kelahiran', 'tanggal_perkawinan', 'pekerjaan', 'keterangan', 'mendapat_tunjangan']
+        widgets = {
+            'nama': forms.TextInput(attrs={'class': 'form-control'}),
+            'tanggal_kelahiran': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'cth: 23 - 09 - 2000'}),
+            'tanggal_perkawinan': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'cth: 05 - 10 - 2025 / Belum Kawin'}),
+            'pekerjaan': forms.TextInput(attrs={'class': 'form-control'}),
+            'keterangan': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'cth: Istri / anak'}),
+            'mendapat_tunjangan': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+
+AnggotaKeluargaKP4FormSet = inlineformset_factory(
+    SuratKP4, AnggotaKeluargaKP4,
+    form=AnggotaKeluargaKP4Form,
+    extra=1,
+    can_delete=True
+)
 
 
 class SuratResmiForm(forms.ModelForm):

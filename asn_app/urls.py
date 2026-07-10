@@ -103,6 +103,22 @@ urlpatterns = [
     path('surat_keterangan/<int:pk>/delete/', views.surat_keterangan_delete, name='surat_keterangan_delete'),
     path('surat_keterangan/<int:pk>/pdf/', views.surat_keterangan_export_pdf, name='surat_keterangan_export_pdf'),
 
+    # Surat Rekomendasi Studi Lanjut routes
+    path('surat_rekomendasi/', views.surat_rekomendasi_list, name='surat_rekomendasi_list'),
+    path('surat_rekomendasi/create/', views.surat_rekomendasi_create, name='surat_rekomendasi_create'),
+    path('surat_rekomendasi/<int:pk>/', views.surat_rekomendasi_detail, name='surat_rekomendasi_detail'),
+    path('surat_rekomendasi/<int:pk>/update/', views.surat_rekomendasi_update, name='surat_rekomendasi_update'),
+    path('surat_rekomendasi/<int:pk>/delete/', views.surat_rekomendasi_delete, name='surat_rekomendasi_delete'),
+    path('surat_rekomendasi/<int:pk>/pdf/', views.surat_rekomendasi_export_pdf, name='surat_rekomendasi_export_pdf'),
+
+    # Surat KP4 routes
+    path('surat_kp4/', views.surat_kp4_list, name='surat_kp4_list'),
+    path('surat_kp4/create/', views.surat_kp4_create, name='surat_kp4_create'),
+    path('surat_kp4/<int:pk>/', views.surat_kp4_detail, name='surat_kp4_detail'),
+    path('surat_kp4/<int:pk>/update/', views.surat_kp4_update, name='surat_kp4_update'),
+    path('surat_kp4/<int:pk>/delete/', views.surat_kp4_delete, name='surat_kp4_delete'),
+    path('surat_kp4/<int:pk>/pdf/', views.surat_kp4_export_pdf, name='surat_kp4_export_pdf'),
+
     # Surat Resmi routes
     path('surat_resmi/', views.SuratResmiListView.as_view(), name='surat_resmi_list'),
     path('surat_resmi/create/', views.SuratResmiCreateView.as_view(), name='surat_resmi_create'),

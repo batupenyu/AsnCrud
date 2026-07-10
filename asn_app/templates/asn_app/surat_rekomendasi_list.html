@@ -1,0 +1,74 @@
+{% extends 'asn_app/base.html' %}
+{% load i18n %}
+{% load indonesian_date_tags %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Daftar Surat Rekomendasi Studi Lanjut</h2>
+                <a href="{% url 'surat_rekomendasi_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Tambah Surat Rekomendasi Baru
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    {% if page_obj %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Nomor Surat</th>
+                                        <th>Pegawai</th>
+                                        <th>Universitas/Prodi</th>
+                                        <th>Tanggal Ditetapkan</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for surat in page_obj %}
+                                    <tr>
+                                        <td>{{ surat.nomor_surat }}</td>
+                                        <td>
+                                            {% if surat.pegawai %}{{ surat.pegawai.nama }}{% else %}-{% endif %}
+                                        </td>
+                                        <td>{{ surat.nama_universitas }} / {{ surat.program_studi }}</td>
+                                        <td>{{ surat.tanggal_ditetapkan|indonesian_date:"%d %b %Y" }}</td>
+                                        <td>
+                                            {% if surat.pk %}
+                                                <a href="{% url 'surat_rekomendasi_detail' surat.pk %}" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-eye"></i> Detail
+                                                </a>
+                                                <a href="{% url 'surat_rekomendasi_update' surat.pk %}" class="btn btn-sm btn-warning">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </a>
+                                                <a href="{% url 'surat_rekomendasi_delete' surat.pk %}" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i> Hapus
+                                                </a>
+                                                <a href="{% url 'surat_rekomendasi_export_pdf' surat.pk %}" class="btn btn-sm btn-success" target="_blank">
+                                                    <i class="fas fa-print"></i> Cetak
+                                                </a>
+                                            {% else %}
+                                                <span class="text-muted">No Actions</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Belum ada data Surat Rekomendasi Studi Lanjut</h5>
+                            <a href="{% url 'surat_rekomendasi_create' %}" class="btn btn-primary">Tambah Surat Rekomendasi Pertama</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

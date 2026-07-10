@@ -402,6 +402,81 @@ class SuratKeterangan(models.Model):
         return reverse('surat_keterangan_detail', kwargs={'pk': self.pk})
 
 
+class SuratRekomendasiStudiLanjut(models.Model):
+    """Model untuk Surat Rekomendasi Studi Lanjut yang diberikan pimpinan kepada pegawai."""
+    DEFAULT_PERTIMBANGAN = (
+        "Pegawai yang bersangkutan memiliki dedikasi dan kinerja yang baik selama bekerja di instansi kami.\n"
+        "Bidang ilmu yang akan dipelajari relevan dengan kebutuhan pengembangan kompetensi serta peningkatan efektivitas pelayanan di unit kerja kami.\n"
+        "Pegawai memiliki potensi akademik yang baik serta kemampuan untuk mengaplikasikan ilmu yang didapat bagi kemajuan instansi."
+    )
+
+    nomor_surat = models.CharField(max_length=100, verbose_name='Nomor Surat')
+    kop_surat = models.ForeignKey(KopSurat, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Kop Surat')
+    penandatangan = models.ForeignKey(ASN, on_delete=models.SET_NULL, null=True, blank=True, related_name='rekomendasi_penandatangan', verbose_name='Pimpinan (Atasan)')
+    instansi = models.CharField(max_length=200, verbose_name='Nama Instansi/Sekolah/Organisasi')
+    pegawai = models.ForeignKey(ASN, on_delete=models.SET_NULL, null=True, blank=True, related_name='rekomendasi_pegawai', verbose_name='Pegawai')
+    nama_universitas = models.CharField(max_length=200, verbose_name='Nama Universitas/Kampus')
+    program_studi = models.CharField(max_length=200, verbose_name='Nama Program Studi')
+    pertimbangan = models.TextField(blank=True, default=DEFAULT_PERTIMBANGAN, verbose_name='Pertimbangan Rekomendasi')
+    tempat_ditetapkan = models.CharField(max_length=100, verbose_name='Tempat Ditetapkan')
+    tanggal_ditetapkan = models.DateField(verbose_name='Tanggal Ditetapkan')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Surat Rekomendasi Studi Lanjut"
+        ordering = ['-tanggal_ditetapkan']
+
+    def __str__(self):
+        subject = self.pegawai.nama if self.pegawai else "[Tanpa Pegawai]"
+        return f"Surat Rekomendasi Studi Lanjut - {subject} - {self.nomor_surat}"
+
+    def get_absolute_url(self):
+        return reverse('surat_rekomendasi_detail', kwargs={'pk': self.pk})
+
+
+class SuratKP4(models.Model):
+    """Model untuk KP4 - Surat Keterangan untuk mendapatkan pembayaran tunjangan keluarga."""
+    kop_surat = models.ForeignKey(KopSurat, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Kop Surat')
+    pegawai = models.ForeignKey(ASN, on_delete=models.SET_NULL, null=True, blank=True, related_name='kp4_pegawai', verbose_name='Pegawai (Yang Menerangkan)')
+    penandatangan = models.ForeignKey(ASN, on_delete=models.SET_NULL, null=True, blank=True, related_name='kp4_penandatangan', verbose_name='Kepala (Mengetahui)')
+    status_kepegawaian = models.CharField(max_length=100, blank=True, null=True, verbose_name='Status Kepegawaian')
+    masa_kerja_golongan = models.CharField(max_length=100, blank=True, null=True, verbose_name='Masa Kerja Golongan')
+    digaji_menurut = models.CharField(max_length=255, blank=True, null=True, verbose_name='Digaji Menurut')
+    tempat_ditetapkan = models.CharField(max_length=100, verbose_name='Tempat Ditetapkan')
+    tanggal_ditetapkan = models.DateField(verbose_name='Tanggal Ditetapkan')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Surat KP4 (Tunjangan Keluarga)"
+        ordering = ['-tanggal_ditetapkan']
+
+    def __str__(self):
+        subject = self.pegawai.nama if self.pegawai else "[Tanpa Pegawai]"
+        return f"KP4 - {subject}"
+
+    def get_absolute_url(self):
+        return reverse('surat_kp4_detail', kwargs={'pk': self.pk})
+
+
+class AnggotaKeluargaKP4(models.Model):
+    """Model untuk anggota keluarga pada Surat KP4."""
+    surat = models.ForeignKey(SuratKP4, on_delete=models.CASCADE, related_name='anggota_keluarga', verbose_name='Surat KP4')
+    nama = models.CharField(max_length=200, verbose_name='Nama Istri/Suami/Tanggungan')
+    tanggal_kelahiran = models.CharField(max_length=50, blank=True, null=True, verbose_name='Tanggal Kelahiran')
+    tanggal_perkawinan = models.CharField(max_length=50, blank=True, null=True, verbose_name='Tanggal Perkawinan')
+    pekerjaan = models.CharField(max_length=100, blank=True, null=True, verbose_name='Pekerjaan')
+    keterangan = models.CharField(max_length=100, blank=True, null=True, verbose_name='Keterangan')
+    mendapat_tunjangan = models.BooleanField(default=True, verbose_name='Mendapat Tunjangan')
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return self.nama
+
+
 class SuratResmi(models.Model):
     kop_surat = models.ForeignKey(KopSurat, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Kop Surat')
     tempat_ditetapkan = models.CharField(max_length=100, verbose_name='Tempat Ditetapkan')
