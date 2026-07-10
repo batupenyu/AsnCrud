@@ -144,6 +144,7 @@ class NotaDinas(models.Model):
     hal = models.CharField(max_length=255)
     isi_surat = models.TextField()
     pegawai = models.ManyToManyField(ASN, blank=True)
+    siswa = models.ManyToManyField('Siswa', blank=True, related_name='nota_dinas_siswa')
     penutup_surat = models.TextField()
     penanda_tangan = models.ForeignKey(ASN, on_delete=models.CASCADE, related_name='penanda_tangan_nota_dinas')
     kop_surat = models.ForeignKey(KopSurat, on_delete=models.CASCADE, null=True, blank=True)
@@ -355,6 +356,31 @@ class Siswa(models.Model):
 
     def get_absolute_url(self):
         return reverse('siswa_detail', kwargs={'pk': self.pk})
+
+
+class PesertaNotaDinas(models.Model):
+    PERAN_CHOICES = [
+        ('Peserta', 'Peserta'),
+        ('Pendamping', 'Pendamping'),
+        ('Toolman', 'Toolman'),
+        ('Kepsek', 'Kepsek / Penanggungjawab'),
+        ('Bendahara', 'Bendahara'),
+    ]
+    nota_dinas = models.ForeignKey(NotaDinas, on_delete=models.CASCADE, related_name='peserta_nota_dinas')
+    pegawai = models.ForeignKey(ASN, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Pegawai')
+    siswa = models.ForeignKey(Siswa, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Siswa')
+    bidang_lomba = models.CharField(max_length=255, blank=True, verbose_name='Bidang Lomba')
+    peran = models.CharField(max_length=50, choices=PERAN_CHOICES, default='Peserta', verbose_name='Peran')
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        if self.pegawai:
+            return f"{self.pegawai.nama} - {self.peran}"
+        elif self.siswa:
+            return f"{self.siswa.nama} - {self.peran}"
+        return f"Peserta {self.id}"
 
 
 class SiswaKeluar(models.Model):

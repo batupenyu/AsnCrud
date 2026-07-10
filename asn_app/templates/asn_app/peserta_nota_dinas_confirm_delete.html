@@ -1,0 +1,36 @@
+{% extends 'asn_app/base.html' %}
+
+{% block title %}Hapus Peserta dan Pendamping Kegiatan LKS{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>Hapus Peserta dan Pendamping Kegiatan LKS</h2>
+        </div>
+        <div class="card-body">
+            <p>Apakah Anda yakin ingin menghapus peserta berikut?</p>
+            <ul>
+                <li><strong>Nota Dinas:</strong> {{ peserta.nota_dinas.nomor }} - {{ peserta.nota_dinas.hal }}</li>
+                <li><strong>Nama:</strong> 
+                    {% if peserta.pegawai %}
+                        {{ peserta.pegawai.nama }}
+                    {% elif peserta.siswa %}
+                        {{ peserta.siswa.nama }}
+                    {% endif %}
+                </li>
+                <li><strong>Peran:</strong> {{ peserta.get_peran_display }}</li>
+                <li><strong>Bidang Lomba:</strong> {{ peserta.bidang_lomba|default:"-" }}</li>
+            </ul>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next_url }}">
+                <div class="d-flex justify-content-end">
+                    <a href="{{ next_url }}" class="btn btn-secondary me-2">Batal</a>
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

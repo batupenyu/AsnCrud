@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Peserta dan Pendamping Kegiatan LKS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            font-size: 14px;
+        }
+        .header-info {
+            margin-bottom: 20px;
+            line-height: 1.0;
+            padding-left: 200px;
+        }
+        .header-info table {
+            width: 100%;
+            border-collapse: collapse;
+            border: none;
+        }
+        .header-info td {
+            padding: 2px 0;
+            vertical-align: top;
+            border: none;
+        }
+        .header-info .label {
+            width: 100px;
+            vertical-align: top;
+        }
+        .header-info .colon {
+            width: 10px;
+            vertical-align: top;
+        }
+        .title {
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: center;
+            font-weight: bold;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .footer {
+            float: right;
+            text-align: left;
+            margin-top: 20px;
+            padding-right: 50px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-info">
+        <table>
+            <tr>
+                <td class="label">LAMPIRAN I</td>
+                <td class="colon">:</td>
+                <td>Nota Dinas Kepala SMK Negeri 1 Koba</td>
+            </tr>
+            <tr>
+                <td class="label">NOMOR</td>
+                <td class="colon">:</td>
+                <td>{{ nota_dinas.nomor }}</td>
+            </tr>
+            <tr>
+                <td class="label">TANGGAL</td>
+                <td class="colon">:</td>
+                <td>{{ nota_dinas.tanggal|date:"d F Y" }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="title">
+        DAFTAR NAMA PESERTA DAN PENDAMPING KEGIATAN LKS<br>
+        SMK NEGERI 1 KOBA
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 5%;">No</th>
+                <th style="width: 25%;">Nama</th>
+                <th style="width: 20%;">NIP / KLS</th>
+                <th style="width: 20%;">Jabatan</th>
+                <th style="width: 30%;">Bidang Lomba</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for peserta in nota_dinas.peserta_nota_dinas.all %}
+            <tr>
+                <td class="text-center">{{ forloop.counter }}</td>
+                <td>
+                    {% if peserta.pegawai %}
+                        {{ peserta.pegawai.nama }}
+                    {% elif peserta.siswa %}
+                        {{ peserta.siswa.nama }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if peserta.pegawai %}
+                        {{ peserta.pegawai.nip|default:"-" }}
+                    {% elif peserta.siswa %}
+                        {{ peserta.siswa.kelas|default:"-" }}{% if peserta.siswa.jurusan %} - {{ peserta.siswa.jurusan }}{% endif %}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if peserta.pegawai %}
+                        {{ peserta.pegawai.jabatan|default:"-" }}
+                    {% else %}
+                        {{ peserta.peran|default:"Peserta" }}
+                    {% endif %}
+                </td>
+                <td class="text-center">{{ peserta.bidang_lomba|default:"-" }}</td>
+            </tr>
+            {% empty %}
+            {% if nota_dinas.pegawai.all or nota_dinas.siswa.all %}
+            {% for pegawai in nota_dinas.pegawai.all %}
+            <tr>
+                <td class="text-center">{{ forloop.counter }}</td>
+                <td>{{ pegawai.nama }}</td>
+                <td>{{ pegawai.nip|default:"-" }}</td>
+                <td>{{ pegawai.jabatan|default:"-" }}</td>
+                <td class="text-center">-</td>
+            </tr>
+            {% endfor %}
+            {% for siswa in nota_dinas.siswa.all %}
+            <tr>
+                <td class="text-center">{{ nota_dinas.pegawai.all|length|add:forloop.counter }}</td>
+                <td>{{ siswa.nama }}</td>
+                <td>{{ siswa.kelas|default:"-" }}</td>
+                <td>Peserta</td>
+                <td class="text-center">-</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer">
+        Kepala SMKN 1 Koba<br><br><br><br>
+        <strong>SYAHRYANTO, S.T., M.Pd</strong><br>
+        Pembina Tk. I, IV/b<br>
+        NIP. 197708262006041005
+    </div>
+
+</body>
+</html>

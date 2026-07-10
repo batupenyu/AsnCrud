@@ -49,6 +49,13 @@ urlpatterns = [
     path('nota_dinas/<int:pk>/update/', views.nota_dinas_update, name='nota_dinas_update'),
     path('nota_dinas/<int:pk>/delete/', views.nota_dinas_delete, name='nota_dinas_delete'),
     path('nota_dinas/<int:pk>/pdf/', views.nota_dinas_export_pdf, name='nota_dinas_export_pdf'),
+    path('nota_dinas/<int:pk>/lampiran/pdf/', views.nota_dinas_lampiran_pdf, name='nota_dinas_lampiran_pdf'),
+
+    # Peserta Nota Dinas routes
+    path('peserta-nota-dinas/', views.peserta_nota_dinas_list, name='peserta_nota_dinas_list'),
+    path('peserta-nota-dinas/create/', views.peserta_nota_dinas_create, name='peserta_nota_dinas_create'),
+    path('peserta-nota-dinas/<int:pk>/update/', views.peserta_nota_dinas_update, name='peserta_nota_dinas_update'),
+    path('peserta-nota-dinas/<int:pk>/delete/', views.peserta_nota_dinas_delete, name='peserta_nota_dinas_delete'),
 
     # Hari Libur routes
     path('hari_libur/', views.HariLiburListView.as_view(), name='hari_libur_list'),

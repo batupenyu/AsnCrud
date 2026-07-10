@@ -1,0 +1,79 @@
+{% extends 'asn_app/base.html' %}
+{% load indonesian_date_tags %}
+
+{% block title %}Daftar Peserta dan Pendamping Kegiatan LKS{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>
+            Daftar Peserta dan Pendamping Kegiatan LKS
+            {% if nota_dinas %}
+                <small class="text-muted">- {{ nota_dinas.hal }} ({{ nota_dinas.tanggal|indonesian_date:"%d %b %Y" }})</small>
+            {% endif %}
+        </h2>
+        <div>
+            {% if nota_dinas %}
+            <a href="{% url 'nota_dinas_detail' nota_dinas.pk %}" class="btn btn-secondary me-2">Kembali ke Nota Dinas</a>
+            {% endif %}
+            <a href="{% url 'peserta_nota_dinas_create' %}{% if nota_dinas %}?nota_dinas={{ nota_dinas.pk }}{% endif %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Tambah Peserta
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nota Dinas</th>
+                        <th>Nama</th>
+                        <th>NIP / KLS</th>
+                        <th>Peran</th>
+                        <th>Bidang Lomba</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for peserta in peserta_list %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <a href="{% url 'nota_dinas_detail' peserta.nota_dinas.pk %}">
+                                {{ peserta.nota_dinas.nomor }}
+                            </a>
+                        </td>
+                        <td>
+                            {% if peserta.pegawai %}
+                                {{ peserta.pegawai.nama }}
+                            {% elif peserta.siswa %}
+                                {{ peserta.siswa.nama }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if peserta.pegawai %}
+                                {{ peserta.pegawai.nip|default:"-" }}
+                            {% elif peserta.siswa %}
+                                {{ peserta.siswa.kelas|default:"-" }}
+                            {% endif %}
+                        </td>
+                        <td>{{ peserta.get_peran_display }}</td>
+                        <td>{{ peserta.bidang_lomba|default:"-" }}</td>
+                        <td class="text-center">
+                            <a href="{% url 'peserta_nota_dinas_update' peserta.pk %}{% if nota_dinas %}?next={{ nota_dinas.get_absolute_url }}{% endif %}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
+                            <a href="{% url 'peserta_nota_dinas_delete' peserta.pk %}{% if nota_dinas %}?next={{ nota_dinas.get_absolute_url }}{% endif %}" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">Tidak ada data peserta.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

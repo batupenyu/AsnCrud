@@ -1,6 +1,6 @@
 # asn_app/admin.py
 from django.contrib import admin
-from .models import ASN, KopSurat, SuratPerintahTugas, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4
+from .models import ASN, KopSurat, SuratPerintahTugas, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4, PesertaNotaDinas
 
 
 @admin.register(ASN)
@@ -34,6 +34,20 @@ class NotaDinasAdmin(admin.ModelAdmin):
     list_filter = ('tanggal',)
     search_fields = ('hal', 'nomor', 'dari', 'kepada')
     filter_horizontal = ('pegawai',)
+    inlines = [type('PesertaNotaDinasInline', (admin.TabularInline,), {
+        'model': PesertaNotaDinas,
+        'extra': 1,
+        'fields': ('pegawai', 'siswa', 'peran', 'bidang_lomba'),
+    })]
+
+
+class PesertaNotaDinasAdmin(admin.ModelAdmin):
+    list_display = ('nota_dinas', 'pegawai', 'siswa', 'peran', 'bidang_lomba')
+    list_filter = ('peran', 'nota_dinas')
+    search_fields = ('pegawai__nama', 'siswa__nama', 'bidang_lomba')
+
+
+admin.site.register(PesertaNotaDinas, PesertaNotaDinasAdmin)
 
 @admin.register(HariLibur)
 class HariLiburAdmin(admin.ModelAdmin):

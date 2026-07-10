@@ -8,8 +8,8 @@ from django.utils.timezone import now
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.db.models import Q, Count
-from .models import ASN, SuratPerintahTugas, KopSurat, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum, SuratPanggilanSiswa, SiswaKeluar, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4, SuratUndanganSiswa
-from .forms import ASNForm, SPTForm, KopSuratForm, SuratSantunanKorpriForm, NotaDinasForm, HariLiburForm, SuratCutiForm, SisaCutiForm, SiswaForm, SuratKeteranganForm, SuratResmiForm, SPTJMForm, SPMTForm, FotoKegiatanForm, SuratUmumForm, SuratPanggilanSiswaForm, SiswaKeluarForm, SuratRekomendasiStudiLanjutForm, SuratKP4Form, AnggotaKeluargaKP4FormSet, SuratUndanganSiswaForm
+from .models import ASN, SuratPerintahTugas, KopSurat, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum, SuratPanggilanSiswa, SiswaKeluar, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4, SuratUndanganSiswa, PesertaNotaDinas
+from .forms import ASNForm, SPTForm, KopSuratForm, SuratSantunanKorpriForm, NotaDinasForm, HariLiburForm, SuratCutiForm, SisaCutiForm, SiswaForm, SuratKeteranganForm, SuratResmiForm, SPTJMForm, SPMTForm, FotoKegiatanForm, SuratUmumForm, SuratPanggilanSiswaForm, SiswaKeluarForm, SuratRekomendasiStudiLanjutForm, SuratKP4Form, AnggotaKeluargaKP4FormSet, SuratUndanganSiswaForm, PesertaNotaDinasForm, PesertaNotaDinasCRUDForm, PesertaNotaDinasFormSet
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy, reverse
 import base64
@@ -706,23 +706,34 @@ def nota_dinas_detail(request, pk):
 def nota_dinas_create(request):
     if request.method == 'POST':
         form = NotaDinasForm(request.POST)
-        if form.is_valid():
-            form.save()
+        formset = PesertaNotaDinasFormSet(request.POST)
+        if form.is_valid() and formset.is_valid():
+            nota_dinas = form.save()
+            formset.instance = nota_dinas
+            formset.save()
             return redirect('nota_dinas_list')
     else:
         form = NotaDinasForm()
-    return render(request, 'asn_app/nota_dinas_form.html', {'form': form, 'title': 'Tambah Nota Dinas'})
+        formset = PesertaNotaDinasFormSet()
+    return render(request, 'asn_app/nota_dinas_form.html', {
+        'form': form, 'formset': formset, 'title': 'Tambah Nota Dinas'
+    })
 
 def nota_dinas_update(request, pk):
     nota_dinas = get_object_or_404(NotaDinas, pk=pk)
     if request.method == 'POST':
         form = NotaDinasForm(request.POST, instance=nota_dinas)
-        if form.is_valid():
+        formset = PesertaNotaDinasFormSet(request.POST, instance=nota_dinas)
+        if form.is_valid() and formset.is_valid():
             form.save()
+            formset.save()
             return redirect('nota_dinas_detail', pk=nota_dinas.pk)
     else:
         form = NotaDinasForm(instance=nota_dinas)
-    return render(request, 'asn_app/nota_dinas_form.html', {'form': form, 'title': 'Edit Nota Dinas'})
+        formset = PesertaNotaDinasFormSet(instance=nota_dinas)
+    return render(request, 'asn_app/nota_dinas_form.html', {
+        'form': form, 'formset': formset, 'title': 'Edit Nota Dinas'
+    })
 
 def nota_dinas_delete(request, pk):
     nota_dinas = get_object_or_404(NotaDinas, pk=pk)
@@ -730,6 +741,59 @@ def nota_dinas_delete(request, pk):
         nota_dinas.delete()
         return redirect('nota_dinas_list')
     return render(request, 'asn_app/nota_dinas_confirm_delete.html', {'nota_dinas': nota_dinas})
+
+def peserta_nota_dinas_list(request):
+    nota_dinas_id = request.GET.get('nota_dinas')
+    peserta_list = PesertaNotaDinas.objects.select_related('nota_dinas', 'pegawai', 'siswa').all().order_by('nota_dinas__tanggal', 'id')
+    nota_dinas = None
+    if nota_dinas_id:
+        peserta_list = peserta_list.filter(nota_dinas_id=nota_dinas_id)
+        nota_dinas = get_object_or_404(NotaDinas, pk=nota_dinas_id)
+    return render(request, 'asn_app/peserta_nota_dinas_list.html', {
+        'peserta_list': peserta_list,
+        'nota_dinas': nota_dinas,
+    })
+
+def peserta_nota_dinas_create(request):
+    next_url = request.GET.get('next') or request.POST.get('next') or reverse('peserta_nota_dinas_list')
+    if request.method == 'POST':
+        form = PesertaNotaDinasCRUDForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(next_url)
+    else:
+        form = PesertaNotaDinasCRUDForm()
+        nota_dinas_id = request.GET.get('nota_dinas')
+        if nota_dinas_id:
+            form.fields['nota_dinas'].initial = nota_dinas_id
+    return render(request, 'asn_app/peserta_nota_dinas_form.html', {
+        'form': form, 'title': 'Tambah Peserta dan Pendamping Kegiatan LKS', 'next_url': next_url
+    })
+
+def peserta_nota_dinas_update(request, pk):
+    peserta = get_object_or_404(PesertaNotaDinas.objects.select_related('nota_dinas', 'pegawai', 'siswa'), pk=pk)
+    next_url = request.GET.get('next') or request.POST.get('next') or reverse('peserta_nota_dinas_list')
+    if request.method == 'POST':
+        form = PesertaNotaDinasCRUDForm(request.POST, instance=peserta)
+        if form.is_valid():
+            form.save()
+            return redirect(next_url)
+    else:
+        form = PesertaNotaDinasCRUDForm(instance=peserta)
+    return render(request, 'asn_app/peserta_nota_dinas_form.html', {
+        'form': form, 'title': 'Edit Peserta dan Pendamping Kegiatan LKS', 'next_url': next_url, 'peserta': peserta
+    })
+
+def peserta_nota_dinas_delete(request, pk):
+    peserta = get_object_or_404(PesertaNotaDinas.objects.select_related('nota_dinas', 'pegawai', 'siswa'), pk=pk)
+    next_url = request.GET.get('next') or request.POST.get('next') or reverse('peserta_nota_dinas_list')
+    if request.method == 'POST':
+        peserta.delete()
+        return redirect(next_url)
+    return render(request, 'asn_app/peserta_nota_dinas_confirm_delete.html', {
+        'peserta': peserta, 'next_url': next_url
+    })
+
 
 def nota_dinas_export_pdf(request, pk):
     import os
@@ -751,10 +815,19 @@ def nota_dinas_export_pdf(request, pk):
             except Exception as e:
                 logging.error(f"Error encoding image to base64 for large PDF: {e}")
 
+    jumlah_peserta = nota_dinas.peserta_nota_dinas.count()
+    if jumlah_peserta == 0:
+        jumlah_peserta = nota_dinas.pegawai.count() + nota_dinas.siswa.count()
+    show_lampiran_link = jumlah_peserta > 3
+    lampiran_url = request.build_absolute_uri(reverse('nota_dinas_lampiran_pdf', kwargs={'pk': nota_dinas.pk}))
+
     html_string = render_to_string('asn_app/nota_dinas_pdf_template.html', {
         'nota_dinas': nota_dinas,
         'request': request,
         'kop_surat_base64': kop_surat_base64,
+        'show_lampiran_link': show_lampiran_link,
+        'lampiran_url': lampiran_url,
+        'jumlah_peserta': jumlah_peserta,
     })
 
     try:
@@ -765,6 +838,44 @@ def nota_dinas_export_pdf(request, pk):
         return HttpResponse(f"Error writing PDF: {e}", status=500)
 
     response = HttpResponse(result, content_type='application/pdf')
+    return response
+
+
+def nota_dinas_lampiran_pdf(request, pk):
+    import os
+    import base64
+    from weasyprint import HTML
+
+    nota_dinas = get_object_or_404(NotaDinas, pk=pk)
+
+    kop_surat_base64 = None
+    if nota_dinas.kop_surat and nota_dinas.kop_surat.gambar:
+        if os.path.exists(nota_dinas.kop_surat.gambar.path):
+            try:
+                with open(nota_dinas.kop_surat.gambar.path, 'rb') as image_file:
+                    image_data = image_file.read()
+                    image_format = nota_dinas.kop_surat.gambar.name.split('.')[-1].lower()
+                    if image_format == 'jpg':
+                        image_format = 'jpeg'
+                    kop_surat_base64 = f"data:image/{image_format};base64,{base64.b64encode(image_data).decode('utf-8')}"
+            except Exception as e:
+                logging.error(f"Error encoding image to base64 for lampiran PDF: {e}")
+
+    html_string = render_to_string('asn_app/nota_dinas_lampiran_template.html', {
+        'nota_dinas': nota_dinas,
+        'request': request,
+        'kop_surat_base64': kop_surat_base64,
+    })
+
+    try:
+        html = HTML(string=html_string, base_url=request.build_absolute_uri())
+        result = html.write_pdf()
+    except Exception as e:
+        logging.error(f"Error writing lampiran PDF: {e}")
+        return HttpResponse(f"Error writing lampiran PDF: {e}", status=500)
+
+    response = HttpResponse(result, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="lampiran_nota_dinas_{nota_dinas.pk}.pdf"'
     return response
 
 # Hari Libur Views

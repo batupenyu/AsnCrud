@@ -6,7 +6,7 @@ from .models import (
     NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa,
     SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum,
     SuratPanggilanSiswa, SiswaKeluar, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4,
-    SuratUndanganSiswa
+    SuratUndanganSiswa, PesertaNotaDinas
 )
 
 
@@ -172,6 +172,7 @@ class NotaDinasForm(forms.ModelForm):
             'hal': forms.TextInput(attrs={'class': 'form-control'}),
             'isi_surat': forms.Textarea(attrs={'rows': 5, 'class': 'form-control'}),
             'pegawai': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+            'siswa': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
             'penutup_surat': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
             'kop_surat': forms.Select(attrs={'class': 'form-control'}),
         }
@@ -180,8 +181,10 @@ class NotaDinasForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['pegawai'].queryset = ASN.objects.all().order_by('nama')
         self.fields['penanda_tangan'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['siswa'].queryset = Siswa.objects.all().order_by('nama')
         self.fields['pegawai'].label_from_instance = lambda obj: obj.nama
         self.fields['penanda_tangan'].label_from_instance = lambda obj: obj.nama
+        self.fields['siswa'].label_from_instance = lambda obj: f"{obj.nama} - {obj.kelas}"
         if not self.instance.pk:
             self.fields['kepada'].initial = 'Yth. Gubernur Kepulauan Bangka Belitung'
             self.fields['dari'].initial = 'Kepala SMK Negeri 1 Koba'
@@ -636,3 +639,63 @@ class SiswaKeluarForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['siswa'].queryset = Siswa.objects.all().order_by('nama')
         self.fields['siswa'].label_from_instance = lambda obj: f'{obj.nama} - {obj.kelas} - {obj.jurusan if obj.jurusan else ""}'
+
+
+class PesertaNotaDinasForm(forms.ModelForm):
+    class Meta:
+        model = PesertaNotaDinas
+        fields = ['pegawai', 'siswa', 'peran', 'bidang_lomba']
+        widgets = {
+            'pegawai': forms.Select(attrs={'class': 'form-control'}),
+            'siswa': forms.Select(attrs={'class': 'form-control'}),
+            'peran': forms.Select(attrs={'class': 'form-control'}),
+            'bidang_lomba': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['pegawai'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['siswa'].queryset = Siswa.objects.all().order_by('nama')
+        self.fields['pegawai'].label_from_instance = lambda obj: obj.nama
+        self.fields['siswa'].label_from_instance = lambda obj: f'{obj.nama} - {obj.kelas}'
+        self.fields['pegawai'].empty_label = '-- Pilih Pegawai --'
+        self.fields['siswa'].empty_label = '-- Pilih Siswa --'
+
+
+class PesertaNotaDinasCRUDForm(forms.ModelForm):
+    class Meta:
+        model = PesertaNotaDinas
+        fields = ['nota_dinas', 'pegawai', 'siswa', 'peran', 'bidang_lomba']
+        widgets = {
+            'nota_dinas': forms.Select(attrs={'class': 'form-control'}),
+            'pegawai': forms.Select(attrs={'class': 'form-control'}),
+            'siswa': forms.Select(attrs={'class': 'form-control'}),
+            'peran': forms.Select(attrs={'class': 'form-control'}),
+            'bidang_lomba': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['nota_dinas'].queryset = NotaDinas.objects.all().order_by('tanggal')
+        self.fields['nota_dinas'].label_from_instance = lambda obj: f"{obj.nomor} - {obj.hal}"
+        self.fields['pegawai'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['siswa'].queryset = Siswa.objects.all().order_by('nama')
+        self.fields['pegawai'].label_from_instance = lambda obj: obj.nama
+        self.fields['siswa'].label_from_instance = lambda obj: f'{obj.nama} - {obj.kelas}'
+        self.fields['pegawai'].empty_label = '-- Pilih Pegawai --'
+        self.fields['siswa'].empty_label = '-- Pilih Siswa --'
+
+
+BasePesertaNotaDinasFormSet = inlineformset_factory(
+    NotaDinas, PesertaNotaDinas,
+    form=PesertaNotaDinasForm,
+    extra=1,
+    can_delete=True
+)
+
+
+class PesertaNotaDinasFormSet(BasePesertaNotaDinasFormSet):
+    def save_new(self, form, commit=True):
+        if not form.cleaned_data.get('pegawai') and not form.cleaned_data.get('siswa'):
+            return None
+        return super().save_new(form, commit=commit)

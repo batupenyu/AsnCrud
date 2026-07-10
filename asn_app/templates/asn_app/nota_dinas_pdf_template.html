@@ -110,8 +110,8 @@
     <div class="kop-surat-container">
         {% if kop_surat_base64 %}
             <img src="{{ kop_surat_base64 }}" alt="Kop Surat" class="kop-surat-image">
-        {% elif spt.kop_surat.gambar %}
-            <img src="{{ request.scheme }}://{{ request.get_host }}{{ spt.kop_surat.gambar.url }}" alt="Kop Surat" class="kop-surat-image">
+        {% elif nota_dinas.kop_surat and nota_dinas.kop_surat.gambar %}
+            <img src="{{ request.scheme }}://{{ request.get_host }}{{ nota_dinas.kop_surat.gambar.url }}" alt="Kop Surat" class="kop-surat-image">
         {% endif %}
     </div>
 
@@ -149,7 +149,12 @@
             <tr>
                 <td class="label">Lampiran</td>
                 <td class="colon">:</td>
-                <td>{{ nota_dinas.lampiran }}</td>
+                <td>
+                    {{ nota_dinas.lampiran }}
+                    {% if show_lampiran_link %}
+                        <br><a href="{{ lampiran_url }}">Lihat Daftar Peserta dan Pendamping Kegiatan LKS</a>
+                    {% endif %}
+                </td>
             </tr>
             <tr>
                 <td class="label">Hal</td>
@@ -166,43 +171,76 @@
         {{ nota_dinas.isi_surat|linebreaksbr }}
     </div>
 
-    {% if nota_dinas.pegawai.all %}
+    {% if jumlah_peserta <= 3 %}
+    {% if nota_dinas.peserta_nota_dinas.all %}
+    <div class="pegawai-info">
+        <table>
+            {% for p in nota_dinas.peserta_nota_dinas.all %}
+            <tr>
+                <td class="label">{{ forloop.counter }}. Nama</td>
+                <td class="colon">:</td>
+                <td>
+                    {% if p.pegawai %}
+                        {{ p.pegawai.nama }}
+                    {% elif p.siswa %}
+                        {{ p.siswa.nama }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td class="label" style="padding-left: 18px;">NIP/NIS</td>
+                <td class="colon">:</td>
+                <td>
+                    {% if p.pegawai %}
+                        {{ p.pegawai.nip }}
+                    {% elif p.siswa %}
+                        {{ p.siswa.nis|default:"-" }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td class="label" style="padding-left: 18px;">Jabatan</td>
+                <td class="colon">:</td>
+                <td>
+                    {% if p.pegawai %}
+                        {{ p.pegawai.jabatan }}
+                    {% else %}
+                        {{ p.peran|default:"Peserta" }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td class="label" style="padding-left: 18px;">Bidang Lomba</td>
+                <td class="colon">:</td>
+                <td>{{ p.bidang_lomba|default:"-" }}</td>
+            </tr>
+            {% if not forloop.last %}
+            <tr><td colspan="3" style="padding-top: 10px;"></td></tr>
+            {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+    {% elif nota_dinas.pegawai.all or nota_dinas.siswa.all %}
     <div class="pegawai-info">
         <table>
             {% for p in nota_dinas.pegawai.all %}
             <tr>
-                {% if nota_dinas.pegawai.all|length > 1 %}
                 <td class="label">{{ forloop.counter }}. Nama</td>
-                {% else %}
-                <td class="label">Nama</td>
-                {% endif %}
                 <td class="colon">:</td>
                 <td>{{ p.nama }}</td>
             </tr>
             <tr>
-                {% if nota_dinas.pegawai.all|length > 1 %}
                 <td class="label" style="padding-left: 18px;">NIP</td>
-                {% else %}
-                <td class="label">NIP</td>
-                {% endif %}
                 <td class="colon">:</td>
                 <td>{{ p.nip }}</td>
             </tr>
             <tr>
-                {% if nota_dinas.pegawai.all|length > 1 %}
                 <td class="label" style="padding-left: 18px;">Jabatan</td>
-                {% else %}
-                <td class="label">Jabatan</td>
-                {% endif %}
                 <td class="colon">:</td>
                 <td>{{ p.jabatan }}</td>
             </tr>
             <tr>
-                {% if nota_dinas.pegawai.all|length > 1 %}
                 <td class="label" style="padding-left: 18px;">Pangkat/Gol</td>
-                {% else %}
-                <td class="label">Pangkat/Gol</td>
-                {% endif %}
                 <td class="colon">:</td>
                 <td>
                     {% if p.pangkat and p.pangkat != '-' and p.golongan and p.golongan != '-' %}
@@ -216,8 +254,34 @@
             <tr><td colspan="3" style="padding-top: 10px;"></td></tr>
             {% endif %}
             {% endfor %}
+            {% for s in nota_dinas.siswa.all %}
+            <tr>
+                <td class="label">{{ nota_dinas.pegawai.all|length|add:forloop.counter }}. Nama</td>
+                <td class="colon">:</td>
+                <td>{{ s.nama }}</td>
+            </tr>
+            <tr>
+                <td class="label" style="padding-left: 18px;">NIS</td>
+                <td class="colon">:</td>
+                <td>{{ s.nis|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="label" style="padding-left: 18px;">Kelas</td>
+                <td class="colon">:</td>
+                <td>{{ s.kelas|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="label" style="padding-left: 18px;">Jurusan</td>
+                <td class="colon">:</td>
+                <td>{{ s.jurusan|default:"-" }}</td>
+            </tr>
+            {% if not forloop.last %}
+            <tr><td colspan="3" style="padding-top: 10px;"></td></tr>
+            {% endif %}
+            {% endfor %}
         </table>
     </div>
+    {% endif %}
     {% endif %}
 
     <div class="content penutup-surat">

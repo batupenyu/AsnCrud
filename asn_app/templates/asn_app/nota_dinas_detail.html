@@ -26,12 +26,73 @@
             <h5>Isi Surat</h5>
             <p>{{ nota_dinas.isi_surat|linebreaks }}</p>
             <hr>
+            <h5>Peserta Kegiatan LKS</h5>
+            {% if nota_dinas.peserta_nota_dinas.all %}
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>NIP / KLS</th>
+                        <th>Peran</th>
+                        <th>Bidang Lomba</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for peserta in nota_dinas.peserta_nota_dinas.all %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            {% if peserta.pegawai %}
+                                {{ peserta.pegawai.nama }}
+                            {% elif peserta.siswa %}
+                                {{ peserta.siswa.nama }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if peserta.pegawai %}
+                                {{ peserta.pegawai.nip|default:"-" }}
+                            {% elif peserta.siswa %}
+                                {{ peserta.siswa.kelas|default:"-" }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if peserta.pegawai %}
+                                {{ peserta.pegawai.jabatan|default:"-" }}
+                            {% else %}
+                                {{ peserta.peran|default:"Peserta" }}
+                            {% endif %}
+                        </td>
+                        <td>{{ peserta.bidang_lomba|default:"-" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a href="{% url 'peserta_nota_dinas_list' %}?nota_dinas={{ nota_dinas.pk }}" class="btn btn-sm btn-info">
+                <i class="fas fa-list"></i> Kelola Peserta
+            </a>
+            {% else %}
+            <p><em>Belum ada data peserta yang diisi.</em></p>
+            <a href="{% url 'peserta_nota_dinas_create' %}?nota_dinas={{ nota_dinas.pk }}&next={{ request.get_full_path|urlencode }}" class="btn btn-sm btn-primary">
+                <i class="fas fa-plus"></i> Tambah Peserta
+            </a>
+            {% endif %}
+            <hr>
             <h5>Pegawai Terkait</h5>
             <ul>
                 {% for pegawai in nota_dinas.pegawai.all %}
                 <li>{{ pegawai.nama }} ({{ pegawai.nip }})</li>
                 {% empty %}
                 <li>Tidak ada pegawai terkait.</li>
+                {% endfor %}
+            </ul>
+            <hr>
+            <h5>Siswa Terkait</h5>
+            <ul>
+                {% for siswa in nota_dinas.siswa.all %}
+                <li>{{ siswa.nama }} ({{ siswa.kelas }})</li>
+                {% empty %}
+                <li>Tidak ada siswa terkait.</li>
                 {% endfor %}
             </ul>
             <hr>
