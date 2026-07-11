@@ -749,7 +749,7 @@ class PesertaDispensasiFormSet(PesertaDispensasiBaseFormSet):
 class SuratDispensasiForm(forms.ModelForm):
     class Meta:
         model = SuratDispensasi
-        fields = ['nomor_surat', 'nama_kegiatan', 'tanggal_awal', 'tanggal_akhir', 'waktu', 'tempat', 'penandatangan', 'kop_surat']
+        fields = ['nomor_surat', 'nama_kegiatan', 'tanggal_awal', 'tanggal_akhir', 'waktu', 'tempat', 'tempat_ditetapkan', 'tanggal_ditetapkan', 'penandatangan', 'kop_surat']
         widgets = {
             'nomor_surat': forms.TextInput(attrs={'class': 'form-control'}),
             'nama_kegiatan': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'cth: Latihan Futsal'}),
@@ -757,6 +757,8 @@ class SuratDispensasiForm(forms.ModelForm):
             'tanggal_akhir': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'waktu': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'cth: 10.00 Wita - Selesai'}),
             'tempat': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'cth: Freedom Futsal'}),
+            'tempat_ditetapkan': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'cth: Kuta Selatan'}),
+            'tanggal_ditetapkan': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'penandatangan': forms.Select(attrs={'class': 'form-control'}),
             'kop_surat': forms.Select(attrs={'class': 'form-control'}),
         }

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Surat Dispensasi - {{ surat.nomor_surat }}</title>
+    {% load indonesian_date_tags %}
     <style>
         @page {
             size: A4;
@@ -79,7 +80,7 @@
         .data-table th, .data-table td {
             border: 1px solid #000000;
             padding: 6px 10px;
-            font-size: 13px;
+            font-size: 12pt;
         }
         .data-table th {
             background-color: #f2f2f2;
@@ -97,7 +98,7 @@
         .signature-block {
             width: 250px;
             text-align: center;
-            font-size: 14px;
+            font-size: 12pt;
         }
         .signature-space {
             height: 80px;
@@ -212,7 +213,15 @@
     <!-- Bagian Tanda Tangan -->
     <div class="footer">
         <div class="signature-block">
-            <p>{{ surat.penandatangan.jabatan|default:"Kepala Sekolah" }}</p>
+            <p>
+                {% if surat.tempat_ditetapkan or surat.tanggal_ditetapkan %}
+                    {% if surat.tempat_ditetapkan %}{{ surat.tempat_ditetapkan }}{% endif %}{% if surat.tempat_ditetapkan and surat.tanggal_ditetapkan %}, {% endif %}{% if surat.tanggal_ditetapkan %}{{ surat.tanggal_ditetapkan|indonesian_date:"%d %B %Y" }}{% endif %}
+                {% else %}
+                    &nbsp;
+                {% endif %}
+                <br>
+                {{ surat.penandatangan.jabatan|default:"Kepala Sekolah" }}
+            </p>
             <div class="signature-space"></div>
             <p style="margin-bottom: 0;">{{ surat.penandatangan.nama|default:"Nama" }}</p>
             <p style="margin: 0; font-size: 12pt; color: #555;">

@@ -673,6 +673,8 @@ class SuratDispensasi(models.Model):
     tanggal_akhir = models.DateField(verbose_name='Tanggal Akhir', null=True, blank=True)
     waktu = models.CharField(max_length=100, verbose_name='Waktu', help_text='cth: 10.00 Wita - Selesai')
     tempat = models.CharField(max_length=200, verbose_name='Tempat')
+    tempat_ditetapkan = models.CharField(max_length=100, blank=True, null=True, verbose_name='Tempat Ditetapkan')
+    tanggal_ditetapkan = models.DateField(blank=True, null=True, verbose_name='Tanggal Ditetapkan')
     penandatangan = models.ForeignKey(ASN, on_delete=models.SET_NULL, null=True, blank=True, related_name='surat_dispensasi_penandatangan', verbose_name='Kepala Sekolah (Penandatangan)')
     kop_surat = models.ForeignKey(KopSurat, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Kop Surat')
     created_at = models.DateTimeField(auto_now_add=True)

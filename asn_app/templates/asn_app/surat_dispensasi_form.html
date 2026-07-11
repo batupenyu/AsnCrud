@@ -61,6 +61,17 @@
                         {{ form.tempat }}
                     </div>
                     <div class="col-md-6 mb-3">
+                        <label for="{{ form.tempat_ditetapkan.id_for_label }}" class="form-label">Tempat Ditetapkan</label>
+                        {{ form.tempat_ditetapkan }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.tanggal_ditetapkan.id_for_label }}" class="form-label">Tanggal Ditetapkan</label>
+                        {{ form.tanggal_ditetapkan }}
+                    </div>
+                    <div class="col-md-6 mb-3">
                         <label for="{{ form.penandatangan.id_for_label }}" class="form-label">Penandatangan (Kepala Sekolah)</label>
                         {{ form.penandatangan }}
                     </div>
