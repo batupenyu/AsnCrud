@@ -78,7 +78,7 @@
                                 {% for peserta in surat.peserta_dispensasi.all %}
                                 <tr>
                                     <td class="text-center">{{ forloop.counter }}</td>
-                                    <td>{{ peserta.nama }}</td>
+                                    <td>{% if peserta.ket == 'Siswa' %}{{ peserta.nama|upper }}{% else %}{{ peserta.nama }}{% endif %}</td>
                                     <td class="text-center">{{ peserta.kelas }}</td>
                                     <td class="text-center">{{ peserta.ket }}</td>
                                 </tr>
