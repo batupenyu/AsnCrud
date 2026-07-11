@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surat Dispensasi - {{ surat.nomor_surat }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0 2cm;
+        }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            line-height: 1.0;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+        }
+        .document-container {
+            background-color: #ffffff;
+            width: 100%;
+            min-height: 297mm;
+            padding: 20px 0;
+            box-sizing: border-box;
+        }
+        .kop-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .kop-container img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .header h1 {
+            font-size: 18px;
+            text-decoration: underline;
+            margin: 0 0 5px 0;
+            letter-spacing: 1px;
+        }
+        .header p {
+            font-size: 12pt;
+            margin: 0;
+        }
+        .content {
+            font-size: 12pt;
+            text-align: justify;
+        }
+        .meta-table, .schedule-table {
+            width: 100%;
+            margin-bottom: 15px;
+            border-collapse: collapse;
+        }
+        .meta-table td, .schedule-table td {
+            padding: 3px 0;
+            vertical-align: top;
+        }
+        .meta-table td:first-child, .schedule-table td:first-child {
+            width: 120px;
+        }
+        .meta-table td:nth-child(2), .schedule-table td:nth-child(2) {
+            width: 15px;
+            text-align: center;
+        }
+        .intro-text {
+            margin-bottom: 15px;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #000000;
+            padding: 6px 10px;
+            font-size: 13px;
+        }
+        .data-table th {
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .footer {
+            margin-top: 50px;
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .signature-block {
+            width: 250px;
+            text-align: center;
+            font-size: 14px;
+        }
+        .signature-space {
+            height: 80px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="document-container">
+
+    <!-- Kop Surat (jika dipilih) -->
+    {% if kop_surat_base64 %}
+    <div class="kop-container">
+        <img src="{{ kop_surat_base64 }}" alt="Kop Surat">
+    </div>
+    {% endif %}
+
+    <!-- Bagian Judul Surat -->
+    <div class="header">
+        <h1>SURAT DISPENSASI</h1>
+        <p>Nomor: {{ surat.nomor_surat }}</p>
+    </div>
+    </br>
+    <!-- Bagian Konten Utama -->
+    <div class="content">
+        <p class="intro-text">Yang bertandatangan di bawah ini:</p>
+
+        <!-- Data Kepala Sekolah -->
+        <table class="meta-table">
+            <tr>
+                <td>Nama</td>
+                <td>:</td>
+                <td>{{ surat.penandatangan.nama|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td>NIP</td>
+                <td>:</td>
+                <td>{{ surat.penandatangan.nip|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td>Pangkat/Gol</td>
+                <td>:</td>
+                <td>
+                    {% if surat.penandatangan.pangkat or surat.penandatangan.golongan %}
+                        {{ surat.penandatangan.pangkat|default:"" }}{% if surat.penandatangan.pangkat and surat.penandatangan.golongan %} / {% endif %}{{ surat.penandatangan.golongan|default:"" }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>Jabatan</td>
+                <td>:</td>
+                <td>{{ surat.penandatangan.jabatan|default:"Kepala Sekolah" }}</td>
+            </tr>
+        </table>
+
+        <p class="intro-text">Dengan ini memberikan Dispensasi kepada siswa dengan identitas:</p>
+
+        <!-- Tabel Daftar Siswa & Pembina -->
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%;">No</th>
+                    <th style="width: 55%;">Nama</th>
+                    <th style="width: 20%;">Kelas</th>
+                    <th style="width: 20%;">Ket.</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for peserta in surat.peserta_dispensasi.all %}
+                <tr>
+                    <td class="text-center">{{ forloop.counter }}</td>
+                    <td>{{ peserta.nama }}</td>
+                    <td class="text-center">{{ peserta.kelas }}</td>
+                    <td class="text-center">{{ peserta.ket }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td class="text-center">1</td>
+                    <td>-</td>
+                    <td class="text-center">-</td>
+                    <td class="text-center">Siswa</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Informasi Kegiatan -->
+        <p style="margin-top: 20px;">Untuk mengikuti kegiatan <strong>"{{ surat.nama_kegiatan }}"</strong>, yang dilaksanakan pada :</p>
+        <table class="schedule-table" style="margin-left: 20px;">
+            <tr>
+                <td>Hari/tanggal</td>
+                <td>:</td>
+                <td>{{ surat.hari_tanggal_display }}</td>
+            </tr>
+            <tr>
+                <td>Waktu</td>
+                <td>:</td>
+                <td>{{ surat.waktu }}</td>
+            </tr>
+            <tr>
+                <td>Tempat</td>
+                <td>:</td>
+                <td>{{ surat.tempat }}</td>
+            </tr>
+        </table>
+
+        <p style="margin-top: 25px;">Demikian Surat Dispensasi ini dibuat untuk dapat dilaksanakan sebagaimana mestinya.</p>
+    </div>
+
+    <!-- Bagian Tanda Tangan -->
+    <div class="footer">
+        <div class="signature-block">
+            <p>{{ surat.penandatangan.jabatan|default:"Kepala Sekolah" }}</p>
+            <div class="signature-space"></div>
+            <p style="margin-bottom: 0;">{{ surat.penandatangan.nama|default:"Nama" }}</p>
+            <p style="margin: 0; font-size: 12pt; color: #555;">
+                {% if surat.penandatangan.pangkat or surat.penandatangan.golongan %}
+                    {{ surat.penandatangan.pangkat|default:"" }}{% if surat.penandatangan.pangkat and surat.penandatangan.golongan %} / {% endif %}{{ surat.penandatangan.golongan|default:"" }}
+                {% else %}
+                    Pangkat/gol
+                {% endif %}
+            </p>
+            <p style="margin: 0;">NIP. {{ surat.penandatangan.nip|default:"-" }}</p>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

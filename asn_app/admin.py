@@ -1,6 +1,6 @@
 # asn_app/admin.py
 from django.contrib import admin
-from .models import ASN, KopSurat, SuratPerintahTugas, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4, PesertaNotaDinas
+from .models import ASN, KopSurat, SuratPerintahTugas, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4, PesertaNotaDinas, SuratDispensasi, PesertaDispensasi
 
 
 @admin.register(ASN)
@@ -110,3 +110,23 @@ class SuratResmiAdmin(admin.ModelAdmin):
     search_fields = ('nomor', 'perihal', 'pejabat_tujuan_surat', 'penandatangan__nama')
     filter_horizontal = ('pegawai',)
     raw_id_fields = ('penandatangan', 'kop_surat')
+
+
+@admin.register(SuratDispensasi)
+class SuratDispensasiAdmin(admin.ModelAdmin):
+    list_display = ('nomor_surat', 'nama_kegiatan', 'hari_tanggal_display', 'tempat', 'penandatangan', 'created_at')
+    list_filter = ('tanggal_awal', 'penandatangan')
+    search_fields = ('nomor_surat', 'nama_kegiatan', 'tempat', 'penandatangan__nama')
+    raw_id_fields = ('penandatangan', 'kop_surat')
+    inlines = [type('PesertaDispensasiInline', (admin.TabularInline,), {
+        'model': PesertaDispensasi,
+        'extra': 1,
+        'fields': ('siswa', 'guru', 'ket'),
+    })]
+
+
+@admin.register(PesertaDispensasi)
+class PesertaDispensasiAdmin(admin.ModelAdmin):
+    list_display = ('surat', 'siswa', 'guru', 'ket')
+    list_filter = ('ket', 'surat')
+    search_fields = ('siswa__nama', 'guru__nama', 'surat__nomor_surat')

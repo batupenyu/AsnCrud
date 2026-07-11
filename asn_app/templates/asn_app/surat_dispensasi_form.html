@@ -1,0 +1,136 @@
+{% extends 'asn_app/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div class="card">
+        <div class="card-header">
+            <h2>{{ title }}</h2>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.nomor_surat.id_for_label }}" class="form-label">Nomor Surat</label>
+                        {{ form.nomor_surat }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.nama_kegiatan.id_for_label }}" class="form-label">Nama Kegiatan</label>
+                        {{ form.nama_kegiatan }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.tanggal_awal.id_for_label }}" class="form-label">Tanggal Awal</label>
+                        {{ form.tanggal_awal }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.tanggal_akhir.id_for_label }}" class="form-label">Tanggal Akhir (opsional)</label>
+                        {{ form.tanggal_akhir }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.waktu.id_for_label }}" class="form-label">Waktu</label>
+                        {{ form.waktu }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.tempat.id_for_label }}" class="form-label">Tempat</label>
+                        {{ form.tempat }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.penandatangan.id_for_label }}" class="form-label">Penandatangan (Kepala Sekolah)</label>
+                        {{ form.penandatangan }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.kop_surat.id_for_label }}" class="form-label">Kop Surat</label>
+                        {{ form.kop_surat }}
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="mb-3">
+                    <label class="form-label">Peserta Dispensasi (Siswa & Guru)</label>
+                    {% if formset.non_form_errors %}
+                    <div class="alert alert-danger">
+                        {{ formset.non_form_errors }}
+                    </div>
+                    {% endif %}
+                    {{ formset.management_form }}
+                    {% for fs in formset %}
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                {% for hidden in fs.hidden_fields %}
+                                    {{ hidden }}
+                                {% endfor %}
+                                {% if fs.non_field_errors %}
+                                <div class="alert alert-danger">
+                                    {{ fs.non_field_errors }}
+                                </div>
+                                {% endif %}
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Siswa</label>
+                                        {{ fs.siswa }}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Guru/Pembina</label>
+                                        {{ fs.guru }}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Keterangan</label>
+                                        {{ fs.ket }}
+                                    </div>
+                                </div>
+                                {% if fs.instance.pk %}
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check">
+                                            {{ fs.DELETE }}
+                                            <label class="form-check-label" for="{{ fs.DELETE.id_for_label }}">
+                                                Hapus peserta ini
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <a href="{% url 'surat_dispensasi_list' %}" class="btn btn-secondary me-2">Batal</a>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

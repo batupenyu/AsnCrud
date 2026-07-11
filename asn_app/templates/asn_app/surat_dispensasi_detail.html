@@ -1,0 +1,103 @@
+{% extends 'asn_app/base.html' %}
+{% load i18n %}
+
+{% block title %}Detail Surat Dispensasi - {{ surat.nomor_surat }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-file-alt"></i> Detail Surat Dispensasi
+                        </h4>
+                        <div>
+                            <a href="{% url 'surat_dispensasi_export_pdf' surat.pk %}" class="btn btn-success btn-sm" target="_blank">
+                                <i class="fas fa-print"></i> Cetak
+                            </a>
+                            <a href="{% url 'surat_dispensasi_update' surat.pk %}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="{% url 'surat_dispensasi_list' %}" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-arrow-left"></i> Kembali
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 mb-3">
+                            <strong>Nomor Surat:</strong><br>
+                            {{ surat.nomor_surat }}
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <strong>Nama Kegiatan:</strong><br>
+                            {{ surat.nama_kegiatan }}
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <strong>Hari/Tanggal:</strong><br>
+                            {{ surat.hari_tanggal_display }}
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <strong>Waktu:</strong><br>
+                            {{ surat.waktu }}
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <strong>Tempat:</strong><br>
+                            {{ surat.tempat }}
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <strong>Kop Surat:</strong><br>
+                            {% if surat.kop_surat %}{{ surat.kop_surat.nama }}{% else %}-{% endif %}
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <strong>Penandatangan:</strong><br>
+                            {% if surat.penandatangan %}{{ surat.penandatangan.nama }}{% else %}-{% endif %}
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <strong>Jabatan:</strong><br>
+                            {% if surat.penandatangan %}{{ surat.penandatangan.jabatan }}{% else %}-{% endif %}
+                        </div>
+                    </div>
+
+                    <h5 class="mt-4 mb-3">Daftar Peserta</h5>
+                    {% if surat.peserta_dispensasi.all %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="width: 5%;">No</th>
+                                    <th>Nama</th>
+                                    <th class="text-center" style="width: 15%;">Kelas</th>
+                                    <th class="text-center" style="width: 15%;">Ket.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for peserta in surat.peserta_dispensasi.all %}
+                                <tr>
+                                    <td class="text-center">{{ forloop.counter }}</td>
+                                    <td>{{ peserta.nama }}</td>
+                                    <td class="text-center">{{ peserta.kelas }}</td>
+                                    <td class="text-center">{{ peserta.ket }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                        <p class="text-muted">Belum ada peserta.</p>
+                    {% endif %}
+                </div>
+                <div class="card-footer text-muted">
+                    <small>
+                        Dibuat: {{ surat.created_at }} |
+                        Diupdate: {{ surat.updated_at }}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -662,3 +662,92 @@ class SuratUndanganSiswa(models.Model):
 
     def get_absolute_url(self):
         return reverse('surat_undangan_siswa_detail', kwargs={'pk': self.pk})
+
+
+class SuratDispensasi(models.Model):
+    """Model untuk Surat Dispensasi (izin mengikuti kegiatan bagi siswa)."""
+
+    nomor_surat = models.CharField(max_length=100, verbose_name='Nomor Surat')
+    nama_kegiatan = models.CharField(max_length=200, verbose_name='Nama Kegiatan')
+    tanggal_awal = models.DateField(verbose_name='Tanggal Awal')
+    tanggal_akhir = models.DateField(verbose_name='Tanggal Akhir', null=True, blank=True)
+    waktu = models.CharField(max_length=100, verbose_name='Waktu', help_text='cth: 10.00 Wita - Selesai')
+    tempat = models.CharField(max_length=200, verbose_name='Tempat')
+    penandatangan = models.ForeignKey(ASN, on_delete=models.SET_NULL, null=True, blank=True, related_name='surat_dispensasi_penandatangan', verbose_name='Kepala Sekolah (Penandatangan)')
+    kop_surat = models.ForeignKey(KopSurat, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Kop Surat')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Surat Dispensasi"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Surat Dispensasi {self.nomor_surat} - {self.nama_kegiatan}"
+
+    def get_absolute_url(self):
+        return reverse('surat_dispensasi_detail', kwargs={'pk': self.pk})
+
+    def hari_tanggal_display(self):
+        """Format Hari/Tanggal untuk tampilan & PDF.
+
+        - Jika tanggal_akhir sama dengan tanggal_awal (atau kosong),
+          hanya ditampilkan hari dan tanggal awal, cth: 'Senin, 12 Februari 2024'.
+        - Jika berbeda, ditampilkan rentang, cth: 'Senin s.d Selasa, 12 s.d 13 Februari 2024'.
+        """
+        from .templatetags.indonesian_date_tags import INDONESIAN_MONTHS_FULL, INDONESIAN_DAYS_FULL
+
+        if not self.tanggal_awal:
+            return '-'
+
+        awal = self.tanggal_awal
+        hari_awal = INDONESIAN_DAYS_FULL[awal.weekday()]
+        bulan_awal = INDONESIAN_MONTHS_FULL[awal.month]
+        tgl_awal = f"{hari_awal}, {awal.day} {bulan_awal} {awal.year}"
+
+        if self.tanggal_akhir and self.tanggal_akhir != self.tanggal_awal:
+            akhir = self.tanggal_akhir
+            hari_akhir = INDONESIAN_DAYS_FULL[akhir.weekday()]
+            if akhir.month == awal.month and akhir.year == awal.year:
+                return f"{hari_awal} s.d {hari_akhir}, {awal.day} s.d {akhir.day} {bulan_awal} {awal.year}"
+            bulan_akhir = INDONESIAN_MONTHS_FULL[akhir.month]
+            return f"{hari_awal} s.d {hari_akhir}, {awal.day} {bulan_awal} {awal.year} s.d {akhir.day} {bulan_akhir} {akhir.year}"
+
+        return tgl_awal
+
+
+class PesertaDispensasi(models.Model):
+    """Model untuk peserta Surat Dispensasi (dapat berasal dari data Siswa maupun Guru)."""
+
+    KET_CHOICES = [
+        ('Siswa', 'Siswa'),
+        ('Pembina', 'Pembina'),
+    ]
+    surat = models.ForeignKey(SuratDispensasi, on_delete=models.CASCADE, related_name='peserta_dispensasi')
+    siswa = models.ForeignKey(Siswa, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Siswa')
+    guru = models.ForeignKey(ASN, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Guru/Pembina')
+    ket = models.CharField(max_length=20, choices=KET_CHOICES, default='Siswa', verbose_name='Keterangan')
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        if self.siswa:
+            return f"{self.siswa.nama} - {self.ket}"
+        elif self.guru:
+            return f"{self.guru.nama} - {self.ket}"
+        return f"Peserta {self.id}"
+
+    @property
+    def nama(self):
+        if self.siswa:
+            return self.siswa.nama
+        elif self.guru:
+            return self.guru.nama
+        return '-'
+
+    @property
+    def kelas(self):
+        if self.siswa:
+            return self.siswa.kelas or '-'
+        return '-'

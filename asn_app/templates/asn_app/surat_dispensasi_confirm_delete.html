@@ -1,0 +1,29 @@
+{% extends 'asn_app/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Hapus Surat Dispensasi</h4>
+                </div>
+                <div class="card-body">
+                    <p>Apakah Anda yakin ingin menghapus Surat Dispensasi berikut?</p>
+                    <ul>
+                        <li><strong>Nomor Surat:</strong> {{ surat.nomor_surat }}</li>
+                        <li><strong>Nama Kegiatan:</strong> {{ surat.nama_kegiatan }}</li>
+                    </ul>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-end">
+                            <a href="{% url 'surat_dispensasi_list' %}" class="btn btn-secondary me-2">Batal</a>
+                            <button type="submit" class="btn btn-danger">Ya, Hapus</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

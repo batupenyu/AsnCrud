@@ -174,4 +174,12 @@ urlpatterns = [
     path('surat_undangan_siswa/<int:pk>/update/', views.surat_undangan_siswa_update, name='surat_undangan_siswa_update'),
     path('surat_undangan_siswa/<int:pk>/delete/', views.surat_undangan_siswa_delete, name='surat_undangan_siswa_delete'),
     path('surat_undangan_siswa/<int:pk>/pdf/', views.surat_undangan_siswa_export_pdf, name='surat_undangan_siswa_export_pdf'),
+
+    # Surat Dispensasi routes
+    path('surat_dispensasi/', views.surat_dispensasi_list, name='surat_dispensasi_list'),
+    path('surat_dispensasi/create/', views.surat_dispensasi_create, name='surat_dispensasi_create'),
+    path('surat_dispensasi/<int:pk>/', views.surat_dispensasi_detail, name='surat_dispensasi_detail'),
+    path('surat_dispensasi/<int:pk>/update/', views.surat_dispensasi_update, name='surat_dispensasi_update'),
+    path('surat_dispensasi/<int:pk>/delete/', views.surat_dispensasi_delete, name='surat_dispensasi_delete'),
+    path('surat_dispensasi/<int:pk>/pdf/', views.surat_dispensasi_export_pdf, name='surat_dispensasi_export_pdf'),
 ]

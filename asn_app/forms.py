@@ -6,7 +6,7 @@ from .models import (
     NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa,
     SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum,
     SuratPanggilanSiswa, SiswaKeluar, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4,
-    SuratUndanganSiswa, PesertaNotaDinas
+    SuratUndanganSiswa, PesertaNotaDinas, SuratDispensasi, PesertaDispensasi
 )
 
 
@@ -699,3 +699,71 @@ class PesertaNotaDinasFormSet(BasePesertaNotaDinasFormSet):
         if not form.cleaned_data.get('pegawai') and not form.cleaned_data.get('siswa'):
             return None
         return super().save_new(form, commit=commit)
+
+
+class PesertaDispensasiForm(forms.ModelForm):
+    class Meta:
+        model = PesertaDispensasi
+        fields = ['siswa', 'guru', 'ket']
+        widgets = {
+            'siswa': forms.Select(attrs={'class': 'form-control'}),
+            'guru': forms.Select(attrs={'class': 'form-control'}),
+            'ket': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['siswa'].queryset = Siswa.objects.all().order_by('nama')
+        self.fields['guru'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['siswa'].label_from_instance = lambda obj: f'{obj.nama} - {obj.kelas}'
+        self.fields['guru'].label_from_instance = lambda obj: obj.nama
+        self.fields['siswa'].empty_label = '-- Pilih Siswa --'
+        self.fields['guru'].empty_label = '-- Pilih Guru --'
+
+    def clean(self):
+        cleaned_data = super().clean()
+        siswa = cleaned_data.get('siswa')
+        guru = cleaned_data.get('guru')
+        # Biarkan baris kosong (tidak diisi) untuk dilewati,
+        # tapi wajib pilih salah satu jika baris diisi.
+        if not siswa and not guru:
+            return cleaned_data
+        return cleaned_data
+
+
+PesertaDispensasiBaseFormSet = inlineformset_factory(
+    SuratDispensasi, PesertaDispensasi,
+    form=PesertaDispensasiForm,
+    extra=1,
+    can_delete=True
+)
+
+
+class PesertaDispensasiFormSet(PesertaDispensasiBaseFormSet):
+    def save_new(self, form, commit=True):
+        if not form.cleaned_data.get('siswa') and not form.cleaned_data.get('guru'):
+            return None
+        return super().save_new(form, commit=commit)
+
+
+class SuratDispensasiForm(forms.ModelForm):
+    class Meta:
+        model = SuratDispensasi
+        fields = ['nomor_surat', 'nama_kegiatan', 'tanggal_awal', 'tanggal_akhir', 'waktu', 'tempat', 'penandatangan', 'kop_surat']
+        widgets = {
+            'nomor_surat': forms.TextInput(attrs={'class': 'form-control'}),
+            'nama_kegiatan': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'cth: Latihan Futsal'}),
+            'tanggal_awal': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'tanggal_akhir': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'waktu': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'cth: 10.00 Wita - Selesai'}),
+            'tempat': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'cth: Freedom Futsal'}),
+            'penandatangan': forms.Select(attrs={'class': 'form-control'}),
+            'kop_surat': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['penandatangan'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['penandatangan'].label_from_instance = lambda obj: obj.nama
+        self.fields['kop_surat'].queryset = KopSurat.objects.all().order_by('nama')
+        self.fields['kop_surat'].label_from_instance = lambda obj: obj.nama
