@@ -142,7 +142,7 @@
                 <td>:</td>
                 <td>
                     {% if surat.penandatangan.pangkat or surat.penandatangan.golongan %}
-                        {{ surat.penandatangan.pangkat|default:"" }}{% if surat.penandatangan.pangkat and surat.penandatangan.golongan %} / {% endif %}{{ surat.penandatangan.golongan|default:"" }}
+                        {{ surat.penandatangan.pangkat|default:"" }}{% if surat.penandatangan.pangkat and surat.penandatangan.golongan %}, {% endif %}{{ surat.penandatangan.golongan|default:"" }}
                     {% else %}
                         -
                     {% endif %}
@@ -217,7 +217,7 @@
             <p style="margin-bottom: 0;">{{ surat.penandatangan.nama|default:"Nama" }}</p>
             <p style="margin: 0; font-size: 12pt; color: #555;">
                 {% if surat.penandatangan.pangkat or surat.penandatangan.golongan %}
-                    {{ surat.penandatangan.pangkat|default:"" }}{% if surat.penandatangan.pangkat and surat.penandatangan.golongan %} / {% endif %}{{ surat.penandatangan.golongan|default:"" }}
+                    {{ surat.penandatangan.pangkat|default:"" }}{% if surat.penandatangan.pangkat and surat.penandatangan.golongan %},{% endif %}{{ surat.penandatangan.golongan|default:"" }}
                 {% else %}
                     Pangkat/gol
                 {% endif %}
