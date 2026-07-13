@@ -1274,8 +1274,12 @@ def laporan_cuti_pdf(request, pk):
             page_rows.append(row)
         pages.append({'rows': page_rows})
 
-    # Default penandatangan if not found
-    penandatangan = ASN.objects.filter(jabatan__icontains="kepala sekolah").first()
+    # Default penandatangan: cari pegawai dengan jabatan Kepala (bukan Wakil Kepala)
+    penandatangan = (
+        ASN.objects.filter(jabatan__icontains="kepala")
+        .exclude(jabatan__icontains="wakil")
+        .first()
+    )
     if not penandatangan:
         penandatangan = ASN(nama="[Nama Kepala Sekolah]", nip="[NIP Kepala Sekolah]", pangkat="[Pangkat]", golongan="[Golongan]", jabatan="Kepala Sekolah")
 
