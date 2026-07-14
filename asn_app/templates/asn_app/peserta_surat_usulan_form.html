@@ -36,9 +36,15 @@
                     {{ form.pegawai }}
                 </div>
 
-                <div class="mb-3">
-                    <label for="{{ form.tanggal_tempat.id_for_label }}" class="form-label">Tanggal / Tempat</label>
-                    {{ form.tanggal_tempat }}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.tanggal_kegiatan.id_for_label }}" class="form-label">Tanggal Kegiatan</label>
+                        {{ form.tanggal_kegiatan }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.tempat_kegiatan.id_for_label }}" class="form-label">Tempat Kegiatan</label>
+                        {{ form.tempat_kegiatan }}
+                    </div>
                 </div>
 
                 <div class="d-flex justify-content-end">

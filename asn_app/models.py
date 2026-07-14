@@ -779,7 +779,8 @@ class SuratUsulan(models.Model):
 class PesertaSuratUsulan(models.Model):
     surat_usulan = models.ForeignKey(SuratUsulan, on_delete=models.CASCADE, related_name='peserta_surat_usulan')
     pegawai = models.ForeignKey(ASN, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Pegawai')
-    tanggal_tempat = models.CharField(max_length=255, blank=True, verbose_name='Tanggal / Tempat')
+    tanggal_kegiatan = models.DateField(verbose_name='Tanggal Kegiatan', blank=True, null=True)
+    tempat_kegiatan = models.CharField(max_length=255, verbose_name='Tempat Kegiatan', blank=True)
     
     class Meta:
         ordering = ['id']

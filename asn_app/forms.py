@@ -819,10 +819,11 @@ class SuratUsulanForm(forms.ModelForm):
 class PesertaSuratUsulanForm(forms.ModelForm):
     class Meta:
         model = PesertaSuratUsulan
-        fields = ['pegawai', 'tanggal_tempat']
+        fields = ['pegawai', 'tanggal_kegiatan', 'tempat_kegiatan']
         widgets = {
             'pegawai': forms.Select(attrs={'class': 'form-control'}),
-            'tanggal_tempat': forms.TextInput(attrs={'class': 'form-control'}),
+            'tanggal_kegiatan': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'tempat_kegiatan': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -835,11 +836,12 @@ class PesertaSuratUsulanForm(forms.ModelForm):
 class PesertaSuratUsulanCRUDForm(forms.ModelForm):
     class Meta:
         model = PesertaSuratUsulan
-        fields = ['surat_usulan', 'pegawai', 'tanggal_tempat']
+        fields = ['surat_usulan', 'pegawai', 'tanggal_kegiatan', 'tempat_kegiatan']
         widgets = {
             'surat_usulan': forms.Select(attrs={'class': 'form-control'}),
             'pegawai': forms.Select(attrs={'class': 'form-control'}),
-            'tanggal_tempat': forms.TextInput(attrs={'class': 'form-control'}),
+            'tanggal_kegiatan': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'tempat_kegiatan': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):

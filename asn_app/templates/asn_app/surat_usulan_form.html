@@ -109,10 +109,15 @@
                                             {{ form.pegawai }}
                                             {% if form.pegawai.errors %}<div class="text-danger">{{ form.pegawai.errors }}</div>{% endif %}
                                         </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">Tanggal / Tempat</label>
-                                            {{ form.tanggal_tempat }}
-                                            {% if form.tanggal_tempat.errors %}<div class="text-danger">{{ form.tanggal_tempat.errors }}</div>{% endif %}
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Tanggal Kegiatan</label>
+                                            {{ form.tanggal_kegiatan }}
+                                            {% if form.tanggal_kegiatan.errors %}<div class="text-danger">{{ form.tanggal_kegiatan.errors }}</div>{% endif %}
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Tempat Kegiatan</label>
+                                            {{ form.tempat_kegiatan }}
+                                            {% if form.tempat_kegiatan.errors %}<div class="text-danger">{{ form.tempat_kegiatan.errors }}</div>{% endif %}
                                         </div>
                                     </div>
                                     <div class="row">
