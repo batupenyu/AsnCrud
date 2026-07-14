@@ -109,7 +109,7 @@
     }
     .signature-title {
       font-weight: bold;
-      text-transform: uppercase;
+      /* text-transform: uppercase; */
       margin-bottom: 60px;
       font-size: 11pt;
     }
@@ -125,16 +125,16 @@
       display: table;
     }
 
-    /* unit kerja menjorok 35px */
+    /* unit kerja menjorok 29px */
     .signature-unit {
-      padding-left: 35px;
+      padding-left: 29px;
       display: block;
       font-size: 11pt;
     }
 
-    /* semua isi di bawah signature-title menjorok 35px */
+    /* semua isi di bawah signature-title menjorok 29px */
     .signature-body {
-      padding-left: 35px;
+      padding-left: 29px;
       font-size: 11pt;
     }
 
@@ -219,7 +219,7 @@
             <tr>
                 <th style="width: 5%;">No</th>
                 <th style="width: 22%;">Nama</th>
-                <th style="width: 18%;">NIP</th>
+                <th style="width: 18%;">NIP/NIS</th>
                 <th style="width: 15%;">Pangkat / Gol</th>
                 <th style="width: 15%;">Jabatan</th>
                 <th style="width: 12%;">Tanggal Kegiatan</th>
@@ -230,16 +230,46 @@
             {% for peserta in surat_usulan.peserta_surat_usulan.all %}
             <tr>
                 <td>{{ forloop.counter }}</td>
-                <td>{{ peserta.pegawai.nama|default:"-" }}</td>
-                <td>{{ peserta.pegawai.nip|default:"-" }}</td>
                 <td>
-                    {% if peserta.pegawai.pangkat and peserta.pegawai.pangkat != '-' and peserta.pegawai.golongan and peserta.pegawai.golongan != '-' %}
-                        {{ peserta.pegawai.pangkat }} / {{ peserta.pegawai.golongan }}
+                    {% if peserta.pegawai %}
+                        {{ peserta.pegawai.nama }}
+                    {% elif peserta.siswa %}
+                        {{ peserta.siswa.nama|upper }}
                     {% else %}
                         -
                     {% endif %}
                 </td>
-                <td>{{ peserta.pegawai.jabatan|default:"-" }}</td>
+                <td>
+                    {% if peserta.pegawai %}
+                        {{ peserta.pegawai.nip }}
+                    {% elif peserta.siswa %}
+                        {{ peserta.siswa.nis|default:"-" }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if peserta.pegawai %}
+                        {% if peserta.pegawai.pangkat and peserta.pegawai.pangkat != '-' and peserta.pegawai.golongan and peserta.pegawai.golongan != '-' %}
+                            {{ peserta.pegawai.pangkat }} / {{ peserta.pegawai.golongan }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    {% elif peserta.siswa %}
+                        {{ peserta.siswa.kelas|default:"-" }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if peserta.pegawai %}
+                        {{ peserta.pegawai.jabatan|default:"-" }}
+                    {% elif peserta.siswa %}
+                        Siswa
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
                 <td>{{ peserta.tanggal_kegiatan|default:"-" }}</td>
                 <td>{{ peserta.tempat_kegiatan|default:"-" }}</td>
             </tr>

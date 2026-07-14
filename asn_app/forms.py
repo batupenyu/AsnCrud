@@ -819,9 +819,10 @@ class SuratUsulanForm(forms.ModelForm):
 class PesertaSuratUsulanForm(forms.ModelForm):
     class Meta:
         model = PesertaSuratUsulan
-        fields = ['pegawai', 'tanggal_kegiatan', 'tempat_kegiatan']
+        fields = ['pegawai', 'siswa', 'tanggal_kegiatan', 'tempat_kegiatan']
         widgets = {
             'pegawai': forms.Select(attrs={'class': 'form-control'}),
+            'siswa': forms.Select(attrs={'class': 'form-control'}),
             'tanggal_kegiatan': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'tempat_kegiatan': forms.TextInput(attrs={'class': 'form-control'}),
         }
@@ -831,15 +832,19 @@ class PesertaSuratUsulanForm(forms.ModelForm):
         self.fields['pegawai'].queryset = ASN.objects.all().order_by('nama')
         self.fields['pegawai'].label_from_instance = lambda obj: obj.nama
         self.fields['pegawai'].empty_label = '-- Pilih Pegawai --'
+        self.fields['siswa'].queryset = Siswa.objects.all().order_by('nama')
+        self.fields['siswa'].label_from_instance = lambda obj: f"{obj.nama} - {obj.kelas}"
+        self.fields['siswa'].empty_label = '-- Pilih Siswa --'
 
 
 class PesertaSuratUsulanCRUDForm(forms.ModelForm):
     class Meta:
         model = PesertaSuratUsulan
-        fields = ['surat_usulan', 'pegawai', 'tanggal_kegiatan', 'tempat_kegiatan']
+        fields = ['surat_usulan', 'pegawai', 'siswa', 'tanggal_kegiatan', 'tempat_kegiatan']
         widgets = {
             'surat_usulan': forms.Select(attrs={'class': 'form-control'}),
             'pegawai': forms.Select(attrs={'class': 'form-control'}),
+            'siswa': forms.Select(attrs={'class': 'form-control'}),
             'tanggal_kegiatan': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'tempat_kegiatan': forms.TextInput(attrs={'class': 'form-control'}),
         }
@@ -851,6 +856,9 @@ class PesertaSuratUsulanCRUDForm(forms.ModelForm):
         self.fields['pegawai'].queryset = ASN.objects.all().order_by('nama')
         self.fields['pegawai'].label_from_instance = lambda obj: obj.nama
         self.fields['pegawai'].empty_label = '-- Pilih Pegawai --'
+        self.fields['siswa'].queryset = Siswa.objects.all().order_by('nama')
+        self.fields['siswa'].label_from_instance = lambda obj: f"{obj.nama} - {obj.kelas}"
+        self.fields['siswa'].empty_label = '-- Pilih Siswa --'
 
 
 BasePesertaSuratUsulanFormSet = inlineformset_factory(
@@ -863,6 +871,6 @@ BasePesertaSuratUsulanFormSet = inlineformset_factory(
 
 class PesertaSuratUsulanFormSet(BasePesertaSuratUsulanFormSet):
     def save_new(self, form, commit=True):
-        if not form.cleaned_data.get('pegawai'):
+        if not form.cleaned_data.get('pegawai') and not form.cleaned_data.get('siswa'):
             return None
         return super().save_new(form, commit=commit)

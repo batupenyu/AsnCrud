@@ -20,8 +20,8 @@
                     <tr>
                         <th>No</th>
                         <th>Surat Usulan</th>
-                        <th>Pegawai</th>
-                        <th>NIP</th>
+                        <th>Nama</th>
+                        <th>NIP/NIS</th>
                         <th>Tanggal Kegiatan</th>
                         <th>Tempat Kegiatan</th>
                         <th class="text-center">Aksi</th>
@@ -32,8 +32,24 @@
                     <tr>
                         <td>{{ forloop.counter }}</td>
                         <td>{{ peserta.surat_usulan.nomor }}</td>
-                        <td>{{ peserta.pegawai.nama|default:"-" }}</td>
-                        <td>{{ peserta.pegawai.nip|default:"-" }}</td>
+                        <td>
+                            {% if peserta.pegawai %}
+                                {{ peserta.pegawai.nama }}
+                            {% elif peserta.siswa %}
+                                {{ peserta.siswa.nama }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if peserta.pegawai %}
+                                {{ peserta.pegawai.nip }}
+                            {% elif peserta.siswa %}
+                                {{ peserta.siswa.nis|default:"-" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
                         <td>{{ peserta.tanggal_kegiatan|default:"-" }}</td>
                         <td>{{ peserta.tempat_kegiatan|default:"-" }}</td>
                         <td class="text-center">

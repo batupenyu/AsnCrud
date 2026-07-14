@@ -779,6 +779,7 @@ class SuratUsulan(models.Model):
 class PesertaSuratUsulan(models.Model):
     surat_usulan = models.ForeignKey(SuratUsulan, on_delete=models.CASCADE, related_name='peserta_surat_usulan')
     pegawai = models.ForeignKey(ASN, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Pegawai')
+    siswa = models.ForeignKey('Siswa', on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Siswa')
     tanggal_kegiatan = models.DateField(verbose_name='Tanggal Kegiatan', blank=True, null=True)
     tempat_kegiatan = models.CharField(max_length=255, verbose_name='Tempat Kegiatan', blank=True)
     
@@ -788,4 +789,6 @@ class PesertaSuratUsulan(models.Model):
     def __str__(self):
         if self.pegawai:
             return f"{self.pegawai.nama}"
+        elif self.siswa:
+            return f"{self.siswa.nama}"
         return f"Peserta {self.id}"

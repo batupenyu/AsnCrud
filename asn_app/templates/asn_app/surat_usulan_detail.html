@@ -36,7 +36,7 @@
                     <tr>
                         <th>No</th>
                         <th>Nama</th>
-                        <th>NIP</th>
+                        <th>NIP/NIS</th>
                         <th>Pangkat / Gol</th>
                         <th>Jabatan</th>
                         <th>Tanggal Kegiatan</th>
@@ -47,16 +47,46 @@
                     {% for peserta in surat_usulan.peserta_surat_usulan.all %}
                     <tr>
                         <td>{{ forloop.counter }}</td>
-                        <td>{{ peserta.pegawai.nama|default:"-" }}</td>
-                        <td>{{ peserta.pegawai.nip|default:"-" }}</td>
                         <td>
-                            {% if peserta.pegawai.pangkat and peserta.pegawai.pangkat != '-' and peserta.pegawai.golongan and peserta.pegawai.golongan != '-' %}
-                                {{ peserta.pegawai.pangkat }}, {{ peserta.pegawai.golongan }}
+                            {% if peserta.pegawai %}
+                                {{ peserta.pegawai.nama }}
+                            {% elif peserta.siswa %}
+                                {{ peserta.siswa.nama }}
                             {% else %}
                                 -
                             {% endif %}
                         </td>
-                        <td>{{ peserta.pegawai.jabatan|default:"-" }}</td>
+                        <td>
+                            {% if peserta.pegawai %}
+                                {{ peserta.pegawai.nip }}
+                            {% elif peserta.siswa %}
+                                {{ peserta.siswa.nis|default:"-" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if peserta.pegawai %}
+                                {% if peserta.pegawai.pangkat and peserta.pegawai.pangkat != '-' and peserta.pegawai.golongan and peserta.pegawai.golongan != '-' %}
+                                    {{ peserta.pegawai.pangkat }}, {{ peserta.pegawai.golongan }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            {% elif peserta.siswa %}
+                                {{ peserta.siswa.kelas|default:"-" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if peserta.pegawai %}
+                                {{ peserta.pegawai.jabatan|default:"-" }}
+                            {% elif peserta.siswa %}
+                                Siswa
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
                         <td>{{ peserta.tanggal_kegiatan|default:"-" }}</td>
                         <td>{{ peserta.tempat_kegiatan|default:"-" }}</td>
                     </tr>
