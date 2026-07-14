@@ -1011,10 +1011,16 @@ def surat_usulan_export_pdf(request, pk):
             except Exception as e:
                 logging.error(f"Error encoding image to base64 for Surat Usulan PDF: {e}")
 
+    jumlah_peserta = surat_usulan.peserta_surat_usulan.count()
+    show_lampiran_link = jumlah_peserta > 0
+    lampiran_url = request.build_absolute_uri(reverse('surat_usulan_lampiran_pdf', kwargs={'pk': surat_usulan.pk}))
+
     html_string = render_to_string('asn_app/surat_usulan_pdf_template.html', {
         'surat_usulan': surat_usulan,
         'request': request,
         'kop_surat_base64': kop_surat_base64,
+        'show_lampiran_link': show_lampiran_link,
+        'lampiran_url': lampiran_url,
     })
 
     try:
@@ -1026,6 +1032,44 @@ def surat_usulan_export_pdf(request, pk):
 
     response = HttpResponse(result, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename=surat_usulan_{surat_usulan.pk}.pdf'
+    return response
+
+
+def surat_usulan_lampiran_pdf(request, pk):
+    import os
+    import base64
+    from weasyprint import HTML
+
+    surat_usulan = get_object_or_404(SuratUsulan, pk=pk)
+
+    kop_surat_base64 = None
+    if surat_usulan.kop_surat and surat_usulan.kop_surat.gambar:
+        if os.path.exists(surat_usulan.kop_surat.gambar.path):
+            try:
+                with open(surat_usulan.kop_surat.gambar.path, 'rb') as image_file:
+                    image_data = image_file.read()
+                    image_format = surat_usulan.kop_surat.gambar.name.split('.')[-1].lower()
+                    if image_format == 'jpg':
+                        image_format = 'jpeg'
+                    kop_surat_base64 = f"data:image/{image_format};base64,{base64.b64encode(image_data).decode('utf-8')}"
+            except Exception as e:
+                logging.error(f"Error encoding image to base64 for Surat Usulan Lampiran PDF: {e}")
+
+    html_string = render_to_string('asn_app/surat_usulan_lampiran_template.html', {
+        'surat_usulan': surat_usulan,
+        'request': request,
+        'kop_surat_base64': kop_surat_base64,
+    })
+
+    try:
+        html = HTML(string=html_string, base_url=request.build_absolute_uri())
+        result = html.write_pdf()
+    except Exception as e:
+        logging.error(f"Error writing lampiran PDF for Surat Usulan: {e}")
+        return HttpResponse(f"Error writing lampiran PDF: {e}", status=500)
+
+    response = HttpResponse(result, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename=lampiran_surat_usulan_{surat_usulan.pk}.pdf'
     return response
 
 

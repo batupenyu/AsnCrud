@@ -58,6 +58,7 @@ urlpatterns = [
     path('surat_usulan/<int:pk>/update/', views.surat_usulan_update, name='surat_usulan_update'),
     path('surat_usulan/<int:pk>/delete/', views.surat_usulan_delete, name='surat_usulan_delete'),
     path('surat_usulan/<int:pk>/pdf/', views.surat_usulan_export_pdf, name='surat_usulan_export_pdf'),
+    path('surat_usulan/<int:pk>/lampiran/pdf/', views.surat_usulan_lampiran_pdf, name='surat_usulan_lampiran_pdf'),
 
     # Peserta Surat Usulan routes
     path('peserta-surat-usulan/', views.peserta_surat_usulan_list, name='peserta_surat_usulan_list'),

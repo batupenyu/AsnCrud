@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lampiran Surat Usulan - {{ surat_usulan.hal }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            font-size: 14px;
+        }
+        @page {
+            size: A4 landscape;
+            margin: 1cm 1cm 1cm 1cm;
+        }
+        .header-info {
+            margin-bottom: 20px;
+            line-height: 1.0;
+            padding-left: 500px;
+            font-style: italic;
+        }
+        .header-info table {
+            width: 100%;
+            border-collapse: collapse;
+            border: none;
+        }
+        .header-info td {
+            padding: 2px 0;
+            vertical-align: top;
+            border: none;
+        }
+        .header-info .label {
+            width: 100px;
+            vertical-align: top;
+        }
+        .header-info .colon {
+            width: 10px;
+            vertical-align: top;
+        }
+        .title {
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: center;
+            font-weight: bold;
+        }
+        .text-center {
+            text-align: center;
+        }
+        /* .footer {
+            float: right;
+            text-align: left;
+            margin-top: 20px;
+            padding-right: 50px;
+            line-height: 1.6;
+        } */
+
+/* tanda tangan */
+    .signature-container {
+      margin-top: 40px;
+      float: right;
+      width: 50%;
+      text-align: left;
+      font-size: 11pt;
+    }
+    .signature-title {
+      /* font-weight: bold; */
+      /* text-transform: uppercase; */
+      margin-bottom: 60px;
+      font-size: 11pt;
+    }
+    .signature-name {
+      font-weight: bold;
+      /* text-decoration: underline; */
+      /* text-transform: uppercase; */
+      font-size: 11pt;
+    }
+    .clearfix::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+
+    /* unit kerja menjorok 26px */
+    .signature-unit {
+      padding-left: 26px;
+      display: block;
+      font-size: 11pt;
+    }
+
+    /* semua isi di bawah signature-title menjorok 26px */
+    .signature-body {
+      padding-left: 26px;
+      font-size: 11pt;
+    }
+
+    /* NIP / pangkat */
+    .signature-nip {
+      margin-top: 5px;
+      font-size: 11pt;
+    }
+
+    /* fallback untuk elemen kecil */
+    small, .small, .fine-print {
+      font-size: 11pt;
+    }
+    </style>
+</head>
+<body>
+
+    <div class="header-info">
+        <table>
+            <tr>
+                <td class="label">LAMPIRAN I</td>
+                <td class="colon">:</td>
+                <td>Kepala Dinas Pendidikan Prov. Kepulauan Bangka Belitung</td>
+            </tr>
+            <tr>
+                <td class="label">NOMOR</td>
+                <td class="colon">:</td>
+                <td>{{ surat_usulan.nomor }}</td>
+            </tr>
+            <tr>
+                <td class="label">TANGGAL</td>
+                <td class="colon">:</td>
+                <td>{{ surat_usulan.tanggal|date:"d F Y" }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="title">
+        DAFTAR NAMA PESERTA 
+        <!-- {{ surat_usulan.hal|upper }}<br> -->
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 5%;">No</th>
+                <th style="width: 22%;">Nama</th>
+                <th style="width: 18%;">NIP/NIS</th>
+                <th style="width: 15%;">Pangkat / Gol</th>
+                <th style="width: 15%;">Jabatan</th>
+                <th style="width: 12%;">Tanggal Kegiatan</th>
+                <th style="width: 13%;">Tempat Kegiatan</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for peserta in surat_usulan.peserta_surat_usulan.all %}
+            <tr>
+                <td class="text-center">{{ forloop.counter }}</td>
+                <td>
+                    {% if peserta.pegawai %}
+                        {{ peserta.pegawai.nama }}
+                    {% elif peserta.siswa %}
+                        {{ peserta.siswa.nama|upper }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if peserta.pegawai %}
+                        {{ peserta.pegawai.nip|default:"-" }}
+                    {% elif peserta.siswa %}
+                        {{ peserta.siswa.nis|default:"-" }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if peserta.pegawai %}
+                        {% if peserta.pegawai.pangkat and peserta.pegawai.pangkat != '-' and peserta.pegawai.golongan and peserta.pegawai.golongan != '-' %}
+                            {{ peserta.pegawai.pangkat }} / {{ peserta.pegawai.golongan }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    {% elif peserta.siswa %}
+                        {{ peserta.siswa.kelas|default:"-" }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if peserta.pegawai %}
+                        {{ peserta.pegawai.jabatan|default:"-" }}
+                    {% elif peserta.siswa %}
+                        Siswa
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>{{ peserta.tanggal_kegiatan|default:"-" }}</td>
+                <td>{{ peserta.tempat_kegiatan|default:"-" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">Tidak ada data peserta.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- <div class="footer">
+        {{ surat_usulan.penanda_tangan.jabatan }}<br><br><br><br>
+        <strong>{{ surat_usulan.penanda_tangan.nama }}</strong><br>
+        {% if surat_usulan.penanda_tangan.pangkat and surat_usulan.penanda_tangan.pangkat != '-' and surat_usulan.penanda_tangan.golongan and surat_usulan.penanda_tangan.golongan != '-' %}
+            {{ surat_usulan.penanda_tangan.pangkat }} / {{ surat_usulan.penanda_tangan.golongan }}<br>
+        {% endif %}
+        NIP. {{ surat_usulan.penanda_tangan.nip }}
+    </div> -->
+
+
+    <!-- Tanda Tangan -->
+    <div class="clearfix">
+        <div class="signature-container">
+            <div class="signature-title">
+                {{ surat_usulan.penanda_tangan.jabatan }}
+                <span class="signature-unit">{{ surat_usulan.penanda_tangan.unit_kerja|default:"" }},</span>
+            </div>
+            <div class="signature-body">
+                    <!-- <div class="signature-name">{{ surat_usulan.penanda_tangan.nama }}</div> -->
+                    <div class="signature-nip">
+                        {% if surat_usulan.penanda_tangan.pangkat and surat_usulan.penanda_tangan.pangkat != '-' and surat_usulan.penanda_tangan.golongan and surat_usulan.penanda_tangan.golongan != '-' %}
+                            {{ surat_usulan.penanda_tangan.nama }}<br>
+                            {{ surat_usulan.penanda_tangan.pangkat }}<br>
+                        {% endif %}
+                        NIP. {{ surat_usulan.penanda_tangan.nip }}
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+</html>

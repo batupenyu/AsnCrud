@@ -194,7 +194,13 @@
         <tr>
             <td>Lampiran</td>
             <td>:</td>
-            <td>{{ surat_usulan.lampiran }}</td>
+            <td>
+                {% if show_lampiran_link %}
+                    <a style="text-decoration: none;" href="{{ lampiran_url }}">{{ surat_usulan.lampiran }}</a>
+                {% else %}
+                    {{ surat_usulan.lampiran }}
+                {% endif %}
+            </td>
         </tr>
         <tr>
             <td>Hal</td>
@@ -214,7 +220,7 @@
     </div>
 
     <!-- Tabel Data Anggota -->
-    <table class="data-table">
+    <!-- <table class="data-table">
         <thead>
             <tr>
                 <th style="width: 5%;">No</th>
@@ -275,7 +281,7 @@
             </tr>
             {% endfor %}
         </tbody>
-    </table>
+    </table> -->
 
     <div class="content">
         <p>Demikian surat permohonan ini kami sampaikan. Atas perhatian Bapak, Kami sampaikan terima kasih.</p>
