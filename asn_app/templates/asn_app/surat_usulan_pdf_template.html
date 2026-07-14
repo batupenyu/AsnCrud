@@ -215,9 +215,11 @@
         <p>{{ surat_usulan.dasar_surat }}</p>
     </div>
 
+    {% if surat_usulan.isi_surat %}
     <div class="content">
         <p>{{ surat_usulan.isi_surat }}</p>
     </div>
+    {% endif %}
 
     <!-- Tabel Data Anggota -->
     <!-- <table class="data-table">

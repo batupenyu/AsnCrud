@@ -764,7 +764,7 @@ class SuratUsulan(models.Model):
     lampiran = models.CharField(max_length=255)
     hal = models.CharField(max_length=255)
     dasar_surat = models.TextField(verbose_name='Dasar Surat')
-    isi_surat = models.TextField(default='')
+    isi_surat = models.TextField(null=True, blank=True, default='')
     penutup_surat = models.TextField()
     penanda_tangan = models.ForeignKey(ASN, on_delete=models.CASCADE, related_name='penanda_tangan_surat_usulan')
     kop_surat = models.ForeignKey(KopSurat, on_delete=models.CASCADE, null=True, blank=True)
