@@ -1021,6 +1021,7 @@ def surat_usulan_export_pdf(request, pk):
         'kop_surat_base64': kop_surat_base64,
         'show_lampiran_link': show_lampiran_link,
         'lampiran_url': lampiran_url,
+        'jumlah_peserta': jumlah_peserta,
     })
 
     try:

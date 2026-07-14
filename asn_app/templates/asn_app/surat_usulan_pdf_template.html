@@ -283,6 +283,86 @@
         </tbody>
     </table> -->
 
+    {% if jumlah_peserta <= 3 %}
+    {% if surat_usulan.peserta_surat_usulan.all %}
+    <div class="pegawai-info">
+        <table>
+            {% for p in surat_usulan.peserta_surat_usulan.all %}
+            <tr>
+                <td class="label">{{ forloop.counter }}. <span style="padding-left: 23px;">Nama</span></td>
+                <td class="colon">:</td>
+                <td>
+                    {% if p.pegawai %}
+                        {{ p.pegawai.nama }}
+                    {% elif p.siswa %}
+                        {{ p.siswa.nama|upper }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td class="label" style="padding-left: 40px;">NIP/NIS</td>
+                <td class="colon">:</td>
+                <td>
+                    {% if p.pegawai %}
+                        {{ p.pegawai.nip }}
+                    {% elif p.siswa %}
+                        {{ p.siswa.nis|default:"-" }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td class="label" style="padding-left: 40px;">Jabatan</td>
+                <td class="colon">:</td>
+                <td>
+                    {% if p.pegawai %}
+                        {{ p.pegawai.jabatan|default:"-" }}
+                    {% elif p.siswa %}
+                        Siswa
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td class="label" style="padding-left: 40px;">Pangkat/Gol</td>
+                <td class="colon">:</td>
+                <td>
+                    {% if p.pegawai %}
+                        {% if p.pegawai.pangkat and p.pegawai.pangkat != '-' and p.pegawai.golongan and p.pegawai.golongan != '-' %}
+                            {{ p.pegawai.pangkat }}, {{ p.pegawai.golongan }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    {% elif p.siswa %}
+                        {{ p.siswa.kelas|default:"-" }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+            <!-- <tr>
+                <td class="label" style="padding-left: 40px;">Tanggal Kegiatan</td>
+                <td class="colon">:</td>
+                <td>{{ p.tanggal_kegiatan|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="label" style="padding-left: 40px;">Tempat Kegiatan</td>
+                <td class="colon">:</td>
+                <td>{{ p.tempat_kegiatan|default:"-" }}</td>
+            </tr> -->
+            {% if not forloop.last %}
+            <tr><td colspan="3" style="padding-top: 10px;"></td></tr>
+            {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+    {% endif %}
+    <br>
     <div class="content">
         <p>Demikian surat permohonan ini kami sampaikan. Atas perhatian Bapak, Kami sampaikan terima kasih.</p>
     </div>
@@ -295,8 +375,9 @@
                 <span class="signature-unit">{{ surat_usulan.penanda_tangan.unit_kerja|default:"" }},</span>
             </div>
             <div class="signature-body">
-                    <div class="signature-name">{{ surat_usulan.penanda_tangan.nama }}</div>
-                    <div class="signature-nip">
+                    <div class="signature-name">{{ surat_usulan.penanda_tangan.nama }}<br>
+                    <!-- </div>
+                    <div class="signature-nip"> -->
                         {% if surat_usulan.penanda_tangan.pangkat and surat_usulan.penanda_tangan.pangkat != '-' and surat_usulan.penanda_tangan.golongan and surat_usulan.penanda_tangan.golongan != '-' %}
                             {{ surat_usulan.penanda_tangan.pangkat }}<br>
                         {% endif %}
