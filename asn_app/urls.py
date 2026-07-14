@@ -51,11 +51,19 @@ urlpatterns = [
     path('nota_dinas/<int:pk>/pdf/', views.nota_dinas_export_pdf, name='nota_dinas_export_pdf'),
     path('nota_dinas/<int:pk>/lampiran/pdf/', views.nota_dinas_lampiran_pdf, name='nota_dinas_lampiran_pdf'),
 
-    # Peserta Nota Dinas routes
-    path('peserta-nota-dinas/', views.peserta_nota_dinas_list, name='peserta_nota_dinas_list'),
-    path('peserta-nota-dinas/create/', views.peserta_nota_dinas_create, name='peserta_nota_dinas_create'),
-    path('peserta-nota-dinas/<int:pk>/update/', views.peserta_nota_dinas_update, name='peserta_nota_dinas_update'),
-    path('peserta-nota-dinas/<int:pk>/delete/', views.peserta_nota_dinas_delete, name='peserta_nota_dinas_delete'),
+    # Surat Usulan routes
+    path('surat_usulan/', views.surat_usulan_list, name='surat_usulan_list'),
+    path('surat_usulan/create/', views.surat_usulan_create, name='surat_usulan_create'),
+    path('surat_usulan/<int:pk>/', views.surat_usulan_detail, name='surat_usulan_detail'),
+    path('surat_usulan/<int:pk>/update/', views.surat_usulan_update, name='surat_usulan_update'),
+    path('surat_usulan/<int:pk>/delete/', views.surat_usulan_delete, name='surat_usulan_delete'),
+    path('surat_usulan/<int:pk>/pdf/', views.surat_usulan_export_pdf, name='surat_usulan_export_pdf'),
+
+    # Peserta Surat Usulan routes
+    path('peserta-surat-usulan/', views.peserta_surat_usulan_list, name='peserta_surat_usulan_list'),
+    path('peserta-surat-usulan/create/', views.peserta_surat_usulan_create, name='peserta_surat_usulan_create'),
+    path('peserta-surat-usulan/<int:pk>/update/', views.peserta_surat_usulan_update, name='peserta_surat_usulan_update'),
+    path('peserta-surat-usulan/<int:pk>/delete/', views.peserta_surat_usulan_delete, name='peserta_surat_usulan_delete'),
 
     # Hari Libur routes
     path('hari_libur/', views.HariLiburListView.as_view(), name='hari_libur_list'),

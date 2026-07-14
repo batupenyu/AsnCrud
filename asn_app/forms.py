@@ -6,7 +6,8 @@ from .models import (
     NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa,
     SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum,
     SuratPanggilanSiswa, SiswaKeluar, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4,
-    SuratUndanganSiswa, PesertaNotaDinas, SuratDispensasi, PesertaDispensasi
+    SuratUndanganSiswa, PesertaNotaDinas, SuratDispensasi, PesertaDispensasi,
+    SuratUsulan, PesertaSuratUsulan
 )
 
 
@@ -769,3 +770,97 @@ class SuratDispensasiForm(forms.ModelForm):
         self.fields['penandatangan'].label_from_instance = lambda obj: obj.nama
         self.fields['kop_surat'].queryset = KopSurat.objects.all().order_by('nama')
         self.fields['kop_surat'].label_from_instance = lambda obj: obj.nama
+
+
+class SuratUsulanForm(forms.ModelForm):
+    SIFAT_CHOICES = [
+        ('Penting', 'Penting'),
+        ('Biasa', 'Biasa'),
+        ('Segera', 'Segera'),
+    ]
+    sifat = forms.ChoiceField(choices=SIFAT_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
+    class Meta:
+        model = SuratUsulan
+        fields = '__all__'
+        widgets = {
+            'kepada': forms.TextInput(attrs={'class': 'form-control'}),
+            'dari': forms.TextInput(attrs={'class': 'form-control'}),
+            'tanggal': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'nomor': forms.TextInput(attrs={'class': 'form-control'}),
+            'lampiran': forms.TextInput(attrs={'class': 'form-control'}),
+            'hal': forms.TextInput(attrs={'class': 'form-control'}),
+            'dasar_surat': forms.Textarea(attrs={'rows': 5, 'class': 'form-control'}),
+            'isi_surat': forms.Textarea(attrs={'rows': 5, 'class': 'form-control'}),
+            'penutup_surat': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'penanda_tangan': forms.Select(attrs={'class': 'form-control'}),
+            'kop_surat': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['penanda_tangan'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['penanda_tangan'].label_from_instance = lambda obj: obj.nama
+        self.fields['kop_surat'].queryset = KopSurat.objects.all().order_by('nama')
+        self.fields['kop_surat'].label_from_instance = lambda obj: obj.nama
+        if not self.instance.pk:
+            self.fields['kepada'].initial = 'Yth. Gubernur Provinsi Kepulauan Bangka Belitung'
+            self.fields['dari'].initial = 'Plt. Kepala Dinas Pendidikan Wilayah I Provinsi Kepulauan Bangka Belitung'
+            self.fields['lampiran'].initial = '1 (satu) Set'
+            self.fields['hal'].initial = 'Permohonan Izin Perjalanan Dinas'
+            self.fields['penutup_surat'].initial = 'Demikian surat permohonan ini kami sampaikan. Atas perhatian Bapak, Kami sampaikan terima kasih.'
+            default_penanda_tangan = ASN.objects.first()
+            if default_penanda_tangan:
+                self.fields['penanda_tangan'].initial = default_penanda_tangan.pk
+            default_kop_surat = KopSurat.objects.first()
+            if default_kop_surat:
+                self.fields['kop_surat'].initial = default_kop_surat.pk
+
+
+class PesertaSuratUsulanForm(forms.ModelForm):
+    class Meta:
+        model = PesertaSuratUsulan
+        fields = ['pegawai', 'tanggal_tempat']
+        widgets = {
+            'pegawai': forms.Select(attrs={'class': 'form-control'}),
+            'tanggal_tempat': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['pegawai'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['pegawai'].label_from_instance = lambda obj: obj.nama
+        self.fields['pegawai'].empty_label = '-- Pilih Pegawai --'
+
+
+class PesertaSuratUsulanCRUDForm(forms.ModelForm):
+    class Meta:
+        model = PesertaSuratUsulan
+        fields = ['surat_usulan', 'pegawai', 'tanggal_tempat']
+        widgets = {
+            'surat_usulan': forms.Select(attrs={'class': 'form-control'}),
+            'pegawai': forms.Select(attrs={'class': 'form-control'}),
+            'tanggal_tempat': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['surat_usulan'].queryset = SuratUsulan.objects.all().order_by('tanggal')
+        self.fields['surat_usulan'].label_from_instance = lambda obj: f"{obj.nomor} - {obj.hal}"
+        self.fields['pegawai'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['pegawai'].label_from_instance = lambda obj: obj.nama
+        self.fields['pegawai'].empty_label = '-- Pilih Pegawai --'
+
+
+BasePesertaSuratUsulanFormSet = inlineformset_factory(
+    SuratUsulan, PesertaSuratUsulan,
+    form=PesertaSuratUsulanForm,
+    extra=1,
+    can_delete=True
+)
+
+
+class PesertaSuratUsulanFormSet(BasePesertaSuratUsulanFormSet):
+    def save_new(self, form, commit=True):
+        if not form.cleaned_data.get('pegawai'):
+            return None
+        return super().save_new(form, commit=commit)

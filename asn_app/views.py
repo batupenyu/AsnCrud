@@ -8,8 +8,8 @@ from django.utils.timezone import now
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.db.models import Q, Count
-from .models import ASN, SuratPerintahTugas, KopSurat, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum, SuratPanggilanSiswa, SiswaKeluar, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4, SuratUndanganSiswa, PesertaNotaDinas, SuratDispensasi, PesertaDispensasi
-from .forms import ASNForm, SPTForm, KopSuratForm, SuratSantunanKorpriForm, NotaDinasForm, HariLiburForm, SuratCutiForm, SisaCutiForm, SiswaForm, SuratKeteranganForm, SuratResmiForm, SPTJMForm, SPMTForm, FotoKegiatanForm, SuratUmumForm, SuratPanggilanSiswaForm, SiswaKeluarForm, SuratRekomendasiStudiLanjutForm, SuratKP4Form, AnggotaKeluargaKP4FormSet, SuratUndanganSiswaForm, PesertaNotaDinasForm, PesertaNotaDinasCRUDForm, PesertaNotaDinasFormSet, SuratDispensasiForm, PesertaDispensasiFormSet
+from .models import ASN, SuratPerintahTugas, KopSurat, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum, SuratPanggilanSiswa, SiswaKeluar, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4, SuratUndanganSiswa, PesertaNotaDinas, SuratDispensasi, PesertaDispensasi, SuratUsulan, PesertaSuratUsulan
+from .forms import ASNForm, SPTForm, KopSuratForm, SuratSantunanKorpriForm, NotaDinasForm, HariLiburForm, SuratCutiForm, SisaCutiForm, SiswaForm, SuratKeteranganForm, SuratResmiForm, SPTJMForm, SPMTForm, FotoKegiatanForm, SuratUmumForm, SuratPanggilanSiswaForm, SiswaKeluarForm, SuratRekomendasiStudiLanjutForm, SuratKP4Form, AnggotaKeluargaKP4FormSet, SuratUndanganSiswaForm, PesertaNotaDinasForm, PesertaNotaDinasCRUDForm, PesertaNotaDinasFormSet, SuratDispensasiForm, PesertaDispensasiFormSet, SuratUsulanForm, PesertaSuratUsulanForm, PesertaSuratUsulanCRUDForm, PesertaSuratUsulanFormSet
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy, reverse
 import base64
@@ -887,6 +887,147 @@ def nota_dinas_lampiran_pdf(request, pk):
     response = HttpResponse(result, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="lampiran_nota_dinas_{nota_dinas.pk}.pdf"'
     return response
+
+
+# Surat Usulan Views
+def surat_usulan_list(request):
+    surat_usulan_list = SuratUsulan.objects.all().order_by('-tanggal')
+    return render(request, 'asn_app/surat_usulan_list.html', {'surat_usulan_list': surat_usulan_list})
+
+def surat_usulan_detail(request, pk):
+    surat_usulan = get_object_or_404(SuratUsulan, pk=pk)
+    return render(request, 'asn_app/surat_usulan_detail.html', {'surat_usulan': surat_usulan})
+
+def surat_usulan_create(request):
+    if request.method == 'POST':
+        form = SuratUsulanForm(request.POST)
+        formset = PesertaSuratUsulanFormSet(request.POST)
+        if form.is_valid() and formset.is_valid():
+            surat_usulan = form.save()
+            formset.instance = surat_usulan
+            formset.save()
+            return redirect('surat_usulan_list')
+    else:
+        form = SuratUsulanForm()
+        formset = PesertaSuratUsulanFormSet()
+    
+    return render(request, 'asn_app/surat_usulan_form.html', {
+        'form': form, 'formset': formset, 'title': 'Tambah Surat Usulan'
+    })
+
+def surat_usulan_update(request, pk):
+    surat_usulan = get_object_or_404(SuratUsulan, pk=pk)
+    if request.method == 'POST':
+        form = SuratUsulanForm(request.POST, instance=surat_usulan)
+        formset = PesertaSuratUsulanFormSet(request.POST, instance=surat_usulan)
+        if form.is_valid() and formset.is_valid():
+            form.save()
+            formset.save()
+            return redirect('surat_usulan_detail', pk=surat_usulan.pk)
+    else:
+        form = SuratUsulanForm(instance=surat_usulan)
+        formset = PesertaSuratUsulanFormSet(instance=surat_usulan)
+    
+    return render(request, 'asn_app/surat_usulan_form.html', {
+        'form': form, 'formset': formset, 'title': 'Edit Surat Usulan'
+    })
+
+def surat_usulan_delete(request, pk):
+    surat_usulan = get_object_or_404(SuratUsulan, pk=pk)
+    if request.method == 'POST':
+        surat_usulan.delete()
+        return redirect('surat_usulan_list')
+    return render(request, 'asn_app/surat_usulan_confirm_delete.html', {'surat_usulan': surat_usulan})
+
+def peserta_surat_usulan_list(request):
+    surat_usulan_id = request.GET.get('surat_usulan')
+    peserta_list = PesertaSuratUsulan.objects.select_related('surat_usulan', 'pegawai').all().order_by('surat_usulan__tanggal', 'id')
+    surat_usulan = None
+    if surat_usulan_id:
+        peserta_list = peserta_list.filter(surat_usulan_id=surat_usulan_id)
+        surat_usulan = get_object_or_404(SuratUsulan, pk=surat_usulan_id)
+    return render(request, 'asn_app/peserta_surat_usulan_list.html', {
+        'peserta_list': peserta_list,
+        'surat_usulan': surat_usulan,
+    })
+
+def peserta_surat_usulan_create(request):
+    next_url = request.GET.get('next') or request.POST.get('next') or reverse('peserta_surat_usulan_list')
+    if request.method == 'POST':
+        form = PesertaSuratUsulanCRUDForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(next_url)
+    else:
+        form = PesertaSuratUsulanCRUDForm()
+        surat_usulan_id = request.GET.get('surat_usulan')
+        if surat_usulan_id:
+            form.fields['surat_usulan'].initial = surat_usulan_id
+    return render(request, 'asn_app/peserta_surat_usulan_form.html', {
+        'form': form, 'title': 'Tambah Peserta Surat Usulan', 'next_url': next_url
+    })
+
+def peserta_surat_usulan_update(request, pk):
+    peserta = get_object_or_404(PesertaSuratUsulan.objects.select_related('surat_usulan', 'pegawai'), pk=pk)
+    next_url = request.GET.get('next') or request.POST.get('next') or reverse('peserta_surat_usulan_list')
+    if request.method == 'POST':
+        form = PesertaSuratUsulanCRUDForm(request.POST, instance=peserta)
+        if form.is_valid():
+            form.save()
+            return redirect(next_url)
+    else:
+        form = PesertaSuratUsulanCRUDForm(instance=peserta)
+    return render(request, 'asn_app/peserta_surat_usulan_form.html', {
+        'form': form, 'title': 'Edit Peserta Surat Usulan', 'next_url': next_url, 'peserta': peserta
+    })
+
+def peserta_surat_usulan_delete(request, pk):
+    peserta = get_object_or_404(PesertaSuratUsulan.objects.select_related('surat_usulan', 'pegawai'), pk=pk)
+    next_url = request.GET.get('next') or request.POST.get('next') or reverse('peserta_surat_usulan_list')
+    if request.method == 'POST':
+        peserta.delete()
+        return redirect(next_url)
+    return render(request, 'asn_app/peserta_surat_usulan_confirm_delete.html', {
+        'peserta': peserta, 'next_url': next_url
+    })
+
+def surat_usulan_export_pdf(request, pk):
+    import os
+    import base64
+    from weasyprint import HTML
+
+    surat_usulan = get_object_or_404(SuratUsulan, pk=pk)
+
+    kop_surat_base64 = None
+    if surat_usulan.kop_surat and surat_usulan.kop_surat.gambar:
+        if os.path.exists(surat_usulan.kop_surat.gambar.path):
+            try:
+                with open(surat_usulan.kop_surat.gambar.path, 'rb') as image_file:
+                    image_data = image_file.read()
+                    image_format = surat_usulan.kop_surat.gambar.name.split('.')[-1].lower()
+                    if image_format == 'jpg':
+                        image_format = 'jpeg'
+                    kop_surat_base64 = f"data:image/{image_format};base64,{base64.b64encode(image_data).decode('utf-8')}"
+            except Exception as e:
+                logging.error(f"Error encoding image to base64 for Surat Usulan PDF: {e}")
+
+    html_string = render_to_string('asn_app/surat_usulan_pdf_template.html', {
+        'surat_usulan': surat_usulan,
+        'request': request,
+        'kop_surat_base64': kop_surat_base64,
+    })
+
+    try:
+        html = HTML(string=html_string, base_url=request.build_absolute_uri())
+        result = html.write_pdf()
+    except Exception as e:
+        logging.error(f"Error writing PDF for Surat Usulan: {e}")
+        return HttpResponse(f"Error writing PDF: {e}", status=500)
+
+    response = HttpResponse(result, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename=surat_usulan_{surat_usulan.pk}.pdf'
+    return response
+
 
 # Hari Libur Views
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView

@@ -753,3 +753,38 @@ class PesertaDispensasi(models.Model):
         if self.siswa:
             return self.siswa.kelas or '-'
         return '-'
+
+
+class SuratUsulan(models.Model):
+    kepada = models.CharField(max_length=255)
+    dari = models.CharField(max_length=255)
+    tanggal = models.DateField()
+    nomor = models.CharField(max_length=255)
+    sifat = models.CharField(max_length=255)
+    lampiran = models.CharField(max_length=255)
+    hal = models.CharField(max_length=255)
+    dasar_surat = models.TextField(verbose_name='Dasar Surat')
+    isi_surat = models.TextField(default='')
+    penutup_surat = models.TextField()
+    penanda_tangan = models.ForeignKey(ASN, on_delete=models.CASCADE, related_name='penanda_tangan_surat_usulan')
+    kop_surat = models.ForeignKey(KopSurat, on_delete=models.CASCADE, null=True, blank=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.hal
+
+
+class PesertaSuratUsulan(models.Model):
+    surat_usulan = models.ForeignKey(SuratUsulan, on_delete=models.CASCADE, related_name='peserta_surat_usulan')
+    pegawai = models.ForeignKey(ASN, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Pegawai')
+    tanggal_tempat = models.CharField(max_length=255, blank=True, verbose_name='Tanggal / Tempat')
+    
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        if self.pegawai:
+            return f"{self.pegawai.nama}"
+        return f"Peserta {self.id}"

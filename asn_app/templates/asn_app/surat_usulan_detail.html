@@ -1,0 +1,88 @@
+{% extends 'asn_app/base.html' %}
+{% load indonesian_date_tags %}
+
+{% block title %}Detail Surat Usulan{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">{{ surat_usulan.hal }}</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Nomor:</strong> {{ surat_usulan.nomor }}</p>
+                    <p><strong>Tanggal:</strong> {{ surat_usulan.tanggal|indonesian_date:"%d %b %Y" }}</p>
+                    <p><strong>Sifat:</strong> {{ surat_usulan.sifat }}</p>
+                    <p><strong>Lampiran:</strong> {{ surat_usulan.lampiran }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Kepada:</strong> {{ surat_usulan.kepada }}</p>
+                    <p><strong>Dari:</strong> {{ surat_usulan.dari }}</p>
+                </div>
+            </div>
+            <hr>
+            <h5>Dasar Surat</h5>
+            <p>{{ surat_usulan.dasar_surat|linebreaks }}</p>
+            <hr>
+            <h5>Isi Surat</h5>
+            <p>{{ surat_usulan.isi_surat|linebreaks }}</p>
+            <hr>
+            <h5>Peserta Perjalanan Dinas</h5>
+            {% if surat_usulan.peserta_surat_usulan.all %}
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>NIP</th>
+                        <th>Pangkat / Gol</th>
+                        <th>Jabatan</th>
+                        <th>Tanggal / Tempat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for peserta in surat_usulan.peserta_surat_usulan.all %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ peserta.pegawai.nama|default:"-" }}</td>
+                        <td>{{ peserta.pegawai.nip|default:"-" }}</td>
+                        <td>
+                            {% if peserta.pegawai.pangkat and peserta.pegawai.pangkat != '-' and peserta.pegawai.golongan and peserta.pegawai.golongan != '-' %}
+                                {{ peserta.pegawai.pangkat }}, {{ peserta.pegawai.golongan }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>{{ peserta.pegawai.jabatan|default:"-" }}</td>
+                        <td>{{ peserta.tanggal_tempat|default:"-" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a href="{% url 'peserta_surat_usulan_list' %}?surat_usulan={{ surat_usulan.pk }}" class="btn btn-sm btn-info">
+                <i class="fas fa-list"></i> Kelola Peserta
+            </a>
+            {% else %}
+            <p><em>Belum ada data peserta yang diisi.</em></p>
+            <a href="{% url 'peserta_surat_usulan_create' %}?surat_usulan={{ surat_usulan.pk }}&next={{ request.get_full_path|urlencode }}" class="btn btn-sm btn-primary">
+                <i class="fas fa-plus"></i> Tambah Peserta
+            </a>
+            {% endif %}
+            <hr>
+            <h5>Penutup Surat</h5>
+            <p>{{ surat_usulan.penutup_surat|linebreaks }}</p>
+            <hr>
+            <h5>Penanda Tangan</h5>
+            <p>{{ surat_usulan.penanda_tangan.nama }}</p>
+            <p>NIP: {{ surat_usulan.penanda_tangan.nip }}</p>
+        </div>
+        <div class="card-footer text-end">
+            <a href="{% url 'surat_usulan_list' %}" class="btn btn-secondary">Kembali</a>
+            <a href="{% url 'surat_usulan_update' surat_usulan.pk %}" class="btn btn-warning">Edit</a>
+            <a href="{% url 'surat_usulan_export_pdf' surat_usulan.pk %}" class="btn btn-primary">Cetak PDF</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

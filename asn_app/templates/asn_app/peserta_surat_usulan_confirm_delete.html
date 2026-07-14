@@ -1,0 +1,23 @@
+{% extends 'asn_app/base.html' %}
+
+{% block title %}Hapus Peserta Surat Usulan{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>Hapus Peserta Surat Usulan</h2>
+        </div>
+        <div class="card-body">
+            <p>Anda yakin ingin menghapus peserta <strong>{{ peserta.pegawai.nama }}</strong> dari surat usulan <strong>{{ peserta.surat_usulan.hal }}</strong>?</p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-flex justify-content-end">
+                    <a href="{{ next_url }}" class="btn btn-secondary me-2">Batal</a>
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

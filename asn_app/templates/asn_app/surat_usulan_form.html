@@ -1,0 +1,164 @@
+{% extends 'asn_app/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div class="card">
+        <div class="card-header">
+            <h2>{{ title }}</h2>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.kepada.id_for_label }}" class="form-label">Kepada</label>
+                        {{ form.kepada }}
+                        {% if form.kepada.errors %}<div class="text-danger">{{ form.kepada.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.dari.id_for_label }}" class="form-label">Dari</label>
+                        {{ form.dari }}
+                        {% if form.dari.errors %}<div class="text-danger">{{ form.dari.errors }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.tanggal.id_for_label }}" class="form-label">Tanggal</label>
+                        {{ form.tanggal }}
+                        {% if form.tanggal.errors %}<div class="text-danger">{{ form.tanggal.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.nomor.id_for_label }}" class="form-label">Nomor</label>
+                        {{ form.nomor }}
+                        {% if form.nomor.errors %}<div class="text-danger">{{ form.nomor.errors }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.sifat.id_for_label }}" class="form-label">Sifat</label>
+                        {{ form.sifat }}
+                        {% if form.sifat.errors %}<div class="text-danger">{{ form.sifat.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.lampiran.id_for_label }}" class="form-label">Lampiran</label>
+                        {{ form.lampiran }}
+                        {% if form.lampiran.errors %}<div class="text-danger">{{ form.lampiran.errors }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.hal.id_for_label }}" class="form-label">Hal</label>
+                    {{ form.hal }}
+                    {% if form.hal.errors %}<div class="text-danger">{{ form.hal.errors }}</div>{% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.dasar_surat.id_for_label }}" class="form-label">Dasar Surat</label>
+                    {{ form.dasar_surat }}
+                    {% if form.dasar_surat.errors %}<div class="text-danger">{{ form.dasar_surat.errors }}</div>{% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.isi_surat.id_for_label }}" class="form-label">Isi Surat</label>
+                    {{ form.isi_surat }}
+                    {% if form.isi_surat.errors %}<div class="text-danger">{{ form.isi_surat.errors }}</div>{% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Peserta Perjalanan Dinas</label>
+                    {% if formset.non_form_errors %}
+                    <div class="alert alert-danger">
+                        {{ formset.non_form_errors }}
+                    </div>
+                    {% endif %}
+                    {{ formset.management_form }}
+                    {% if formset %}
+                        {% for form in formset %}
+                            <div class="card mb-2">
+                                <div class="card-body">
+                                    {% for hidden in form.hidden_fields %}
+                                        {{ hidden }}
+                                    {% endfor %}
+                                    {% if form.non_field_errors %}
+                                    <div class="alert alert-danger">
+                                        {{ form.non_field_errors }}
+                                    </div>
+                                    {% endif %}
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Pegawai</label>
+                                            {{ form.pegawai }}
+                                            {% if form.pegawai.errors %}<div class="text-danger">{{ form.pegawai.errors }}</div>{% endif %}
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Tanggal / Tempat</label>
+                                            {{ form.tanggal_tempat }}
+                                            {% if form.tanggal_tempat.errors %}<div class="text-danger">{{ form.tanggal_tempat.errors }}</div>{% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            {% if form.instance.pk %}
+                                            <label class="form-label">Hapus</label>
+                                            <div class="form-check">
+                                                {{ form.DELETE }}
+                                                <label class="form-check-label" for="{{ form.DELETE.id_for_label }}">
+                                                    Hapus peserta ini
+                                                </label>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.penutup_surat.id_for_label }}" class="form-label">Penutup Surat</label>
+                    {{ form.penutup_surat }}
+                    {% if form.penutup_surat.errors %}<div class="text-danger">{{ form.penutup_surat.errors }}</div>{% endif %}
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.penanda_tangan.id_for_label }}" class="form-label">Penanda Tangan</label>
+                        {{ form.penanda_tangan }}
+                        {% if form.penanda_tangan.errors %}<div class="text-danger">{{ form.penanda_tangan.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.kop_surat.id_for_label }}" class="form-label">Kop Surat</label>
+                        {{ form.kop_surat }}
+                        {% if form.kop_surat.errors %}<div class="text-danger">{{ form.kop_surat.errors }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <a href="{% url 'surat_usulan_list' %}" class="btn btn-secondary me-2">Batal</a>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
