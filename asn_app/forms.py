@@ -7,7 +7,7 @@ from .models import (
     SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum,
     SuratPanggilanSiswa, SiswaKeluar, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4,
     SuratUndanganSiswa, PesertaNotaDinas, SuratDispensasi, PesertaDispensasi,
-    SuratUsulan, PesertaSuratUsulan
+    SuratUsulan, PesertaSuratUsulan, StSatyalancana
 )
 
 
@@ -766,10 +766,12 @@ class SuratDispensasiForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['penandatangan'].queryset = ASN.objects.all().order_by('nama')
-        self.fields['penandatangan'].label_from_instance = lambda obj: obj.nama
+        self.fields['penanda_tangan'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['penanda_tangan'].label_from_instance = lambda obj: obj.nama
         self.fields['kop_surat'].queryset = KopSurat.objects.all().order_by('nama')
         self.fields['kop_surat'].label_from_instance = lambda obj: obj.nama
+        if not self.instance.pk:
+            self.fields['dasar_surat'].initial = 'Surat Sekretariat Daerah Provinsi Kepulauan Bangka Belitung Nomor: 800/143/BKPSDM/2026 tanggal 20 Juli 2026 tentang Persyaratan Pengajuan Satyalancana Karya Satya, Kepala Dinas Pendidikan Provinsi Bangka Belitung.'
 
 
 class SuratUsulanForm(forms.ModelForm):
@@ -874,3 +876,36 @@ class PesertaSuratUsulanFormSet(BasePesertaSuratUsulanFormSet):
         if not form.cleaned_data.get('pegawai') and not form.cleaned_data.get('siswa'):
             return None
         return super().save_new(form, commit=commit)
+
+
+class StSatyalancanaForm(forms.ModelForm):
+    class Meta:
+        model = StSatyalancana
+        fields = '__all__'
+        widgets = {
+            'dasar_surat': forms.Textarea(attrs={'rows': 5, 'class': 'form-control'}),
+            'kepada_nama': forms.TextInput(attrs={'class': 'form-control', 'id': 'id_kepada_nama'}),
+            'kepada_nip': forms.TextInput(attrs={'class': 'form-control', 'id': 'id_kepada_nip'}),
+            'kepada_pangkat_gol': forms.TextInput(attrs={'class': 'form-control', 'id': 'id_kepada_pangkat_gol'}),
+            'kepada_jabatan': forms.TextInput(attrs={'class': 'form-control', 'id': 'id_kepada_jabatan'}),
+            'kepada_unit_kerja': forms.TextInput(attrs={'class': 'form-control', 'id': 'id_kepada_unit_kerja'}),
+            'untuk_tugas': forms.Textarea(attrs={'rows': 5, 'class': 'form-control'}),
+            'nomor': forms.TextInput(attrs={'class': 'form-control'}),
+            'tanggal': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'penanda_tangan': forms.Select(attrs={'class': 'form-control'}),
+            'kop_surat': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['kepada_pegawai'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['kepada_pegawai'].label_from_instance = lambda obj: obj.nama
+        self.fields['kepada_pegawai'].empty_label = '-- Pilih Pegawai --'
+        self.fields['penanda_tangan'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['penanda_tangan'].label_from_instance = lambda obj: obj.nama
+        self.fields['kop_surat'].queryset = KopSurat.objects.all().order_by('nama')
+        self.fields['kop_surat'].label_from_instance = lambda obj: obj.nama
+        if not self.instance.pk:
+            self.fields['dasar_surat'].initial = 'Surat Sekretariat Daerah Provinsi Kepulauan Bangka Belitung Nomor: 800/143/BKPSDM/2026 tanggal 20 Juli 2026 tentang Persyaratan Pengajuan Satyalancana Karya Satya, Kepala Dinas Pendidikan Provinsi Bangka Belitung.'
+            self.fields['untuk_tugas'].initial = 'Pengajuan Tanda Kehormatan Satyalancana Karya Satya 20 Tahun\nDilaksanakan dengan sebaik-baik dan penuh tanggung jawab.'
+            self.fields['nomor'].initial = '800/......../DISDIK/2026'

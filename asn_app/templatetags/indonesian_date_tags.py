@@ -121,6 +121,12 @@ def strip_list_prefix(value):
     return re.sub(r'^\s*\d+[\.\)]\s*', '', str(value))
 
 @register.filter
+def splitlines(value):
+    if not value:
+        return []
+    return str(value).splitlines()
+
+@register.filter
 def strip(value):
     """Hapus spasi di awal dan akhir string."""
     if value is None:

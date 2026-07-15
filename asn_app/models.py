@@ -792,3 +792,24 @@ class PesertaSuratUsulan(models.Model):
         elif self.siswa:
             return f"{self.siswa.nama}"
         return f"Peserta {self.id}"
+
+
+class StSatyalancana(models.Model):
+    dasar_surat = models.TextField(verbose_name='Dasar Surat')
+    kepada_pegawai = models.ForeignKey(ASN, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Kepada Pegawai')
+    kepada_nama = models.CharField(max_length=255, blank=True, verbose_name='Nama')
+    kepada_nip = models.CharField(max_length=255, blank=True, verbose_name='NIP')
+    kepada_pangkat_gol = models.CharField(max_length=255, blank=True, verbose_name='Pangkat / Golongan')
+    kepada_jabatan = models.CharField(max_length=255, blank=True, verbose_name='Jabatan')
+    kepada_unit_kerja = models.CharField(max_length=255, blank=True, verbose_name='Unit Kerja')
+    untuk_tugas = models.TextField(verbose_name='Untuk Ditujukan')
+    nomor = models.CharField(max_length=255)
+    tanggal = models.DateField()
+    penanda_tangan = models.ForeignKey(ASN, on_delete=models.CASCADE, related_name='penanda_tangan_st_satyalancana')
+    kop_surat = models.ForeignKey(KopSurat, on_delete=models.CASCADE, null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Surat Tugas Satyalancana - {self.kepada_nama}"

@@ -1,0 +1,47 @@
+{% extends 'asn_app/base.html' %}
+{% load indonesian_date_tags %}
+
+{% block title %}Detail Surat Tugas Satyalancana{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Surat Tugas Satyalancana</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Nomor:</strong> {{ st.nomor }}</p>
+                    <p><strong>Tanggal:</strong> {{ st.tanggal|indonesian_date:"%d %b %Y" }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Kepada:</strong> {{ st.kepada_nama }}</p>
+                    <p><strong>NIP:</strong> {{ st.kepada_nip }}</p>
+                    <p><strong>Jabatan:</strong> {{ st.kepada_jabatan }}</p>
+                    <p><strong>Unit Kerja:</strong> {{ st.kepada_unit_kerja }}</p>
+                </div>
+            </div>
+            <hr>
+            <h5>Dasar Surat</h5>
+            <p>{{ st.dasar_surat|linebreaks }}</p>
+            <hr>
+            <h5>Untuk Ditujukan</h5>
+            <ol>
+                {% for tugas in st.untuk_tugas|splitlines %}
+                <li>{{ tugas|linebreaksbr }}</li>
+                {% endfor %}
+            </ol>
+            <hr>
+            <h5>Penanda Tangan</h5>
+            <p>{{ st.penanda_tangan.nama }}</p>
+            <p>NIP: {{ st.penanda_tangan.nip }}</p>
+        </div>
+        <div class="card-footer text-end">
+            <a href="{% url 'st_satyalancana_list' %}" class="btn btn-secondary">Kembali</a>
+            <a href="{% url 'st_satyalancana_update' st.pk %}" class="btn btn-warning">Edit</a>
+            <a href="{% url 'st_satyalancana_export_pdf' st.pk %}" class="btn btn-primary">Cetak PDF</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

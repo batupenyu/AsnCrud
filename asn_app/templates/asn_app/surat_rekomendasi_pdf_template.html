@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="id">
+{% load indonesian_date_tags %}
   <style>
     @page {
       size: A4;
@@ -107,7 +108,7 @@
       <br />
       <p><strong>Pertimbangan Rekomendasi:</strong></p>
       <ol class="pertimbangan" style="text-align: justify; line-height: 1.5; margin-top: 0; padding-left: 20pt">
-        {% for line in surat.pertimbangan.splitlines %}
+        {% for line in surat.pertimbangan|splitlines %}
         {% if line|strip %}<li style="margin-bottom: 0; line-height: 1.5">{{ line|strip_list_prefix }}</li>{% endif %}
         {% endfor %}
       </ol>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Surat Tugas - Dinas Pendidikan Prov. Kep. Babel</title>
+    {% load indonesian_date_tags %}
+    <style>
+        @page {
+            size: A4;
+            margin: 1cm 2cm 2cm 2.5cm;
+        }
+        body {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            color: #000;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+        }
+        /* Kop Surat */
+        .kop-surat {
+            border-bottom: 4px double #000;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            position: relative;
+            text-align: center;
+        }
+        .logo-daerah {
+            position: absolute;
+            left: 0;
+            top: 5px;
+            width: 70px;
+            height: auto;
+        }
+        .kop-teks {
+            margin-left: 80px;
+            margin-right: 20px;
+        }
+        .kop-teks h1 {
+            font-size: 14pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 0;
+        }
+        .kop-teks h2 {
+            font-size: 16pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 0;
+        }
+        .kop-teks p {
+            font-size: 10pt;
+            margin: 2px 0 0 0;
+            line-height: 1.2;
+        }
+        /* Judul Surat */
+        .judul-surat {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .judul-surat h3 {
+            font-size: 12pt;
+            text-decoration: underline;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+        .judul-surat p {
+            margin: 0;
+            font-size: 11pt;
+        }
+        /* Struktur Isi / Grid Tabel */
+        .row-dasar, .row-kepada, .row-untuk {
+            display: flex;
+            margin-bottom: 15px;
+            align-items: flex-start;
+        }
+        .label-utama {
+            width: 120px;
+            font-weight: bold;
+        }
+        .titik-dua-utama {
+            width: 20px;
+        }
+        .konten-utama {
+            flex: 1;
+            text-align: justify;
+        }
+        /* Tabel Data Pegawai */
+        .tabel-data {
+            width: 100%;
+            margin-top: 5px;
+            border-collapse: collapse;
+        }
+        .tabel-data td {
+            padding: 2px 0;
+            vertical-align: top;
+        }
+        .tabel-data td.label-sub {
+            width: 120px;
+        }
+        .tabel-data td.titik-dua-sub {
+            width: 15px;
+        }
+        /* Bagian Penugasan / List */
+        .list-tugas {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .list-tugas li {
+            margin-bottom: 5px;
+            text-align: justify;
+        }
+        /* Tanda Tangan */
+        .ttd-container {
+            float: right;
+            margin-top: 40px;
+            width: 300px;
+            text-align: left;
+        }
+        .ttd-container p {
+            margin: 0;
+        }
+        .nama-pejabat {
+            font-weight: bold;
+            text-decoration: underline;
+            margin-top: 70px !important;
+        }
+        /* Pembatas Print */
+        @media print {
+            body {
+                background: none;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+
+        .kop-surat-container {
+            text-align: center;
+            margin-bottom: 10px;
+            margin-left: -2cm;
+            margin-right: -2cm;
+        }
+        .kop-surat-image {
+            width: 80%;
+            max-width: 21cm;
+            height: auto;
+            max-height: 200px; /* Batasi tinggi maksimal */
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- KOP SURAT -->
+    <div class="kop-surat-container">
+        {% if kop_surat_base64 %}
+            <img src="{{ kop_surat_base64 }}" alt="Kop Surat" class="kop-surat-image">
+        {% elif nota_dinas.kop_surat and nota_dinas.kop_surat.gambar %}
+            <img src="{{ request.scheme }}://{{ request.get_host }}{{ nota_dinas.kop_surat.gambar.url }}" alt="Kop Surat" class="kop-surat-image">
+        {% endif %}
+    </div>
+
+    <!-- JUDUL SURAT -->
+    <div class="judul-surat">
+        <h3>Surat Tugas</h3>
+        <p>NOMOR : {{ st.nomor }}</p>
+    </div>
+
+    <!-- DASAR SURAT -->
+    <div class="row-dasar">
+        <div class="label-utama">DASAR</div>
+        <div class="titik-dua-utama">:</div>
+        <div class="konten-utama">
+            {{ st.dasar_surat|linebreaksbr }}
+        </div>
+    </div>
+
+    <div style="text-align: center; font-weight: bold; margin: 15px 0; letter-spacing: 1px;">MENUGASKAN:</div>
+
+    <!-- KEPADA -->
+    <div class="row-kepada">
+        <div class="label-utama">KEPADA</div>
+        <div class="titik-dua-utama">:</div>
+        <div class="konten-utama">
+            <table class="tabel-data">
+                <tr>
+                    <td class="label-sub">Nama</td>
+                    <td class="titik-dua-sub">:</td>
+                    <td><strong>{{ st.kepada_nama }}</strong></td>
+                </tr>
+                <tr>
+                    <td class="label-sub">NIP.</td>
+                    <td class="titik-dua-sub">:</td>
+                    <td>{{ st.kepada_nip }}</td>
+                </tr>
+                <tr>
+                    <td class="label-sub">Pangkat / Gol</td>
+                    <td class="titik-dua-sub">:</td>
+                    <td>{{ st.kepada_pangkat_gol }}</td>
+                </tr>
+                <tr>
+                    <td class="label-sub">Jabatan</td>
+                    <td class="titik-dua-sub">:</td>
+                    <td>{{ st.kepada_jabatan }}</td>
+                </tr>
+                <tr>
+                    <td class="label-sub">Unit Kerja</td>
+                    <td class="titik-dua-sub">:</td>
+                    <td>{{ st.kepada_unit_kerja }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- UNTUK -->
+    <div class="row-untuk">
+        <div class="label-utama">UNTUK</div>
+        <div class="titik-dua-utama">:</div>
+        <div class="konten-utama">
+            <ol class="list-tugas">
+                {% for tugas in st.untuk_tugas|splitlines %}
+                <li>{{ tugas|linebreaksbr }}</li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+
+    <!-- TANDA TANGAN -->
+    <div class="ttd-container">
+        <p>Dikeluarkan di Pangkalpinang</p>
+        <p>Pada Tanggal {{ st.tanggal|indonesian_date:"%d %B %Y" }}</p>
+        <br>
+        <p>{{ st.penanda_tangan.jabatan }}</p>
+        <p>{{ st.penanda_tangan.unit_kerja|default:"" }}</p>
+        
+        <p class="nama-pejabat">{{ st.penanda_tangan.nama }}</p>
+        <p>
+            {% if st.penanda_tangan.pangkat and st.penanda_tangan.pangkat != '-' and st.penanda_tangan.golongan and st.penanda_tangan.golongan != '-' %}
+                {{ st.penanda_tangan.pangkat }} / {{ st.penanda_tangan.golongan }}<br>
+            {% endif %}
+            NIP. {{ st.penanda_tangan.nip }}
+        </p>
+    </div>
+</div>
+</body>
+</html>
