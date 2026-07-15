@@ -74,6 +74,14 @@ urlpatterns = [
     path('st_satyalancana/<int:pk>/delete/', views.st_satyalancana_delete, name='st_satyalancana_delete'),
     path('st_satyalancana/<int:pk>/pdf/', views.st_satyalancana_export_pdf, name='st_satyalancana_export_pdf'),
 
+    # DRH Satyalancana routes
+    path('drh_satyalancana/', views.drh_satyalancana_list, name='drh_satyalancana_list'),
+    path('drh_satyalancana/create/', views.drh_satyalancana_create, name='drh_satyalancana_create'),
+    path('drh_satyalancana/<int:pk>/', views.drh_satyalancana_detail, name='drh_satyalancana_detail'),
+    path('drh_satyalancana/<int:pk>/update/', views.drh_satyalancana_update, name='drh_satyalancana_update'),
+    path('drh_satyalancana/<int:pk>/delete/', views.drh_satyalancana_delete, name='drh_satyalancana_delete'),
+    path('drh_satyalancana/<int:pk>/pdf/', views.drh_satyalancana_export_pdf, name='drh_satyalancana_export_pdf'),
+
     # Hari Libur routes
     path('hari_libur/', views.HariLiburListView.as_view(), name='hari_libur_list'),
     path('hari_libur/create/', views.HariLiburCreateView.as_view(), name='hari_libur_create'),

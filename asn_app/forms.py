@@ -7,7 +7,7 @@ from .models import (
     SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum,
     SuratPanggilanSiswa, SiswaKeluar, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4,
     SuratUndanganSiswa, PesertaNotaDinas, SuratDispensasi, PesertaDispensasi,
-    SuratUsulan, PesertaSuratUsulan, StSatyalancana
+    SuratUsulan, PesertaSuratUsulan, StSatyalancana, DRHSatyalancana
 )
 
 
@@ -909,3 +909,25 @@ class StSatyalancanaForm(forms.ModelForm):
             self.fields['dasar_surat'].initial = 'Surat Sekretariat Daerah Provinsi Kepulauan Bangka Belitung Nomor: 800/143/BKPSDM/2026 tanggal 20 Juli 2026 tentang Persyaratan Pengajuan Satyalancana Karya Satya, Kepala Dinas Pendidikan Provinsi Bangka Belitung.'
             self.fields['untuk_tugas'].initial = 'Pengajuan Tanda Kehormatan Satyalancana Karya Satya 20 Tahun\nDilaksanakan dengan sebaik-baik dan penuh tanggung jawab.'
             self.fields['nomor'].initial = '800/......../DISDIK/2026'
+
+
+class DRHSatyalancanaForm(forms.ModelForm):
+    class Meta:
+        model = DRHSatyalancana
+        fields = '__all__'
+        widgets = {
+            'asn': forms.Select(attrs={'class': 'form-control'}),
+            'nip_lama': forms.TextInput(attrs={'class': 'form-control'}),
+            'pendidikan_terakhir': forms.TextInput(attrs={'class': 'form-control'}),
+            'pangkat_golongan': forms.TextInput(attrs={'class': 'form-control'}),
+            'no_sk_cpns': forms.TextInput(attrs={'class': 'form-control'}),
+            'jabatan_terakhir': forms.TextInput(attrs={'class': 'form-control'}),
+            'tanda_kehormatan': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'hukuman_disiplin': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'cltn': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['asn'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['asn'].label_from_instance = lambda obj: obj.nama

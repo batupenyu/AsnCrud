@@ -813,3 +813,20 @@ class StSatyalancana(models.Model):
 
     def __str__(self):
         return f"Surat Tugas Satyalancana - {self.kepada_nama}"
+
+
+class DRHSatyalancana(models.Model):
+    asn = models.ForeignKey(ASN, on_delete=models.CASCADE, related_name='drh_satyalancana')
+    nip_lama = models.CharField(max_length=255, blank=True, verbose_name='NIP Lama')
+    pendidikan_terakhir = models.CharField(max_length=255, blank=True, verbose_name='Pendidikan Terakhir')
+    pangkat_golongan = models.CharField(max_length=255, blank=True, verbose_name='Pangkat, Gol. Ruang Terakhir (TMT)')
+    no_sk_cpns = models.CharField(max_length=255, blank=True, verbose_name='No. SK CPNS (TMT)')
+    jabatan_terakhir = models.CharField(max_length=255, blank=True, verbose_name='Jabatan Terakhir (TMT)')
+    tanda_kehormatan = models.TextField(blank=True, verbose_name='Tanda Kehormatan yang sudah dimiliki')
+    hukuman_disiplin = models.TextField(blank=True, verbose_name='Hukuman Disiplin')
+    cltn = models.TextField(blank=True, verbose_name='CLTN')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"DRH Satyalancana - {self.asn.nama}"

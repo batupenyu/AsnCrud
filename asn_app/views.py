@@ -9,7 +9,7 @@ from django.core.paginator import Paginator
 from django.contrib import messages
 from django.db.models import Q, Count
 from .models import ASN, SuratPerintahTugas, KopSurat, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum, SuratPanggilanSiswa, SiswaKeluar, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4, SuratUndanganSiswa, PesertaNotaDinas, SuratDispensasi, PesertaDispensasi, SuratUsulan, PesertaSuratUsulan, StSatyalancana
-from .forms import ASNForm, SPTForm, KopSuratForm, SuratSantunanKorpriForm, NotaDinasForm, HariLiburForm, SuratCutiForm, SisaCutiForm, SiswaForm, SuratKeteranganForm, SuratResmiForm, SPTJMForm, SPMTForm, FotoKegiatanForm, SuratUmumForm, SuratPanggilanSiswaForm, SiswaKeluarForm, SuratRekomendasiStudiLanjutForm, SuratKP4Form, AnggotaKeluargaKP4FormSet, SuratUndanganSiswaForm, PesertaNotaDinasForm, PesertaNotaDinasCRUDForm, PesertaNotaDinasFormSet, SuratDispensasiForm, PesertaDispensasiFormSet, SuratUsulanForm, PesertaSuratUsulanForm, PesertaSuratUsulanCRUDForm, PesertaSuratUsulanFormSet, StSatyalancanaForm
+from .forms import ASNForm, SPTForm, KopSuratForm, SuratSantunanKorpriForm, NotaDinasForm, HariLiburForm, SuratCutiForm, SisaCutiForm, SiswaForm, SuratKeteranganForm, SuratResmiForm, SPTJMForm, SPMTForm, FotoKegiatanForm, SuratUmumForm, SuratPanggilanSiswaForm, SiswaKeluarForm, SuratRekomendasiStudiLanjutForm, SuratKP4Form, AnggotaKeluargaKP4FormSet, SuratUndanganSiswaForm, PesertaNotaDinasForm, PesertaNotaDinasCRUDForm, PesertaNotaDinasFormSet, SuratDispensasiForm, PesertaDispensasiFormSet, SuratUsulanForm, PesertaSuratUsulanForm, PesertaSuratUsulanCRUDForm, PesertaSuratUsulanFormSet, StSatyalancanaForm, DRHSatyalancanaForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy, reverse
 import base64
@@ -1172,6 +1172,90 @@ def st_satyalancana_export_pdf(request, pk):
 
     response = HttpResponse(result, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename=st_satyalancana_{st.pk}.pdf'
+    return response
+
+
+# DRH Satyalancana Views
+def drh_satyalancana_list(request):
+    drh_list = DRHSatyalancana.objects.select_related('asn').all().order_by('-created_at')
+    return render(request, 'asn_app/drh_satyalancana_list.html', {'drh_list': drh_list})
+
+def drh_satyalancana_detail(request, pk):
+    drh = get_object_or_404(DRHSatyalancana.objects.select_related('asn'), pk=pk)
+    return render(request, 'asn_app/drh_satyalancana_detail.html', {'drh': drh})
+
+def drh_satyalancana_create(request):
+    if request.method == 'POST':
+        form = DRHSatyalancanaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('drh_satyalancana_list')
+    else:
+        form = DRHSatyalancanaForm()
+    return render(request, 'asn_app/drh_satyalancana_form.html', {
+        'form': form, 'title': 'Tambah DRH Satyalancana'
+    })
+
+def drh_satyalancana_update(request, pk):
+    drh = get_object_or_404(DRHSatyalancana.objects.select_related('asn'), pk=pk)
+    if request.method == 'POST':
+        form = DRHSatyalancanaForm(request.POST, instance=drh)
+        if form.is_valid():
+            form.save()
+            return redirect('drh_satyalancana_detail', pk=drh.pk)
+    else:
+        form = DRHSatyalancanaForm(instance=drh)
+    return render(request, 'asn_app/drh_satyalancana_form.html', {
+        'form': form, 'title': 'Edit DRH Satyalancana'
+    })
+
+def drh_satyalancana_delete(request, pk):
+    drh = get_object_or_404(DRHSatyalancana.objects.select_related('asn'), pk=pk)
+    if request.method == 'POST':
+        drh.delete()
+        return redirect('drh_satyalancana_list')
+    return render(request, 'asn_app/drh_satyalancana_confirm_delete.html', {'drh': drh})
+
+def drh_satyalancana_export_pdf(request, pk):
+    import os
+    import base64
+    from weasyprint import HTML
+
+    drh = get_object_or_404(DRHSatyalancana.objects.select_related('asn'), pk=pk)
+    asn = drh.asn
+
+    kop_surat_base64 = None
+    if asn.unit_kerja:
+        # Try to get kop surat from StSatyalancana or use a default
+        kop_surat = StSatyalancana.objects.first().kop_surat if StSatyalancana.objects.exists() else None
+        if kop_surat and kop_surat.gambar:
+            if os.path.exists(kop_surat.gambar.path):
+                try:
+                    with open(kop_surat.gambar.path, 'rb') as image_file:
+                        image_data = image_file.read()
+                        image_format = kop_surat.gambar.name.split('.')[-1].lower()
+                        if image_format == 'jpg':
+                            image_format = 'jpeg'
+                        kop_surat_base64 = f"data:image/{image_format};base64,{base64.b64encode(image_data).decode('utf-8')}"
+                except Exception as e:
+                    logging.error(f"Error encoding image to base64 for DRH PDF: {e}")
+
+    html_string = render_to_string('asn_app/drh_satyalancana_pdf_template.html', {
+        'drh': drh,
+        'asn': asn,
+        'request': request,
+        'kop_surat_base64': kop_surat_base64,
+    })
+
+    try:
+        html = HTML(string=html_string, base_url=request.build_absolute_uri())
+        result = html.write_pdf()
+    except Exception as e:
+        logging.error(f"Error writing PDF for DRH Satyalancana: {e}")
+        return HttpResponse(f"Error writing PDF: {e}", status=500)
+
+    response = HttpResponse(result, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename=drh_satyalancana_{drh.pk}.pdf'
     return response
 
 

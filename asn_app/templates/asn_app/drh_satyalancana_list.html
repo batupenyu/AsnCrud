@@ -1,0 +1,48 @@
+{% extends 'asn_app/base.html' %}
+
+{% block title %}Daftar DRH Satyalancana{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Daftar DRH Satyalancana</h2>
+        <a href="{% url 'drh_satyalancana_create' %}" class="btn btn-primary">Tambah DRH Satyalancana</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Nama</th>
+                        <th>NIP</th>
+                        <th>Pangkat / Gol</th>
+                        <th>Jabatan</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for drh in drh_list %}
+                    <tr>
+                        <td>{{ drh.asn.nama }}</td>
+                        <td>{{ drh.asn.nip }}</td>
+                        <td>{{ drh.asn.pangkat }} / {{ drh.asn.golongan }}</td>
+                        <td>{{ drh.asn.jabatan }}</td>
+                        <td class="text-center">
+                            <a href="{% url 'drh_satyalancana_detail' drh.pk %}" class="btn btn-sm btn-info"><i class="fas fa-eye"></i> </a>
+                            <a href="{% url 'drh_satyalancana_update' drh.pk %}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> </a>
+                            <a href="{% url 'drh_satyalancana_delete' drh.pk %}" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> </a>
+                            <a href="{% url 'drh_satyalancana_export_pdf' drh.pk %}" class="btn btn-sm btn-secondary"><i class="fas fa-file-pdf"></i> </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">Tidak ada data DRH Satyalancana.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
