@@ -50,7 +50,7 @@
                                 -
                             {% endif %}
                         </td>
-                        <td>{{ peserta.tanggal_kegiatan|default:"-" }}</td>
+                        <td>{{ peserta.tanggal_kegiatan|indonesian_date:"%d %B %Y"|default:"-" }}</td>
                         <td>{{ peserta.tempat_kegiatan|default:"-" }}</td>
                         <td class="text-center">
                             <a href="{% url 'peserta_surat_usulan_update' peserta.pk %}?next={{ request.get_full_path|urlencode }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> </a>

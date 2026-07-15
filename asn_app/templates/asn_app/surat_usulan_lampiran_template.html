@@ -195,7 +195,7 @@
                         -
                     {% endif %}
                 </td>
-                <td>{{ peserta.tanggal_kegiatan|default:"-" }}</td>
+                <td>{{ peserta.tanggal_kegiatan|indonesian_date:"%d %B %Y"|default:"-" }}</td>
                 <td>{{ peserta.tempat_kegiatan|default:"-" }}</td>
             </tr>
             {% empty %}

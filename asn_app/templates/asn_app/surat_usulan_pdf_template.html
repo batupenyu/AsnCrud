@@ -292,7 +292,7 @@
                         -
                     {% endif %}
                 </td>
-                <td>{{ peserta.tanggal_kegiatan|default:"-" }}</td>
+                <td>{{ peserta.tanggal_kegiatan|indonesian_date:"%d %B %Y"|default:"-" }}</td>
                 <td>{{ peserta.tempat_kegiatan|default:"-" }}</td>
             </tr>
             {% endfor %}
@@ -363,7 +363,7 @@
             <tr>
                 <td class="label" style="padding-left: 40px;">Tanggal Kegiatan</td>
                 <td class="colon">:</td>
-                <td>{{ p.tanggal_kegiatan|default:"-" }}</td>
+                <td>{{ p.tanggal_kegiatan|indonesian_date:"%d %B %Y"|default:"-" }}</td>
             </tr>
             <tr>
                 <td class="label" style="padding-left: 40px;">Tempat Kegiatan</td>
