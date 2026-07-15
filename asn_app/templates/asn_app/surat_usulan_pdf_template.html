@@ -55,6 +55,7 @@
       border-collapse: collapse;
       margin-bottom: 20px;
       font-size: 11pt;
+      page-break-inside: avoid;
     }
     .meta-table td {
       /* padding: 3px 0; */
@@ -71,6 +72,7 @@
       text-indent: 40px;
       margin-bottom: 15px;
       font-size: 11pt;
+      page-break-inside: avoid;
     }
     .content p {
       margin: 0 0 15px 0;
@@ -83,6 +85,16 @@
       border-collapse: collapse;
       margin: 20px 0;
       font-size: 10pt;
+      page-break-inside: auto;
+    }
+    .data-table tr {
+      page-break-inside: avoid;
+    }
+    .data-table thead {
+      display: table-header-group;
+    }
+    .data-table tbody {
+      display: table-row-group;
     }
     .data-table th,
     .data-table td {
@@ -106,6 +118,8 @@
       width: 50%;
       text-align: left;
       font-size: 11pt;
+      page-break-inside: avoid;
+      page-break-after: avoid;
     }
     .signature-title {
       font-weight: bold;
@@ -285,7 +299,7 @@
         </tbody>
     </table> -->
 
-    {% if jumlah_peserta <= 3 %}
+    <!-- {% if jumlah_peserta <= 3 %}
     {% if surat_usulan.peserta_surat_usulan.all %}
     <div class="pegawai-info">
         <table>
@@ -346,7 +360,7 @@
                     {% endif %}
                 </td>
             </tr>
-            <!-- <tr>
+            <tr>
                 <td class="label" style="padding-left: 40px;">Tanggal Kegiatan</td>
                 <td class="colon">:</td>
                 <td>{{ p.tanggal_kegiatan|default:"-" }}</td>
@@ -355,7 +369,7 @@
                 <td class="label" style="padding-left: 40px;">Tempat Kegiatan</td>
                 <td class="colon">:</td>
                 <td>{{ p.tempat_kegiatan|default:"-" }}</td>
-            </tr> -->
+            </tr>
             {% if not forloop.last %}
             <tr><td colspan="3" style="padding-top: 10px;"></td></tr>
             {% endif %}
@@ -363,7 +377,8 @@
         </table>
     </div>
     {% endif %}
-    {% endif %}
+    {% endif %} -->
+
     <div class="content">
         <p>Demikian surat permohonan ini kami sampaikan. Atas perhatian Bapak, Kami sampaikan terima kasih.</p>
     </div>

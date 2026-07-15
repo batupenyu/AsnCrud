@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lampiran Surat Usulan - {{ surat_usulan.hal }}</title>
+    {% load indonesian_date_tags %}
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
-            font-size: 14px;
+            margin: 10px;
+            font-size: 10pt;
         }
         @page {
             size: A4 landscape;
@@ -19,6 +20,7 @@
             line-height: 1.0;
             padding-left: 500px;
             font-style: italic;
+            page-break-after: avoid;
         }
         .header-info table {
             width: 100%;
@@ -43,11 +45,22 @@
             font-weight: bold;
             text-transform: uppercase;
             margin-bottom: 20px;
+            page-break-after: avoid;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 30px;
+            page-break-inside: auto;
+        }
+        table tr {
+            page-break-inside: avoid;
+        }
+        table thead {
+            display: table-header-group;
+        }
+        table tbody {
+            display: table-row-group;
         }
         th, td {
             border: 1px solid black;
@@ -63,63 +76,41 @@
         .text-center {
             text-align: center;
         }
-        /* .footer {
+        .signature-container {
+            margin-top: 10px;
             float: right;
+            width: 50%;
             text-align: left;
-            margin-top: 20px;
-            padding-right: 50px;
-            line-height: 1.6;
-        } */
-
-/* tanda tangan */
-    .signature-container {
-      margin-top: 40px;
-      float: right;
-      width: 50%;
-      text-align: left;
-      font-size: 11pt;
-    }
-    .signature-title {
-      /* font-weight: bold; */
-      /* text-transform: uppercase; */
-      margin-bottom: 60px;
-      font-size: 11pt;
-    }
-    .signature-name {
-      font-weight: bold;
-      /* text-decoration: underline; */
-      /* text-transform: uppercase; */
-      font-size: 11pt;
-    }
-    .clearfix::after {
-      content: "";
-      clear: both;
-      display: table;
-    }
-
-    /* unit kerja menjorok 26px */
-    .signature-unit {
-      padding-left: 26px;
-      display: block;
-      font-size: 11pt;
-    }
-
-    /* semua isi di bawah signature-title menjorok 26px */
-    .signature-body {
-      padding-left: 26px;
-      font-size: 11pt;
-    }
-
-    /* NIP / pangkat */
-    .signature-nip {
-      margin-top: 5px;
-      font-size: 11pt;
-    }
-
-    /* fallback untuk elemen kecil */
-    small, .small, .fine-print {
-      font-size: 11pt;
-    }
+            font-size: 11pt;
+            page-break-inside: avoid;
+            page-break-after: avoid;
+        }
+        .signature-title {
+            margin-bottom: 60px;
+            font-size: 11pt;
+        }
+        .signature-name {
+            font-weight: bold;
+            font-size: 11pt;
+        }
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+        .signature-unit {
+            padding-left: 26px;
+            display: block;
+            font-size: 11pt;
+        }
+        .signature-body {
+            padding-left: 26px;
+            font-size: 11pt;
+        }
+        .signature-nip {
+            margin-top: 5px;
+            font-size: 11pt;
+        }
     </style>
 </head>
 <body>
@@ -139,14 +130,13 @@
             <tr>
                 <td class="label">TANGGAL</td>
                 <td class="colon">:</td>
-                <td>{{ surat_usulan.tanggal|date:"d F Y" }}</td>
+                <td>{{ surat_usulan.tanggal|indonesian_date:"%d %B %Y" }}</td>
             </tr>
         </table>
     </div>
 
     <div class="title">
-        DAFTAR NAMA 
-        <!-- {{ surat_usulan.hal|upper }}<br> -->
+        DAFTAR NAMA {{ surat_usulan.hal|upper }}<br>
     </div>
 
     <table>
@@ -186,7 +176,7 @@
                 <td>
                     {% if peserta.pegawai %}
                         {% if peserta.pegawai.pangkat and peserta.pegawai.pangkat != '-' and peserta.pegawai.golongan and peserta.pegawai.golongan != '-' %}
-                            {{ peserta.pegawai.pangkat }} / {{ peserta.pegawai.golongan }}
+                            {{ peserta.pegawai.pangkat }},{{ peserta.pegawai.golongan }}
                         {% else %}
                             -
                         {% endif %}
