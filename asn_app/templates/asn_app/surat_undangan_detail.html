@@ -101,10 +101,22 @@
                                     {{ surat.acara|linebreaksbr }}
                                 </div>
                                 {% endif %}
+                                {% if surat.pembuka_surat %}
+                                <div class="col-12 mb-3">
+                                    <strong>Pembuka Surat:</strong><br>
+                                    {{ surat.pembuka_surat|linebreaksbr }}
+                                </div>
+                                {% endif %}
                                 <div class="col-12 mb-3">
                                     <strong>Isi/Maksud Undangan:</strong><br>
                                     {{ surat.isi_undangan|linebreaksbr }}
                                 </div>
+                                {% if surat.penutup_surat %}
+                                <div class="col-12 mb-3">
+                                    <strong>Penutup Surat:</strong><br>
+                                    {{ surat.penutup_surat|linebreaksbr }}
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

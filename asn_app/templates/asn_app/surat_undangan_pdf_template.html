@@ -228,7 +228,7 @@
     </div>
     </br>
   <p style="text-indent: 1cm; margin-top: 15px; text-align: justify;">
-  Dengan ini kami mengundang {% if surat.kepada_yth %}{{ surat.kepada_yth }}{% else %}Bapak/Ibu orang tua/wali dari siswa yang namanya tersebut di atas{% endif %} untuk hadir pada:
+  {% if surat.pembuka_surat %}{{ surat.pembuka_surat|linebreaksbr }}{% else %}Dengan ini kami mengundang {% if surat.kepada_yth %}{{ surat.kepada_yth }}{% else %}Bapak/Ibu orang tua/wali dari siswa yang namanya tersebut di atas{% endif %} untuk hadir pada:{% endif %}
   </p>
 
 
@@ -257,12 +257,12 @@
     </table>
 
     <!-- Isi/Maksud Undangan -->
-    <p style="text-indent: 1cm; margin-top: 15px; text-align: justify;">
-        {{ surat.isi_undangan|default:"Maksud undangan ini akan disampaikan lebih lanjut pada saat pertemuan." }}
-    </p>
+    <!-- <p style="text-indent: 1cm; margin-top: 15px; text-align: justify;">
+        {{ surat.isi_undangan|default:"Maksud undangan ini akan disampaikan lebih lanjut pada saat pertemuan."|linebreaksbr }}
+    </p> -->
 
     <p style="text-indent: 1cm; margin-top: 15px; text-align: justify;">
-        Demikian undangan ini kami sampaikan, atas perhatian dan kerja sama yang baik kami ucapkan terima kasih.
+        {% if surat.penutup_surat %}{{ surat.penutup_surat|linebreaksbr }}{% else %}Demikian undangan ini kami sampaikan, atas perhatian dan kerja sama yang baik kami ucapkan terima kasih.{% endif %}
     </p>
 
     <!-- AREA TANDA TANGAN (Hanya Kepala Sekolah) -->
