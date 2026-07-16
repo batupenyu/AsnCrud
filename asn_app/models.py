@@ -34,6 +34,10 @@ class ASN(models.Model):
     nama_istri_suami = models.CharField(max_length=100, blank=True, null=True, verbose_name='Nama Istri/Suami')
     unit_kerja = models.CharField(max_length=100)
     foto = models.ImageField(upload_to='asn_fotos/', blank=True, null=True)
+    pendidikan_terakhir = models.CharField(max_length=255, blank=True, verbose_name='Pendidikan Terakhir')
+    tmt_pangkat = models.DateField(null=True, blank=True, verbose_name='TMT Pangkat')
+    tmt_cpns = models.DateField(null=True, blank=True, verbose_name='TMT CPNS')
+    tmt_jabatan = models.DateField(null=True, blank=True, verbose_name='TMT Jabatan')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -817,14 +821,21 @@ class StSatyalancana(models.Model):
 
 class DRHSatyalancana(models.Model):
     asn = models.ForeignKey(ASN, on_delete=models.CASCADE, related_name='drh_satyalancana')
+    atasan_langsung = models.ForeignKey(ASN, on_delete=models.SET_NULL, null=True, blank=True, related_name='drh_atasan_langsung', verbose_name='Atasan Langsung')
     nip_lama = models.CharField(max_length=255, blank=True, verbose_name='NIP Lama')
     pendidikan_terakhir = models.CharField(max_length=255, blank=True, verbose_name='Pendidikan Terakhir')
-    pangkat_golongan = models.CharField(max_length=255, blank=True, verbose_name='Pangkat, Gol. Ruang Terakhir (TMT)')
+    pangkat = models.CharField(max_length=255, blank=True, verbose_name='Pangkat')
+    golongan = models.CharField(max_length=255, blank=True, verbose_name='Golongan')
     no_sk_cpns = models.CharField(max_length=255, blank=True, verbose_name='No. SK CPNS (TMT)')
     jabatan_terakhir = models.CharField(max_length=255, blank=True, verbose_name='Jabatan Terakhir (TMT)')
     tanda_kehormatan = models.TextField(blank=True, verbose_name='Tanda Kehormatan yang sudah dimiliki')
     hukuman_disiplin = models.TextField(blank=True, verbose_name='Hukuman Disiplin')
     cltn = models.TextField(blank=True, verbose_name='CLTN')
+    no_kepres = models.CharField(max_length=255, blank=True, verbose_name='No. Keppres')
+    tgl_kepres = models.DateField(null=True, blank=True, verbose_name='Tanggal Keppres')
+    tmt_pangkat = models.DateField(null=True, blank=True, verbose_name='TMT Pangkat')
+    tmt_cpns = models.DateField(null=True, blank=True, verbose_name='TMT CPNS')
+    tmt_jabatan = models.DateField(null=True, blank=True, verbose_name='TMT Jabatan')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

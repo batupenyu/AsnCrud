@@ -1,0 +1,169 @@
+{% extends 'asn_app/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div class="card">
+        <div class="card-header">
+            <h2>{{ title }}</h2>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+                
+                <div class="mb-3">
+                    <label for="{{ form.asn.id_for_label }}" class="form-label">Pegawai (ASN)</label>
+                    <select name="{{ form.asn.name }}" id="{{ form.asn.id_for_label }}" class="form-control">
+                        <option value="">-- Pilih Pegawai --</option>
+                        {% for pegawai in form.fields.asn.queryset %}
+                        <option value="{{ pegawai.pk }}" data-nama="{{ pegawai.nama }}" data-pendidikan="{{ pegawai.pendidikan_terakhir }}" data-pangkat="{{ pegawai.pangkat }}" data-golongan="{{ pegawai.golongan }}" data-tmt-pangkat="{{ pegawai.tmt_pangkat|date:'Y-m-d' }}" data-tmt-cpns="{{ pegawai.tmt_cpns|date:'Y-m-d' }}" data-tmt-jabatan="{{ pegawai.tmt_jabatan|date:'Y-m-d' }}" data-jabatan="{{ pegawai.jabatan }}">{{ pegawai.nama }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if form.asn.errors %}<div class="text-danger">{{ form.asn.errors }}</div>{% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.atasan_langsung.id_for_label }}" class="form-label">Atasan Langsung</label>
+                    {{ form.atasan_langsung }}
+                    {% if form.atasan_langsung.errors %}<div class="text-danger">{{ form.atasan_langsung.errors }}</div>{% endif %}
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.nip_lama.id_for_label }}" class="form-label">NIP Lama</label>
+                        {{ form.nip_lama }}
+                        {% if form.nip_lama.errors %}<div class="text-danger">{{ form.nip_lama.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.pendidikan_terakhir.id_for_label }}" class="form-label">Pendidikan Terakhir</label>
+                        {{ form.pendidikan_terakhir }}
+                        {% if form.pendidikan_terakhir.errors %}<div class="text-danger">{{ form.pendidikan_terakhir.errors }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.pangkat.id_for_label }}" class="form-label">Pangkat</label>
+                        {{ form.pangkat }}
+                        {% if form.pangkat.errors %}<div class="text-danger">{{ form.pangkat.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.golongan.id_for_label }}" class="form-label">Golongan</label>
+                        {{ form.golongan }}
+                        {% if form.golongan.errors %}<div class="text-danger">{{ form.golongan.errors }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.no_sk_cpns.id_for_label }}" class="form-label">No. SK CPNS (TMT)</label>
+                        {{ form.no_sk_cpns }}
+                        {% if form.no_sk_cpns.errors %}<div class="text-danger">{{ form.no_sk_cpns.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.tmt_cpns.id_for_label }}" class="form-label">TMT CPNS</label>
+                        {{ form.tmt_cpns }}
+                        {% if form.tmt_cpns.errors %}<div class="text-danger">{{ form.tmt_cpns.errors }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.jabatan_terakhir.id_for_label }}" class="form-label">Jabatan Terakhir (TMT)</label>
+                        {{ form.jabatan_terakhir }}
+                        {% if form.jabatan_terakhir.errors %}<div class="text-danger">{{ form.jabatan_terakhir.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.tmt_jabatan.id_for_label }}" class="form-label">TMT Jabatan</label>
+                        {{ form.tmt_jabatan }}
+                        {% if form.tmt_jabatan.errors %}<div class="text-danger">{{ form.tmt_jabatan.errors }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.no_kepres.id_for_label }}" class="form-label">No. Keppres</label>
+                        {{ form.no_kepres }}
+                        {% if form.no_kepres.errors %}<div class="text-danger">{{ form.no_kepres.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.tgl_kepres.id_for_label }}" class="form-label">Tanggal Keppres</label>
+                        {{ form.tgl_kepres }}
+                        {% if form.tgl_kepres.errors %}<div class="text-danger">{{ form.tgl_kepres.errors }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.tanda_kehormatan.id_for_label }}" class="form-label">Tanda Kehormatan yang sudah dimiliki</label>
+                    {{ form.tanda_kehormatan }}
+                    {% if form.tanda_kehormatan.errors %}<div class="text-danger">{{ form.tanda_kehormatan.errors }}</div>{% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.hukuman_disiplin.id_for_label }}" class="form-label">Hukuman Disiplin</label>
+                    {{ form.hukuman_disiplin }}
+                    {% if form.hukuman_disiplin.errors %}<div class="text-danger">{{ form.hukuman_disiplin.errors }}</div>{% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.cltn.id_for_label }}" class="form-label">CLTN</label>
+                    {{ form.cltn }}
+                    {% if form.cltn.errors %}<div class="text-danger">{{ form.cltn.errors }}</div>{% endif %}
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <a href="{% url 'drh_satyalancana_list' %}" class="btn btn-secondary me-2">Batal</a>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const asnSelect = document.getElementById('id_asn');
+    const pendidikanInput = document.getElementById('id_pendidikan_terakhir');
+    const pangkatInput = document.getElementById('id_pangkat');
+    const golonganInput = document.getElementById('id_golongan');
+    const tmtPangkatInput = document.getElementById('id_tmt_pangkat');
+    const tmtCpnsInput = document.getElementById('id_tmt_cpns');
+    const tmtJabatanInput = document.getElementById('id_tmt_jabatan');
+    const jabatanTerakhirInput = document.getElementById('id_jabatan_terakhir');
+
+    if (asnSelect) {
+        asnSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const asnData = selectedOption.dataset;
+            
+            if (asnData.pendidikan) pendidikanInput.value = asnData.pendidikan;
+            if (asnData.pangkat) pangkatInput.value = asnData.pangkat;
+            if (asnData.golongan) golonganInput.value = asnData.golongan;
+            if (asnData.tmtPangkat) tmtPangkatInput.value = asnData.tmtPangkat;
+            if (asnData.tmtCpns) tmtCpnsInput.value = asnData.tmtCpns;
+            if (asnData.tmtJabatan) tmtJabatanInput.value = asnData.tmtJabatan;
+            if (asnData.jabatan) jabatanTerakhirInput.value = asnData.jabatan;
+        });
+
+        if (asnSelect.value) {
+            asnSelect.dispatchEvent(new Event('change'));
+        }
+    }
+});
+</script>
+{% endblock %}

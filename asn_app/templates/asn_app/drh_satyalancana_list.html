@@ -16,7 +16,8 @@
                     <tr>
                         <th>Nama</th>
                         <th>NIP</th>
-                        <th>Pangkat / Gol</th>
+                        <th>Pangkat</th>
+                        <th>Golongan</th>
                         <th>Jabatan</th>
                         <th class="text-center">Aksi</th>
                     </tr>
@@ -26,7 +27,8 @@
                     <tr>
                         <td>{{ drh.asn.nama }}</td>
                         <td>{{ drh.asn.nip }}</td>
-                        <td>{{ drh.asn.pangkat }} / {{ drh.asn.golongan }}</td>
+                        <td>{{ drh.pangkat|default:"-" }}</td>
+                        <td>{{ drh.golongan|default:"-" }}</td>
                         <td>{{ drh.asn.jabatan }}</td>
                         <td class="text-center">
                             <a href="{% url 'drh_satyalancana_detail' drh.pk %}" class="btn btn-sm btn-info"><i class="fas fa-eye"></i> </a>

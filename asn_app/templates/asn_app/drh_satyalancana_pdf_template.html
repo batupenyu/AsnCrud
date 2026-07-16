@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Riwayat Hidup - Usul Tanda Kehormatan</title>
+    {% load indonesian_date_tags %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.4;
+            margin: 40px;
+            color: #000;
+        }
+        .header {
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 6px 10px;
+            vertical-align: top;
+            font-size: 13px;
+        }
+        .center-text {
+            text-align: center;
+        }
+        .strike {
+            text-decoration: line-through;
+        }
+        .signature-container {
+            width: 100%;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+        .signature-table {
+            width: 100%;
+            border: none;
+        }
+        .signature-table td {
+            border: none;
+            padding: 0;
+            width: 50%;
+            text-align: center;
+        }
+        .space-tg {
+            height: 15px;
+        }
+        .space-ttd {
+            height: 65px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        DAFTAR RIWAYAT HIDUP<br>
+        USUL TANDA KEHORMATAN SATYALANCANA KARYA SATYA
+    </div>
+
+    <table>
+        <tbody>
+            <tr>
+                <td class="center-text" style="width: 5%;">1.</td>
+                <td style="width: 45%;">Nama Lengkap</td>
+                <td style="width: 50%; font-weight: bold;">{{ asn.nama }}</td>
+            </tr>
+            <tr>
+                <td class="center-text">2.</td>
+                <td>Tempat, Tanggal Lahir</td>
+                <td>{{ asn.tempat_lahir }}, {{ asn.tanggal_lahir|indonesian_date:"%d-%m-%Y" }}</td>
+            </tr>
+            <tr>
+                <td class="center-text">3.</td>
+                <td>NIP</td>
+                <td>{{ asn.nip }}</td>
+            </tr>
+            <tr>
+                <td class="center-text">4.</td>
+                <td>NIP Lama (jika ada)</td>
+                <td>{{ drh.nip_lama|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="center-text">5.</td>
+                <td>Pendidikan Terakhir</td>
+                <td>{{ drh.pendidikan_terakhir|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="center-text">6.</td>
+                <td>Pangkat</td>
+                <td>{{ drh.pangkat|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="center-text">7.</td>
+                <td>Golongan</td>
+                <td>{{ drh.golongan|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="center-text">8.</td>
+                <td>No. SK CPNS (TMT)</td>
+                <td>{{ drh.no_sk_cpns|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="center-text">9.</td>
+                <td>Jabatan Terakhir (TMT)</td>
+                <td>{{ drh.jabatan_terakhir|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="center-text">10.</td>
+                <td>Jenis Kelamin</td>
+                <td>(<span class="strike">Pria</span>/ {{ asn.get_jenis_kelamin_display }}, coret yang tidak perlu)</td>
+            </tr>
+            <tr>
+                <td class="center-text">11.</td>
+                <td>Tanda Kehormatan yang sudah dimiliki (Nomor dan tanggal Keppres)</td>
+                <td>{{ drh.tanda_kehormatan|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="center-text">12.</td>
+                <td>Hukuman Disiplin (Jenis, Nomor dan TMT dijatuhi hukuman s.d selesai)</td>
+                <td>{{ drh.hukuman_disiplin|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="center-text">13.</td>
+                <td>CLTN (Nomor, dan TMT CLTN s.d selesai)</td>
+                <td>{{ drh.cltn|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="center-text">14.</td>
+                <td>No. Keppres</td>
+                <td>{{ drh.no_kepres|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="center-text">15.</td>
+                <td>Tanggal Keppres</td>
+                <td>{{ drh.tgl_kepres|indonesian_date:"%d %B %Y"|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="center-text">16.</td>
+                <td>TMT Pangkat</td>
+                <td>{{ drh.tmt_pangkat|indonesian_date:"%d %B %Y"|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="center-text">17.</td>
+                <td>TMT CPNS</td>
+                <td>{{ drh.tmt_cpns|indonesian_date:"%d %B %Y"|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="center-text">18.</td>
+                <td>TMT Jabatan</td>
+                <td>{{ drh.tmt_jabatan|indonesian_date:"%d %B %Y"|default:"-" }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="signature-container">
+        <table class="signature-table">
+            <tr>
+                <td></td>
+                <td>
+                    Ditetapkan di Pangkalpinang<br>
+                    Tanggal : {{ drh.created_at|indonesian_date:"%d %B %Y" }}
+                </td>
+            </tr>
+            <tr class="space-tg">
+                <td>Jabatan Atasan Langsung,</td>
+                <td></td>
+            </tr>
+            <tr class="space-ttd">
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td style="font-weight: bold; text-decoration: underline;">
+                    {% if drh.atasan_langsung %}
+                        {{ drh.atasan_langsung.nama }}
+                    {% else %}
+                        SAIPUL BAKHRI, S.Pd., M.M.
+                    {% endif %}
+                </td>
+                <td style="font-weight: bold; text-decoration: underline;">{{ asn.nama }}</td>
+            </tr>
+            <tr>
+                <td>
+                    {% if drh.atasan_langsung %}
+                        NIP. {{ drh.atasan_langsung.nip }}
+                    {% else %}
+                        NIP. 19740304 200501 1 013
+                    {% endif %}
+                </td>
+                <td>NIP. {{ asn.nip }}</td>
+            </tr>
+        </table>
+    </div>
+
+</body>
+</html>

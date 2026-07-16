@@ -1,4 +1,5 @@
 <!-- asn_app/templates/asn_app/base.html -->
+{% load indonesian_date_tags %}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -273,6 +274,7 @@
                                                                              <li><a class="nav-link" href="{% url 'nota_dinas_list' %}"><i class="fas fa-sticky-note"></i> Nota Dinas</a></li>
                                                                              <li><a class="nav-link" href="{% url 'surat_usulan_list' %}"><i class="fas fa-file-signature"></i> Surat Usulan</a></li>
                                                                              <li><a class="nav-link" href="{% url 'st_satyalancana_list' %}"><i class="fas fa-award"></i> ST Satyalancana</a></li>
+                                                                             <li><a class="nav-link" href="{% url 'drh_satyalancana_list' %}"><i class="fas fa-id-card"></i> DRH Satyalancana</a></li>
                                                                                <li><a class="nav-link" href="{% url 'surat_panggilan_siswa_list' %}"><i class="fas fa-user-clock"></i> Surat Panggilan Siswa</a></li>
                                                                              <li><a class="nav-link" href="{% url 'surat_undangan_siswa_list' %}"><i class="fas fa-envelope-open-text"></i> Surat Undangan Siswa</a></li>
                                                                         </ul>

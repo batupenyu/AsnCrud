@@ -35,7 +35,14 @@ class ASNForm(forms.ModelForm):
         model = ASN
 
 
-        fields = '__all__'
+        fields = [
+            'nip', 'nama', 'tempat_lahir', 'tanggal_lahir',
+            'jenis_kelamin', 'agama', 'alamat', 'email', 'telepon',
+            'jabatan', 'tmt_jabatan',
+            'pangkat', 'golongan', 'tmt_pangkat',
+            'nama_istri_suami', 'unit_kerja', 'foto',
+            'pendidikan_terakhir', 'tmt_cpns',
+        ]
 
 
         widgets = {
@@ -54,6 +61,10 @@ class ASNForm(forms.ModelForm):
             'unit_kerja': forms.TextInput(attrs={'class': 'form-control'}),
             'foto': forms.FileInput(attrs={'class': 'form-control'}),
             'nama_istri_suami': forms.TextInput(attrs={'class': 'form-control'}),
+            'pendidikan_terakhir': forms.TextInput(attrs={'class': 'form-control'}),
+            'tmt_pangkat': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'tmt_cpns': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'tmt_jabatan': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         }
 
     def clean_nip(self):
@@ -917,17 +928,28 @@ class DRHSatyalancanaForm(forms.ModelForm):
         fields = '__all__'
         widgets = {
             'asn': forms.Select(attrs={'class': 'form-control'}),
+            'atasan_langsung': forms.Select(attrs={'class': 'form-control'}),
             'nip_lama': forms.TextInput(attrs={'class': 'form-control'}),
             'pendidikan_terakhir': forms.TextInput(attrs={'class': 'form-control'}),
-            'pangkat_golongan': forms.TextInput(attrs={'class': 'form-control'}),
+            'pangkat': forms.TextInput(attrs={'class': 'form-control', 'readonly': True}),
+            'golongan': forms.TextInput(attrs={'class': 'form-control', 'readonly': True}),
             'no_sk_cpns': forms.TextInput(attrs={'class': 'form-control'}),
             'jabatan_terakhir': forms.TextInput(attrs={'class': 'form-control'}),
             'tanda_kehormatan': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
             'hukuman_disiplin': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
             'cltn': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'no_kepres': forms.TextInput(attrs={'class': 'form-control'}),
+            'tgl_kepres': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'tmt_pangkat': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'tmt_cpns': forms.DateInput(attrs={'type': 'date', 'class': 'form-control', 'readonly': True}),
+            'tmt_jabatan': forms.DateInput(attrs={'type': 'date', 'class': 'form-control', 'readonly': True}),
+            'jabatan_terakhir': forms.TextInput(attrs={'class': 'form-control', 'readonly': True}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['asn'].queryset = ASN.objects.all().order_by('nama')
         self.fields['asn'].label_from_instance = lambda obj: obj.nama
+        self.fields['atasan_langsung'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['atasan_langsung'].label_from_instance = lambda obj: obj.nama
+        self.fields['atasan_langsung'].empty_label = '-- Pilih Atasan Langsung --'

@@ -1,0 +1,58 @@
+{% extends 'asn_app/base.html' %}
+
+{% block title %}Detail DRH Satyalancana{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Detail DRH Satyalancana</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Nama:</strong> {{ drh.asn.nama }}</p>
+                    <p><strong>NIP:</strong> {{ drh.asn.nip }}</p>
+                    <p><strong>NIP Lama:</strong> {{ drh.nip_lama|default:"-" }}</p>
+                    <p><strong>Tempat, Tanggal Lahir:</strong> {{ drh.asn.tempat_lahir }}, {{ drh.asn.tanggal_lahir|indonesian_date:"%d %B %Y" }}</p>
+                    <p><strong>Jenis Kelamin:</strong> {{ drh.asn.get_jenis_kelamin_display }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Pendidikan Terakhir:</strong> {{ drh.pendidikan_terakhir|default:"-" }}</p>
+                    <p><strong>Pangkat:</strong> {{ drh.pangkat|default:"-" }}</p>
+                    <p><strong>Golongan:</strong> {{ drh.golongan|default:"-" }}</p>
+                    <p><strong>No. SK CPNS:</strong> {{ drh.no_sk_cpns|default:"-" }}</p>
+                    <p><strong>Jabatan Terakhir:</strong> {{ drh.jabatan_terakhir|default:"-" }}</p>
+                </div>
+            </div>
+            <hr>
+            <h5>Tanda Kehormatan yang sudah dimiliki</h5>
+            <p>{{ drh.tanda_kehormatan|linebreaks|default:"-" }}</p>
+            <hr>
+            <h5>Hukuman Disiplin</h5>
+            <p>{{ drh.hukuman_disiplin|linebreaks|default:"-" }}</p>
+            <hr>
+            <h5>CLTN</h5>
+            <p>{{ drh.cltn|linebreaks|default:"-" }}</p>
+            <hr>
+            <h5>Data Keppres & TMT</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>No. Keppres:</strong> {{ drh.no_kepres|default:"-" }}</p>
+                    <p><strong>Tanggal Keppres:</strong> {{ drh.tgl_kepres|indonesian_date:"%d %B %Y"|default:"-" }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>TMT Pangkat:</strong> {{ drh.tmt_pangkat|indonesian_date:"%d %B %Y"|default:"-" }}</p>
+                    <p><strong>TMT CPNS:</strong> {{ drh.tmt_cpns|indonesian_date:"%d %B %Y"|default:"-" }}</p>
+                    <p><strong>TMT Jabatan:</strong> {{ drh.tmt_jabatan|indonesian_date:"%d %B %Y"|default:"-" }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-end">
+            <a href="{% url 'drh_satyalancana_list' %}" class="btn btn-secondary">Kembali</a>
+            <a href="{% url 'drh_satyalancana_update' drh.pk %}" class="btn btn-warning">Edit</a>
+            <a href="{% url 'drh_satyalancana_export_pdf' drh.pk %}" class="btn btn-primary">Cetak PDF</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
