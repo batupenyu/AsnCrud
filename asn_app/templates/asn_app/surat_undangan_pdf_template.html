@@ -81,20 +81,21 @@
             width: 100%;
             border-collapse: collapse;
             margin: 12px 0;
-            padding-left: 20px;
         }
+
         .info-table td {
-            padding: 5px 8px 5px 0;
+            padding: 1px 8px 1px 0;  /* Jarak antar baris sangat rapat */
             vertical-align: top;
         }
+
         .info-table td.label {
             width: 110px;
             font-weight: 500;
+            white-space: nowrap; /* Mencegah label terpotong */
         }
-        .acara-text, .bertemu-text {
-            text-align: justify;
-            margin-top: 6px;
-            margin-bottom: 8px;
+
+        .info-table td:last-child {
+            padding-left: 20px; /* Menjorok ke dalam 20px untuk semua nilai */
         }
 
         /* paragraf penutup */
@@ -243,7 +244,7 @@
         </tr>
         <tr>
             <td class="label">Tempat</td>
-            <td>: {{ surat.tempat|default:"SMK Negeri 2 Pelaihari, Jln. Husni Thamrin Rt.6 Desa Pemuda KNPI Kec. Pelaihari" }}</td>
+            <td>: {{ surat.tempat|default:"SMK Negeri 1 Koba" }}</td>
         </tr>
     </table>
 
