@@ -31,7 +31,7 @@
                     <select name="{{ form.asn.name }}" id="{{ form.asn.id_for_label }}" class="form-control">
                         <option value="">-- Pilih Pegawai --</option>
                         {% for pegawai in form.fields.asn.queryset %}
-                        <option value="{{ pegawai.pk }}" data-nama="{{ pegawai.nama }}" data-pendidikan="{{ pegawai.pendidikan_terakhir }}" data-pangkat="{{ pegawai.pangkat }}" data-golongan="{{ pegawai.golongan }}" data-tmt-pangkat="{{ pegawai.tmt_pangkat|date:'Y-m-d' }}" data-tmt-cpns="{{ pegawai.tmt_cpns|date:'Y-m-d' }}" data-tmt-jabatan="{{ pegawai.tmt_jabatan|date:'Y-m-d' }}" data-jabatan="{{ pegawai.jabatan }}">{{ pegawai.nama }}</option>
+                        <option value="{{ pegawai.pk }}" data-nama="{{ pegawai.nama }}" data-pendidikan="{{ pegawai.pendidikan_terakhir|default:'' }}" data-pangkat="{{ pegawai.pangkat|default:'' }}" data-golongan="{{ pegawai.golongan|default:'' }}" data-tmt-pangkat="{{ pegawai.tmt_pangkat|date:'Y-m-d'|default:'' }}" data-tmt-cpns="{{ pegawai.tmt_cpns|date:'Y-m-d'|default:'' }}" data-tmt-jabatan="{{ pegawai.tmt_jabatan|date:'Y-m-d'|default:'' }}" data-jabatan="{{ pegawai.jabatan|default:'' }}">{{ pegawai.nama }}</option>
                         {% endfor %}
                     </select>
                     {% if form.asn.errors %}<div class="text-danger">{{ form.asn.errors }}</div>{% endif %}
@@ -63,15 +63,15 @@
                         {% if form.pangkat.errors %}<div class="text-danger">{{ form.pangkat.errors }}</div>{% endif %}
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label for="{{ form.golongan.id_for_label }}" class="form-label">Golongan</label>
-                        {{ form.golongan }}
-                        {% if form.golongan.errors %}<div class="text-danger">{{ form.golongan.errors }}</div>{% endif %}
+                        <label for="{{ form.tmt_pangkat.id_for_label }}" class="form-label">TMT Pangkat</label>
+                        {{ form.tmt_pangkat }}
+                        {% if form.tmt_pangkat.errors %}<div class="text-danger">{{ form.tmt_pangkat.errors }}</div>{% endif %}
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="{{ form.no_sk_cpns.id_for_label }}" class="form-label">No. SK CPNS (TMT)</label>
+                        <label for="{{ form.no_sk_cpns.id_for_label }}" class="form-label">No. SK CPNS</label>
                         {{ form.no_sk_cpns }}
                         {% if form.no_sk_cpns.errors %}<div class="text-danger">{{ form.no_sk_cpns.errors }}</div>{% endif %}
                     </div>
@@ -84,14 +84,14 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="{{ form.jabatan_terakhir.id_for_label }}" class="form-label">Jabatan Terakhir (TMT)</label>
-                        {{ form.jabatan_terakhir }}
-                        {% if form.jabatan_terakhir.errors %}<div class="text-danger">{{ form.jabatan_terakhir.errors }}</div>{% endif %}
+                        <label for="{{ form.golongan.id_for_label }}" class="form-label">Golongan</label>
+                        {{ form.golongan }}
+                        {% if form.golongan.errors %}<div class="text-danger">{{ form.golongan.errors }}</div>{% endif %}
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label for="{{ form.tmt_jabatan.id_for_label }}" class="form-label">TMT Jabatan</label>
-                        {{ form.tmt_jabatan }}
-                        {% if form.tmt_jabatan.errors %}<div class="text-danger">{{ form.tmt_jabatan.errors }}</div>{% endif %}
+                        <label for="{{ form.jabatan_terakhir.id_for_label }}" class="form-label">Jabatan Terakhir</label>
+                        {{ form.jabatan_terakhir }}
+                        {% if form.jabatan_terakhir.errors %}<div class="text-danger">{{ form.jabatan_terakhir.errors }}</div>{% endif %}
                     </div>
                 </div>
 
@@ -105,6 +105,14 @@
                         <label for="{{ form.tgl_kepres.id_for_label }}" class="form-label">Tanggal Keppres</label>
                         {{ form.tgl_kepres }}
                         {% if form.tgl_kepres.errors %}<div class="text-danger">{{ form.tgl_kepres.errors }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.tmt_jabatan.id_for_label }}" class="form-label">TMT Jabatan</label>
+                        {{ form.tmt_jabatan }}
+                        {% if form.tmt_jabatan.errors %}<div class="text-danger">{{ form.tmt_jabatan.errors }}</div>{% endif %}
                     </div>
                 </div>
 
@@ -146,23 +154,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const tmtJabatanInput = document.getElementById('id_tmt_jabatan');
     const jabatanTerakhirInput = document.getElementById('id_jabatan_terakhir');
 
-    if (asnSelect) {
-        asnSelect.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            const asnData = selectedOption.dataset;
-            
-            if (asnData.pendidikan) pendidikanInput.value = asnData.pendidikan;
-            if (asnData.pangkat) pangkatInput.value = asnData.pangkat;
-            if (asnData.golongan) golonganInput.value = asnData.golongan;
-            if (asnData.tmtPangkat) tmtPangkatInput.value = asnData.tmtPangkat;
-            if (asnData.tmtCpns) tmtCpnsInput.value = asnData.tmtCpns;
-            if (asnData.tmtJabatan) tmtJabatanInput.value = asnData.tmtJabatan;
-            if (asnData.jabatan) jabatanTerakhirInput.value = asnData.jabatan;
-        });
+    if (!asnSelect) return;
 
-        if (asnSelect.value) {
-            asnSelect.dispatchEvent(new Event('change'));
-        }
+    function populateFromAsn() {
+        const selectedOption = asnSelect.options[asnSelect.selectedIndex];
+        if (!selectedOption) return;
+        const asnData = selectedOption.dataset;
+
+        if (pendidikanInput && asnData.pendidikan) pendidikanInput.value = asnData.pendidikan;
+        if (pangkatInput && asnData.pangkat) pangkatInput.value = asnData.pangkat;
+        if (golonganInput && asnData.golongan) golonganInput.value = asnData.golongan;
+        if (tmtPangkatInput && asnData.tmtPangkat) tmtPangkatInput.value = asnData.tmtPangkat;
+        if (tmtCpnsInput && asnData.tmtCpns) tmtCpnsInput.value = asnData.tmtCpns;
+        if (tmtJabatanInput && asnData.tmtJabatan) tmtJabatanInput.value = asnData.tmtJabatan;
+        if (jabatanTerakhirInput && asnData.jabatan) jabatanTerakhirInput.value = asnData.jabatan;
+    }
+
+    asnSelect.addEventListener('change', populateFromAsn);
+
+    if (asnSelect.value) {
+        populateFromAsn();
     }
 });
 </script>

@@ -95,68 +95,38 @@
             </tr>
             <tr>
                 <td class="center-text">6.</td>
-                <td>Pangkat</td>
-                <td>{{ drh.pangkat|default:"-" }}</td>
+                <td>Pangkat, Gol. Ruang Terakhir (TMT)  </td>
+                <td>{{ drh.pangkat|default:"-" }} ({{ drh.tmt_pangkat|indonesian_date:"%d %B %Y"|default:"-" }})</td>
             </tr>
             <tr>
                 <td class="center-text">7.</td>
-                <td>Golongan</td>
-                <td>{{ drh.golongan|default:"-" }}</td>
+                <td>No. SK CPNS (TMT)</td>
+                <td>{{ drh.no_sk_cpns|default:"-" }} ({{ drh.tmt_cpns|indonesian_date:"%d %B %Y"|default:"-" }})</td>
             </tr>
             <tr>
                 <td class="center-text">8.</td>
-                <td>No. SK CPNS (TMT)</td>
-                <td>{{ drh.no_sk_cpns|default:"-" }}</td>
+                <td>Jabatan Terakhir (TMT)</td>
+                <td>{{ drh.jabatan_terakhir|default:"-" }} ({{ drh.tmt_jabatan|indonesian_date:"%d %B %Y"|default:"-" }})</td>
             </tr>
             <tr>
                 <td class="center-text">9.</td>
-                <td>Jabatan Terakhir (TMT)</td>
-                <td>{{ drh.jabatan_terakhir|default:"-" }}</td>
-            </tr>
-            <tr>
-                <td class="center-text">10.</td>
                 <td>Jenis Kelamin</td>
                 <td>(<span class="strike">Pria</span>/ {{ asn.get_jenis_kelamin_display }}, coret yang tidak perlu)</td>
             </tr>
             <tr>
-                <td class="center-text">11.</td>
+                <td class="center-text">10.</td>
                 <td>Tanda Kehormatan yang sudah dimiliki (Nomor dan tanggal Keppres)</td>
-                <td>{{ drh.tanda_kehormatan|default:"-" }}</td>
+                <td>sudah mendapatkan SLKS yang ke {{ drh.tanda_kehormatan|default:"-" }} ({{ drh.tgl_kepres|indonesian_date:"%d %B %Y"|default:"-" }} dan {{ drh.no_kepres|default:"-" }})</td>
+            </tr>
+            <tr>
+                <td class="center-text">11.</td>
+                <td>Hukuman Disiplin (Jenis, Nomor dan TMT dijatuhi hukuman s.d selesai)</td>
+                <td style="font-style: italic;">{{ drh.hukuman_disiplin|default:"tidak pernah dijatuhi hukuman disiplin tingkat sedang/berat" }}</td>
             </tr>
             <tr>
                 <td class="center-text">12.</td>
-                <td>Hukuman Disiplin (Jenis, Nomor dan TMT dijatuhi hukuman s.d selesai)</td>
-                <td>{{ drh.hukuman_disiplin|default:"-" }}</td>
-            </tr>
-            <tr>
-                <td class="center-text">13.</td>
                 <td>CLTN (Nomor, dan TMT CLTN s.d selesai)</td>
-                <td>{{ drh.cltn|default:"-" }}</td>
-            </tr>
-            <tr>
-                <td class="center-text">14.</td>
-                <td>No. Keppres</td>
-                <td>{{ drh.no_kepres|default:"-" }}</td>
-            </tr>
-            <tr>
-                <td class="center-text">15.</td>
-                <td>Tanggal Keppres</td>
-                <td>{{ drh.tgl_kepres|indonesian_date:"%d %B %Y"|default:"-" }}</td>
-            </tr>
-            <tr>
-                <td class="center-text">16.</td>
-                <td>TMT Pangkat</td>
-                <td>{{ drh.tmt_pangkat|indonesian_date:"%d %B %Y"|default:"-" }}</td>
-            </tr>
-            <tr>
-                <td class="center-text">17.</td>
-                <td>TMT CPNS</td>
-                <td>{{ drh.tmt_cpns|indonesian_date:"%d %B %Y"|default:"-" }}</td>
-            </tr>
-            <tr>
-                <td class="center-text">18.</td>
-                <td>TMT Jabatan</td>
-                <td>{{ drh.tmt_jabatan|indonesian_date:"%d %B %Y"|default:"-" }}</td>
+                <td style="font-style: italic;">{{ drh.cltn|default:"tidak pernah mengambil cuti di luar tanggungan negara (CLTN)" }}</td>
             </tr>
         </tbody>
     </table>

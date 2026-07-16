@@ -941,9 +941,8 @@ class DRHSatyalancanaForm(forms.ModelForm):
             'no_kepres': forms.TextInput(attrs={'class': 'form-control'}),
             'tgl_kepres': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'tmt_pangkat': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'tmt_cpns': forms.DateInput(attrs={'type': 'date', 'class': 'form-control', 'readonly': True}),
-            'tmt_jabatan': forms.DateInput(attrs={'type': 'date', 'class': 'form-control', 'readonly': True}),
-            'jabatan_terakhir': forms.TextInput(attrs={'class': 'form-control', 'readonly': True}),
+            'tmt_cpns': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'tmt_jabatan': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -953,3 +952,6 @@ class DRHSatyalancanaForm(forms.ModelForm):
         self.fields['atasan_langsung'].queryset = ASN.objects.all().order_by('nama')
         self.fields['atasan_langsung'].label_from_instance = lambda obj: obj.nama
         self.fields['atasan_langsung'].empty_label = '-- Pilih Atasan Langsung --'
+        if not self.instance.pk:
+            self.fields['hukuman_disiplin'].initial = 'tidak pernah dijatuhi hukuman disiplin tingkat sedang/berat'
+            self.fields['cltn'].initial = 'tidak pernah mengambil cuti di luar tanggungan negara (CLTN)'

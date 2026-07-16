@@ -1,4 +1,5 @@
 {% extends 'asn_app/base.html' %}
+{% load indonesian_date_tags %}
 
 {% block title %}Detail DRH Satyalancana{% endblock %}
 
@@ -30,10 +31,10 @@
             <p>{{ drh.tanda_kehormatan|linebreaks|default:"-" }}</p>
             <hr>
             <h5>Hukuman Disiplin</h5>
-            <p>{{ drh.hukuman_disiplin|linebreaks|default:"-" }}</p>
+            <p>{{ drh.hukuman_disiplin|linebreaks|default:"tidak pernah dijatuhi hukuman disiplin tingkat sedang/berat" }}</p>
             <hr>
             <h5>CLTN</h5>
-            <p>{{ drh.cltn|linebreaks|default:"-" }}</p>
+            <p>{{ drh.cltn|linebreaks|default:"tidak pernah mengambil cuti di luar tanggungan negara (CLTN)" }}</p>
             <hr>
             <h5>Data Keppres & TMT</h5>
             <div class="row">
