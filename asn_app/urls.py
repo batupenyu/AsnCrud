@@ -193,12 +193,12 @@ urlpatterns = [
     path('surat_panggilan_siswa/<int:pk>/update/', views.surat_panggilan_siswa_update, name='surat_panggilan_siswa_update'),
     path('surat_panggilan_siswa/<int:pk>/delete/', views.surat_panggilan_siswa_delete, name='surat_panggilan_siswa_delete'),
     path('surat_panggilan_siswa/<int:pk>/pdf/', views.surat_panggilan_siswa_export_pdf, name='surat_panggilan_siswa_export_pdf'),
-    path('surat_undangan_siswa/', views.surat_undangan_siswa_list, name='surat_undangan_siswa_list'),
-    path('surat_undangan_siswa/create/', views.surat_undangan_siswa_create, name='surat_undangan_siswa_create'),
-    path('surat_undangan_siswa/<int:pk>/', views.surat_undangan_siswa_detail, name='surat_undangan_siswa_detail'),
-    path('surat_undangan_siswa/<int:pk>/update/', views.surat_undangan_siswa_update, name='surat_undangan_siswa_update'),
-    path('surat_undangan_siswa/<int:pk>/delete/', views.surat_undangan_siswa_delete, name='surat_undangan_siswa_delete'),
-    path('surat_undangan_siswa/<int:pk>/pdf/', views.surat_undangan_siswa_export_pdf, name='surat_undangan_siswa_export_pdf'),
+    path('surat_undangan/', views.surat_undangan_list, name='surat_undangan_list'),
+    path('surat_undangan/create/', views.surat_undangan_create, name='surat_undangan_create'),
+    path('surat_undangan/<int:pk>/', views.surat_undangan_detail, name='surat_undangan_detail'),
+    path('surat_undangan/<int:pk>/update/', views.surat_undangan_update, name='surat_undangan_update'),
+    path('surat_undangan/<int:pk>/delete/', views.surat_undangan_delete, name='surat_undangan_delete'),
+    path('surat_undangan/<int:pk>/pdf/', views.surat_undangan_export_pdf, name='surat_undangan_export_pdf'),
 
     # Surat Dispensasi routes
     path('surat_dispensasi/', views.surat_dispensasi_list, name='surat_dispensasi_list'),

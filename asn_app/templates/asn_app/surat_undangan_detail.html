@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load indonesian_date_tags %}
 
-{% block title %}Detail Surat Undangan Siswa - {{ surat.nomor_surat }}{% endblock %}
+{% block title %}Detail Surat Undangan - {{ surat.nomor_surat }}{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
@@ -12,16 +12,16 @@
                 <div class="card-header bg-primary text-white">
                     <div class="d-flex justify-content-between align-items-center">
                         <h4 class="card-title mb-0">
-                            <i class="fas fa-file-alt"></i> Detail Surat Undangan Siswa
+                            <i class="fas fa-file-alt"></i> Detail Surat Undangan
                         </h4>
                         <div>
-                            <a href="{% url 'surat_undangan_siswa_export_pdf' surat.pk %}" class="btn btn-success btn-sm" target="_blank">
+                            <a href="{% url 'surat_undangan_export_pdf' surat.pk %}" class="btn btn-success btn-sm" target="_blank">
                                 <i class="fas fa-print"></i> Cetak
                             </a>
-                            <a href="{% url 'surat_undangan_siswa_update' surat.pk %}" class="btn btn-warning btn-sm">
+                            <a href="{% url 'surat_undangan_update' surat.pk %}" class="btn btn-warning btn-sm">
                                 <i class="fas fa-edit"></i> Edit
                             </a>
-                            <a href="{% url 'surat_undangan_siswa_list' %}" class="btn btn-secondary btn-sm">
+                            <a href="{% url 'surat_undangan_list' %}" class="btn btn-secondary btn-sm">
                                 <i class="fas fa-arrow-left"></i> Kembali
                             </a>
                         </div>
@@ -49,6 +49,12 @@
                                     <strong>Tempat Ditetapkan:</strong><br>
                                     {{ surat.tempat_ditetapkan }}
                                 </div>
+                                {% if surat.kepada_yth %}
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Kepada Yth.:</strong><br>
+                                    {{ surat.kepada_yth }}
+                                </div>
+                                {% endif %}
                                 <div class="col-sm-6 mb-3">
                                     <strong>Siswa:</strong><br>
                                     {% if surat.siswa %}{{ surat.siswa.nama }}{% else %}-{% endif %}
@@ -89,6 +95,12 @@
                                         -
                                     {% endif %}
                                 </div>
+                                {% if surat.acara %}
+                                <div class="col-12 mb-3">
+                                    <strong>Acara:</strong><br>
+                                    {{ surat.acara|linebreaksbr }}
+                                </div>
+                                {% endif %}
                                 <div class="col-12 mb-3">
                                     <strong>Isi/Maksud Undangan:</strong><br>
                                     {{ surat.isi_undangan|linebreaksbr }}

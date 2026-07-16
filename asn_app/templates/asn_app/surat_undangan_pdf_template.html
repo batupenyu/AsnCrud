@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Surat Undangan Orang Tua Siswa</title>
+    <title>Surat Undangan</title>
     <style>
         /* Reset & Print Optimization */
         * {
@@ -81,6 +81,7 @@
             width: 100%;
             border-collapse: collapse;
             margin: 12px 0;
+            padding-left: 20px;
         }
         .info-table td {
             padding: 5px 8px 5px 0;
@@ -211,17 +212,22 @@
         </table>
     </div>
 
-    <!-- Alamat / Kepada Yth. Bapak/Ibu Orang Tua -->
+    <!-- Alamat / Kepada Yth. -->
     <div class="alamat-tujuan">
+        {% if surat.kepada_yth %}
+        <p>Yth. {{ surat.kepada_yth }}</p>
+        {% else %}
         <p>Yth. Bapak/Ibu Orang Tua/Wali dari Siswa</p>
-        <!-- <p><strong>{% if surat.siswa %}{{ surat.siswa.nama }}{% else %}-{% endif %}</strong></p> -->
+        {% endif %}
+        {% if surat.siswa %}
+        <p><strong>{{ surat.siswa.nama }}</strong></p>
+        {% endif %}
         <p>di</p>
         <p style="padding-left: 0.5cm;">Tempat</p>
-        <!-- <p><strong>{{ surat.tempat|default:"SMK Negeri 2 Pelaihari" }}</strong></p> -->
     </div>
     </br>
   <p style="text-indent: 1cm; margin-top: 15px; text-align: justify;">
-  Dengan ini kami mengundang Bapak/Ibu orang tua/wali dari siswa yang namanya tersebut di atas untuk hadir pada:
+  Dengan ini kami mengundang {% if surat.kepada_yth %}{{ surat.kepada_yth }}{% else %}Bapak/Ibu orang tua/wali dari siswa yang namanya tersebut di atas{% endif %} untuk hadir pada:
   </p>
 
 
@@ -238,6 +244,14 @@
         <tr>
             <td class="label">Tempat</td>
             <td>: {{ surat.tempat|default:"SMK Negeri 2 Pelaihari, Jln. Husni Thamrin Rt.6 Desa Pemuda KNPI Kec. Pelaihari" }}</td>
+        </tr>
+    </table>
+
+    <!-- Acara -->
+    <table class="info-table">
+        <tr>
+            <td class="label">Acara</td>
+            <td>: {{ surat.acara|default:"-"|linebreaksbr }}</td>
         </tr>
     </table>
 

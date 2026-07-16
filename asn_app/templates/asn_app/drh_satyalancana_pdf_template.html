@@ -40,6 +40,7 @@
             width: 100%;
             margin-top: 20px;
             font-size: 13px;
+            padding-left: 50px;
         }
         .signature-table {
             width: 100%;
@@ -49,7 +50,6 @@
             border: none;
             padding: 0;
             width: 50%;
-            text-align: center;
         }
         .space-tg {
             height: 15px;
@@ -111,7 +111,7 @@
             <tr>
                 <td class="center-text">9.</td>
                 <td>Jenis Kelamin</td>
-                <td>(<span class="strike">Pria</span>/ {{ asn.get_jenis_kelamin_display }}, coret yang tidak perlu)</td>
+                <td>(<span class="{% if asn.jenis_kelamin == 'P' %}strike{% endif %}">Pria</span> / <span class="{% if asn.jenis_kelamin == 'L' %}strike{% endif %}">Wanita</span>, coret yang tidak perlu)</td>
             </tr>
             <tr>
                 <td class="center-text">10.</td>

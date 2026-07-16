@@ -639,14 +639,16 @@ class SuratPanggilanSiswa(models.Model):
         return reverse('surat_panggilan_siswa_detail', kwargs={'pk': self.pk})
 
 
-class SuratUndanganSiswa(models.Model):
-    """Model untuk Surat Undangan Siswa (hanya ditandatangani Kepala Sekolah)"""
+class SuratUndangan(models.Model):
+    """Model untuk Surat Undangan (hanya ditandatangani Kepala Sekolah)"""
 
     kop_surat = models.ForeignKey(KopSurat, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Kop Surat')
     nomor_surat = models.CharField(max_length=100, verbose_name='Nomor Surat')
+    kepada_yth = models.CharField(max_length=200, blank=True, null=True, verbose_name='Kepada Yth.')
     siswa = models.ForeignKey(Siswa, on_delete=models.CASCADE, null=True, blank=True, related_name='surat_undangan', verbose_name='Siswa')
     orang_tua = models.CharField(max_length=100, blank=True, null=True, verbose_name='Nama Orang Tua')
     perihal = models.CharField(max_length=200, default='Undangan Orang Tua Siswa', verbose_name='Perihal')
+    acara = models.TextField(blank=True, null=True, verbose_name='Acara')
     isi_undangan = models.TextField(verbose_name='Isi/Maksud Undangan')
     tempat = models.CharField(max_length=100, verbose_name='Tempat')
     tanggal = models.DateField(verbose_name='Tanggal Undangan')
@@ -658,14 +660,14 @@ class SuratUndanganSiswa(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name_plural = "Surat Undangan Siswa"
+        verbose_name_plural = "Surat Undangan"
         ordering = ['-tanggal_ditetapkan']
 
     def __str__(self):
-        return f"Surat Undangan - {self.siswa.nama} - {self.nomor_surat}"
+        return f"Surat Undangan - {self.nomor_surat}"
 
     def get_absolute_url(self):
-        return reverse('surat_undangan_siswa_detail', kwargs={'pk': self.pk})
+        return reverse('surat_undangan_detail', kwargs={'pk': self.pk})
 
 
 class SuratDispensasi(models.Model):

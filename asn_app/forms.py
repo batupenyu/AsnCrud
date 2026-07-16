@@ -6,7 +6,7 @@ from .models import (
     NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa,
     SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum,
     SuratPanggilanSiswa, SiswaKeluar, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4,
-    SuratUndanganSiswa, PesertaNotaDinas, SuratDispensasi, PesertaDispensasi,
+    SuratUndangan, PesertaNotaDinas, SuratDispensasi, PesertaDispensasi,
     SuratUsulan, PesertaSuratUsulan, StSatyalancana, DRHSatyalancana
 )
 
@@ -609,16 +609,18 @@ class SuratPanggilanSiswaForm(forms.ModelForm):
         self.fields['wakasek_kesiswaan'].label_from_instance = lambda obj: f'{obj.nama} - {obj.jabatan}'
         self.fields['kop_surat'].label_from_instance = lambda obj: obj.nama
 
-class SuratUndanganSiswaForm(forms.ModelForm):
+class SuratUndanganForm(forms.ModelForm):
     class Meta:
-        model = SuratUndanganSiswa
+        model = SuratUndangan
         fields = '__all__'
         widgets = {
             'kop_surat': forms.Select(attrs={'class': 'form-control'}),
             'nomor_surat': forms.TextInput(attrs={'class': 'form-control'}),
+            'kepada_yth': forms.TextInput(attrs={'class': 'form-control'}),
             'siswa': forms.Select(attrs={'class': 'form-control'}),
             'orang_tua': forms.TextInput(attrs={'class': 'form-control'}),
             'perihal': forms.TextInput(attrs={'class': 'form-control'}),
+            'acara': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
             'isi_undangan': forms.Textarea(attrs={'rows': 4, 'class': 'form-control'}),
             'tempat': forms.TextInput(attrs={'class': 'form-control'}),
             'tanggal': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
