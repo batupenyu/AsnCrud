@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surat Pengantar Dinas</title>
+    {% load indonesian_date_tags %}
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        body {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+        }
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm 15mm 20mm 15mm;
+            margin: 0 auto;
+            background: white;
+            box-sizing: border-box;
+        }
+        /* Kop Surat */
+        .kop-surat-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .kop-surat-image {
+            max-width: 100%;
+            height: auto;
+            max-height: 220px;
+            object-fit: contain;
+        }
+        .kop-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-bottom: 3px solid #000;
+            margin-bottom: 25px;
+        }
+        .kop-logo {
+            width: 15%;
+            text-align: left;
+            vertical-align: middle;
+            padding-bottom: 10px;
+        }
+        .kop-logo img {
+            width: 70px;
+            height: auto;
+        }
+        .kop-teks {
+            width: 85%;
+            text-align: center;
+            vertical-align: middle;
+            padding-bottom: 10px;
+        }
+        .kop-pemprov {
+            font-size: 14pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .kop-perangkat {
+            font-size: 16pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+        .kop-alamat {
+            font-size: 10pt;
+            margin-top: 4px;
+        }
+
+        /* Tanggal & Tujuan */
+        .meta-table {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        .tujuan-box {
+            margin-top: 15px;
+            line-height: 1.3;
+        }
+
+        /* Judul Surat */
+        .judul-surat {
+            text-align: center;
+            /* font-weight: bold; */
+            font-size: 13pt;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            letter-spacing: 0.5px;
+        }
+        .judul-surat div {
+            margin-top: 2px;
+        }
+
+        /* Tabel Isi */
+        .content-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 35px;
+        }
+        .content-table th {
+            font-weight: normal;
+            text-align: center;
+            background-color: #ffffff;
+        }
+        .content-table th, .content-table td {
+            border: 1px solid #000;
+            padding: 8px 10px;
+            vertical-align: top;
+        }
+
+        /* Tanda Tangan Section */
+        .ttd-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .ttd-box {
+            width: 50%;
+            vertical-align: top;
+        }
+        .ttd-space {
+            height: 80px;
+        }
+        
+        /* Footer nomor telepon */
+        .footer-phone {
+            margin-top: 40px;
+            font-size: 11pt;
+        }
+
+        @media print {
+            body { background: white; }
+            .page { 
+                margin: 0; 
+                box-shadow: none;
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page">
+
+    <!-- KOP SURAT -->
+    <div class="kop-surat-container">
+        {% if kop_surat_base64 %}
+            <img src="{{ kop_surat_base64 }}" alt="Kop Surat" class="kop-surat-image">
+        {% elif surat.kop_surat.gambar %}
+            <img src="{{ request.scheme }}://{{ request.get_host }}{{ surat.kop_surat.gambar.url }}" alt="Kop Surat" class="kop-surat-image">
+        {% endif %}
+    </div>
+
+    <!-- TANGGAL & TUJUAN -->
+    <table class="meta-table">
+        <tr>
+            <td style="width: 50%;"></td>
+            <td style="width: 50%; text-align: right;">
+                {{ surat.tempat_ditetapkan }}, {{ surat.tanggal_surat|indonesian_date:"%d %B %Y" }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" class="tujuan-box">
+                Yth. {{ surat.tujuan_surat }}<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;di<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tempat
+            </td>
+        </tr>
+    </table>
+
+    <!-- JUDUL SURAT -->
+    <div class="judul-surat">
+        SURAT PENGANTAR
+        <div>NOMOR:{{ surat.nomor_surat }}</div>
+    </div>
+
+    <!-- TABEL UTAMA -->
+    <table class="content-table">
+        <thead>
+            <tr>
+                <th style="width: 8%;">No.</th>
+                <th style="width: 50%;">Naskah Dinas/Barang yang Dikirimkan</th>
+                <th style="width: 17%;">Banyaknya</th>
+                <th style="width: 25%;">Keterangan</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="height: 250px;">
+                <td style="text-align: center;"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- TANDA TANGAN -->
+    <table class="ttd-table">
+        <tr>
+            <td class="ttd-box">
+                Diterima tanggal ....................<br>
+                Penerima<br>
+                Nama Jabatan,<br>
+                <div class="ttd-space"></div>
+                <u>Nama</u><br>
+                Pangkat/Golongan<br>
+                NIP
+            </td>
+            <td class="ttd-box" style="padding-left: 70px;">
+                <br>
+                Pengirim<br>
+                {{ surat.penandatangan.jabatan }},<br>
+                <div class="ttd-space"></div>
+                <u>{{ surat.penandatangan.nama }}</u><br>
+                {{ surat.penandatangan.pangkat }}/{{ surat.penandatangan.golongan }}<br>
+                NIP. {{ surat.penandatangan.nip }}
+            </td>
+        </tr>
+    </table>
+
+    <!-- NOMOR TELEPON FOOTER -->
+    {% if surat.nomor_telepon %}
+    <div class="footer-phone">
+        Nomor telepon {{ surat.nomor_telepon }}
+    </div>
+    {% endif %}
+
+    </div>
+
+</body>
+</html>

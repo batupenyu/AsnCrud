@@ -1,0 +1,28 @@
+{% extends 'asn_app/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h4>Hapus Surat Pengantar</h4>
+                </div>
+                <div class="card-body">
+                    <p>Apakah Anda yakin ingin menghapus surat pengantar <strong>{{ surat.nomor_surat }}</strong>?</p>
+                    <p class="text-danger">Tindakan ini tidak dapat dibatalkan.</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Ya, Hapus
+                        </button>
+                        <a href="{% url 'surat_pengantar_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Batal
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,6 +1,6 @@
 # asn_app/admin.py
 from django.contrib import admin
-from .models import ASN, KopSurat, SuratPerintahTugas, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4, PesertaNotaDinas, SuratDispensasi, PesertaDispensasi
+from .models import ASN, KopSurat, SuratPerintahTugas, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4, PesertaNotaDinas, SuratDispensasi, PesertaDispensasi, SuratPengantar
 
 
 @admin.register(ASN)
@@ -130,3 +130,11 @@ class PesertaDispensasiAdmin(admin.ModelAdmin):
     list_display = ('surat', 'siswa', 'guru', 'ket')
     list_filter = ('ket', 'surat')
     search_fields = ('siswa__nama', 'guru__nama', 'surat__nomor_surat')
+
+
+@admin.register(SuratPengantar)
+class SuratPengantarAdmin(admin.ModelAdmin):
+    list_display = ('nomor_surat', 'tujuan_surat', 'tanggal_surat', 'penandatangan', 'created_at')
+    list_filter = ('tanggal_surat',)
+    search_fields = ('nomor_surat', 'tujuan_surat', 'penandatangan__nama')
+    raw_id_fields = ('penandatangan', 'kop_surat')

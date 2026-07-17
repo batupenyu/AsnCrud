@@ -207,4 +207,12 @@ urlpatterns = [
     path('surat_dispensasi/<int:pk>/update/', views.surat_dispensasi_update, name='surat_dispensasi_update'),
     path('surat_dispensasi/<int:pk>/delete/', views.surat_dispensasi_delete, name='surat_dispensasi_delete'),
     path('surat_dispensasi/<int:pk>/pdf/', views.surat_dispensasi_export_pdf, name='surat_dispensasi_export_pdf'),
+
+    # Surat Pengantar routes
+    path('surat_pengantar/', views.surat_pengantar_list, name='surat_pengantar_list'),
+    path('surat_pengantar/create/', views.surat_pengantar_create, name='surat_pengantar_create'),
+    path('surat_pengantar/<int:pk>/', views.surat_pengantar_detail, name='surat_pengantar_detail'),
+    path('surat_pengantar/<int:pk>/update/', views.surat_pengantar_update, name='surat_pengantar_update'),
+    path('surat_pengantar/<int:pk>/delete/', views.surat_pengantar_delete, name='surat_pengantar_delete'),
+    path('surat_pengantar/<int:pk>/pdf/', views.surat_pengantar_export_pdf, name='surat_pengantar_export_pdf'),
 ]

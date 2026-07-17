@@ -7,7 +7,7 @@ from .models import (
     SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum,
     SuratPanggilanSiswa, SiswaKeluar, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4,
     SuratUndangan, PesertaNotaDinas, SuratDispensasi, PesertaDispensasi,
-    SuratUsulan, PesertaSuratUsulan, StSatyalancana, DRHSatyalancana, DasarSurat
+    SuratUsulan, PesertaSuratUsulan, StSatyalancana, DRHSatyalancana, DasarSurat, SuratPengantar
 )
 
 
@@ -997,3 +997,28 @@ class DRHSatyalancanaForm(forms.ModelForm):
         if not self.instance.pk:
             self.fields['hukuman_disiplin'].initial = 'tidak pernah dijatuhi hukuman disiplin tingkat sedang/berat'
             self.fields['cltn'].initial = 'tidak pernah mengambil cuti di luar tanggungan negara (CLTN)'
+
+
+class SuratPengantarForm(forms.ModelForm):
+    class Meta:
+        model = SuratPengantar
+        fields = '__all__'
+        widgets = {
+            'kop_surat': forms.Select(attrs={'class': 'form-control'}),
+            'nomor_surat': forms.TextInput(attrs={'class': 'form-control'}),
+            'tempat_ditetapkan': forms.TextInput(attrs={'class': 'form-control'}),
+            'tanggal_surat': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'penandatangan': forms.Select(attrs={'class': 'form-control'}),
+            'tujuan_surat': forms.TextInput(attrs={'class': 'form-control'}),
+            'isi_surat': forms.Textarea(attrs={'rows': 5, 'class': 'form-control'}),
+            'banyaknya': forms.TextInput(attrs={'class': 'form-control'}),
+            'keterangan': forms.TextInput(attrs={'class': 'form-control'}),
+            'nomor_telepon': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['penandatangan'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['kop_surat'].queryset = KopSurat.objects.all().order_by('nama')
+        self.fields['penandatangan'].label_from_instance = lambda obj: obj.nama
+        self.fields['kop_surat'].label_from_instance = lambda obj: obj.nama

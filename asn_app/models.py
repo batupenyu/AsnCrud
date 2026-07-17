@@ -858,3 +858,28 @@ class DRHSatyalancana(models.Model):
 
     def __str__(self):
         return f"DRH Satyalancana - {self.asn.nama}"
+
+
+class SuratPengantar(models.Model):
+    kop_surat = models.ForeignKey(KopSurat, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Kop Surat')
+    nomor_surat = models.CharField(max_length=100, verbose_name='Nomor Surat')
+    tempat_ditetapkan = models.CharField(max_length=100, verbose_name='Tempat Ditetapkan')
+    tanggal_surat = models.DateField(verbose_name='Tanggal Surat')
+    penandatangan = models.ForeignKey(ASN, on_delete=models.SET_NULL, null=True, blank=True, related_name='surat_pengantar_penandatangan', verbose_name='Penandatangan')
+    tujuan_surat = models.CharField(max_length=255, verbose_name='Tujuan Surat')
+    isi_surat = models.TextField(blank=True, null=True, verbose_name='Naskah Dinas/Barang yang Dikirimkan')
+    banyaknya = models.CharField(max_length=100, default='1 (satu) berkas', verbose_name='Banyaknya')
+    keterangan = models.CharField(max_length=255, default='Demikian disampaikan untuk dapat di tindaklanjuti', verbose_name='Keterangan')
+    nomor_telepon = models.CharField(max_length=20, blank=True, null=True, verbose_name='Nomor Telepon')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Surat Pengantar"
+        ordering = ['-tanggal_surat']
+
+    def __str__(self):
+        return f"Surat Pengantar {self.nomor_surat}"
+
+    def get_absolute_url(self):
+        return reverse('surat_pengantar_detail', kwargs={'pk': self.pk})
