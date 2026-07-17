@@ -65,10 +65,18 @@
                                 {% endif %}
                                 {% if surat.isi_surat %}
                                 <div class="col-12 mb-3">
-                                    <strong>Isi Surat:</strong><br>
+                                    <strong>Naskah Dinas/Barang yang Dikirimkan:</strong><br>
                                     {{ surat.isi_surat|linebreaksbr }}
                                 </div>
                                 {% endif %}
+                                <div class="col-sm-6 mb-3">
+                                    <strong>Banyaknya:</strong><br>
+                                    {{ surat.banyaknya }}
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <strong>Keterangan:</strong><br>
+                                    {{ surat.keterangan }}
+                                </div>
                             </div>
                         </div>
                     </div>

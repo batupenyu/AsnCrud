@@ -1012,7 +1012,7 @@ class SuratPengantarForm(forms.ModelForm):
             'tujuan_surat': forms.TextInput(attrs={'class': 'form-control'}),
             'isi_surat': forms.Textarea(attrs={'rows': 5, 'class': 'form-control'}),
             'banyaknya': forms.TextInput(attrs={'class': 'form-control'}),
-            'keterangan': forms.TextInput(attrs={'class': 'form-control'}),
+            'keterangan': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
             'nomor_telepon': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
