@@ -819,12 +819,12 @@ class SuratDispensasiForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['penanda_tangan'].queryset = ASN.objects.all().order_by('nama')
-        self.fields['penanda_tangan'].label_from_instance = lambda obj: obj.nama
+        self.fields['penandatangan'].queryset = ASN.objects.all().order_by('nama')
+        self.fields['penandatangan'].label_from_instance = lambda obj: obj.nama
         self.fields['kop_surat'].queryset = KopSurat.objects.all().order_by('nama')
         self.fields['kop_surat'].label_from_instance = lambda obj: obj.nama
         if not self.instance.pk:
-            self.fields['dasar_surat'].initial = 'Surat Sekretariat Daerah Provinsi Kepulauan Bangka Belitung Nomor: 800/143/BKPSDM/2026 tanggal 20 Juli 2026 tentang Persyaratan Pengajuan Satyalancana Karya Satya, Kepala Dinas Pendidikan Provinsi Bangka Belitung.'
+            self.fields['nomor_surat'].initial = '800.1.11.1/' + str(SuratDispensasi.objects.count() + 1).zfill(3) + '/SMKN1KB/' + str(__import__('datetime').datetime.now().year)
 
 
 class SuratUsulanForm(forms.ModelForm):
