@@ -41,7 +41,11 @@
             <div class="info-item"><span class="info-label">Tempat Ditetapkan</span><span class="info-colon">:</span><span class="info-value">{{ spt.tempat_ditetapkan }}</span></div>
             <div class="info-item"><span class="info-label">Tanggal Ditetapkan</span><span class="info-colon">:</span><span class="info-value">{{ spt.tanggal_ditetapkan|indonesian_date:"%d %B %Y" }}</span></div>
         </div>
-        <div class="info-item" style="grid-column: 1 / -1;"><span class="info-label">Dasar Surat</span><span class="info-colon">:</span><span class="info-value">{{ spt.dasar_surat|linebreaks }}</span></div>
+        <div class="info-item" style="grid-column: 1 / -1;"><span class="info-label">Dasar Surat</span><span class="info-colon">:</span><span class="info-value">
+            <ol style="margin-bottom: 0;">
+                {% for ds in spt.dasar_surat_items.all %}<li>{{ ds.isi|linebreaksbr }}</li>{% empty %}-{% endfor %}
+            </ol>
+        </span></div>
     </div>
 
     <div class="section">

@@ -144,7 +144,11 @@
       <tr>
         <td style="vertical-align: top; width: 15%">Dasar</td>
         <td style="vertical-align: top; width: 5%">:</td>
-        <td style="vertical-align: top; width: 80%">{{ spt.dasar_surat }}</td>
+        <td style="vertical-align: top; width: 80%">
+          <ol style="margin: 0; padding-left: 1.2em;">
+            {% for ds in spt.dasar_surat_items.all %}<li>{{ ds.isi }}</li>{% empty %}-{% endfor %}
+          </ol>
+        </td>
       </tr>
       <tr>
         <td style="vertical-align: top">Kepada</td>

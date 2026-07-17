@@ -51,9 +51,13 @@
                     <div class="subsection-content">
                         <div class="subsection-title">Landasan Hukum</div>
                         <ol class="custom-ol" style="text-align: justify;">
+                            {% for ds in spt.dasar_surat_items.all %}
                             <li>
-                                {{ spt.dasar_surat|default:"-"|linebreaksbr }}
+                                {{ ds.isi|default:"-"|linebreaksbr }}
                             </li>
+                            {% empty %}
+                            <li>-</li>
+                            {% endfor %}
                             <li>
                                 SPT {{ spt.nomor_spt }}
                             </li>

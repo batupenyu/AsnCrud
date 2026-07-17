@@ -9,7 +9,7 @@ from django.core.paginator import Paginator
 from django.contrib import messages
 from django.db.models import Q, Count
 from .models import ASN, SuratPerintahTugas, KopSurat, SuratSantunanKorpri, NotaDinas, HariLibur, SuratCuti, SisaCuti, Siswa, SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum, SuratPanggilanSiswa, SiswaKeluar, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4, SuratUndangan, PesertaNotaDinas, SuratDispensasi, PesertaDispensasi, SuratUsulan, PesertaSuratUsulan, StSatyalancana, DRHSatyalancana
-from .forms import ASNForm, SPTForm, KopSuratForm, SuratSantunanKorpriForm, NotaDinasForm, HariLiburForm, SuratCutiForm, SisaCutiForm, SiswaForm, SuratKeteranganForm, SuratResmiForm, SPTJMForm, SPMTForm, FotoKegiatanForm, SuratUmumForm, SuratPanggilanSiswaForm, SiswaKeluarForm, SuratRekomendasiStudiLanjutForm, SuratKP4Form, AnggotaKeluargaKP4FormSet, SuratUndanganForm, PesertaNotaDinasForm, PesertaNotaDinasCRUDForm, PesertaNotaDinasFormSet, SuratDispensasiForm, PesertaDispensasiFormSet, SuratUsulanForm, PesertaSuratUsulanForm, PesertaSuratUsulanCRUDForm, PesertaSuratUsulanFormSet, StSatyalancanaForm, DRHSatyalancanaForm
+from .forms import ASNForm, SPTForm, KopSuratForm, SuratSantunanKorpriForm, NotaDinasForm, HariLiburForm, SuratCutiForm, SisaCutiForm, SiswaForm, SuratKeteranganForm, SuratResmiForm, SPTJMForm, SPMTForm, FotoKegiatanForm, SuratUmumForm, SuratPanggilanSiswaForm, SiswaKeluarForm, SuratRekomendasiStudiLanjutForm, SuratKP4Form, AnggotaKeluargaKP4FormSet, SuratUndanganForm, PesertaNotaDinasForm, PesertaNotaDinasCRUDForm, PesertaNotaDinasFormSet, SuratDispensasiForm, PesertaDispensasiFormSet, SuratUsulanForm, PesertaSuratUsulanForm, PesertaSuratUsulanCRUDForm, PesertaSuratUsulanFormSet, StSatyalancanaForm, DRHSatyalancanaForm, DasarSuratFormSet
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy, reverse
 import base64
@@ -340,24 +340,31 @@ def spt_create(request):
     """Membuat SPT baru"""
     if request.method == 'POST':
         form = SPTForm(request.POST)
-        if form.is_valid():
-            form.save()
+        formset = DasarSuratFormSet(request.POST)
+        if form.is_valid() and formset.is_valid():
+            spt = form.save()
+            formset.instance = spt
+            formset.save()
             return redirect('spt_list')
     else:
         form = SPTForm()
-    return render(request, 'asn_app/spt_form.html', {'form': form, 'title': 'Tambah SPT'})
+        formset = DasarSuratFormSet()
+    return render(request, 'asn_app/spt_form.html', {'form': form, 'formset': formset, 'title': 'Tambah SPT'})
 
 def spt_update(request, pk):
     """Mengupdate data SPT"""
     spt = get_object_or_404(SuratPerintahTugas, pk=pk)
     if request.method == 'POST':
         form = SPTForm(request.POST, instance=spt)
-        if form.is_valid():
+        formset = DasarSuratFormSet(request.POST, instance=spt)
+        if form.is_valid() and formset.is_valid():
             form.save()
+            formset.save()
             return redirect('spt_detail', pk=spt.pk)
     else:
         form = SPTForm(instance=spt)
-    return render(request, 'asn_app/spt_form.html', {'form': form, 'title': 'Edit SPT'})
+        formset = DasarSuratFormSet(instance=spt)
+    return render(request, 'asn_app/spt_form.html', {'form': form, 'formset': formset, 'title': 'Edit SPT'})
 
 def spt_delete(request, pk):
     """Menghapus data SPT"""

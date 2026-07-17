@@ -58,7 +58,6 @@ class KopSurat(models.Model):
 
 class SuratPerintahTugas(models.Model):
     peserta = models.ManyToManyField(ASN, related_name='spt_peserta', verbose_name='Peserta')
-    dasar_surat = models.TextField(verbose_name='Dasar Surat')
     nomor_spt = models.CharField(max_length=50, verbose_name='Nomor SPT')
     tempat_pelaksanaan = models.CharField(max_length=100, verbose_name='Tempat Pelaksanaan')
     waktu_pelaksanaan = models.DateTimeField(verbose_name='Waktu Pelaksanaan')
@@ -108,6 +107,20 @@ class SuratPerintahTugas(models.Model):
                 return 1
             return 0
         return 1
+
+
+class DasarSurat(models.Model):
+    spt = models.ForeignKey(SuratPerintahTugas, related_name='dasar_surat_items', on_delete=models.CASCADE, verbose_name='SPT')
+    urutan = models.PositiveIntegerField(default=0, blank=True, verbose_name='Urutan')
+    isi = models.TextField(blank=True, verbose_name='Dasar Surat')
+
+    class Meta:
+        ordering = ['urutan']
+        verbose_name = 'Dasar Surat'
+        verbose_name_plural = 'Dasar Surat'
+
+    def __str__(self):
+        return f"Dasar Surat {self.urutan}: {self.isi[:50]}"
 
 
 class FotoKegiatan(models.Model):

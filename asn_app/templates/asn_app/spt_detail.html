@@ -9,7 +9,14 @@
         </div>
         <div class="card-body">
             <h5 class="card-title">{{ spt.nama_kegiatan }}</h5>
-            <p class="card-text"><strong>Dasar Surat:</strong> {{ spt.dasar_surat }}</p>
+            <p class="card-text"><strong>Dasar Surat:</strong></p>
+            <ol>
+                {% for ds in spt.dasar_surat_items.all %}
+                <li>{{ ds.isi|linebreaksbr }}</li>
+                {% empty %}
+                <li>-</li>
+                {% endfor %}
+            </ol>
             <p class="card-text"><strong>Tempat Pelaksanaan:</strong> {{ spt.tempat_pelaksanaan }}</p>
             <p class="card-text"><strong>Waktu Pelaksanaan:</strong> {{ spt.waktu_pelaksanaan }}</p>
             <p class="card-text"><strong>Tanggal Pelaksanaan:</strong> {{ spt.tanggal_pelaksanaan }}</p>

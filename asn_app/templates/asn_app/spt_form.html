@@ -14,7 +14,7 @@
                         
                         <div class="row">
                             {% for field in form %}
-                                {% if field.name != 'peserta' %}
+                                {% if field.name != 'peserta' and field.name != 'dasar_surat' %}
                                 <div class="col-md-6 mb-3">
                                     <label for="{{ field.id_for_label }}" class="form-label">
                                         {{ field.label }}
@@ -32,6 +32,53 @@
                                 </div>
                                 {% endif %}
                             {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Dasar Surat</label>
+                            {% if formset.non_form_errors %}
+                            <div class="alert alert-danger">
+                                {{ formset.non_form_errors }}
+                            </div>
+                            {% endif %}
+                            {{ formset.management_form }}
+                            <div id="dasar-surat-container">
+                                {% for ds_form in formset %}
+                                <div class="dasar-surat-item card mb-2">
+                                    <div class="card-body">
+                                        {% for hidden in ds_form.hidden_fields %}
+                                            {{ hidden }}
+                                        {% endfor %}
+                                        {% if ds_form.non_field_errors %}
+                                        <div class="alert alert-danger">
+                                            {{ ds_form.non_field_errors }}
+                                        </div>
+                                        {% endif %}
+                                        <div class="row">
+                                            <div class="col-md-2 mb-3">
+                                                <label class="form-label">Urutan</label>
+                                                {{ ds_form.urutan }}
+                                            </div>
+                                            <div class="col-md-10 mb-3">
+                                                <label class="form-label">Isi Dasar Surat</label>
+                                                {{ ds_form.isi }}
+                                            </div>
+                                        </div>
+                                        {% if ds_form.instance.pk %}
+                                        <div class="form-check">
+                                            {{ ds_form.DELETE }}
+                                            <label class="form-check-label" for="{{ ds_form.DELETE.id_for_label }}">
+                                                Hapus dasar surat ini
+                                            </label>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" id="add-dasar-surat">
+                                <i class="fas fa-plus"></i> Tambah Dasar Surat
+                            </button>
                         </div>
                         
                         <div class="mb-3">
@@ -67,4 +114,68 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('dasar-surat-container');
+    const addButton = document.getElementById('add-dasar-surat');
+    const totalForms = document.getElementById('id_dasarsurat_set-TOTAL_FORMS');
+
+    function updateRemoveButtons() {
+        const items = container.querySelectorAll('.dasar-surat-item');
+        items.forEach(function(item) {
+            let removeBtn = item.querySelector('.remove-dasar-surat');
+            if (!removeBtn && items.length > 1) {
+                removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'btn btn-outline-danger btn-sm remove-dasar-surat mt-2';
+                removeBtn.innerHTML = '<i class="fas fa-trash"></i> Hapus';
+                item.querySelector('.card-body').appendChild(removeBtn);
+                removeBtn.addEventListener('click', function() {
+                    const delInput = item.querySelector('input[name$="-DELETE"]');
+                    if (delInput) {
+                        delInput.checked = true;
+                        item.style.display = 'none';
+                    } else {
+                        item.remove();
+                    }
+                    updateRemoveButtons();
+                });
+            }
+        });
+    }
+
+    if (addButton && container && totalForms) {
+        addButton.addEventListener('click', function() {
+            const formCount = container.querySelectorAll('.dasar-surat-item').length;
+            const newItem = container.querySelector('.dasar-surat-item').cloneNode(true);
+
+            newItem.style.display = '';
+            newItem.querySelectorAll('input, textarea, select').forEach(function(el) {
+                if (el.name) {
+                    el.name = el.name.replace(/-\d+-/, '-' + formCount + '-');
+                    el.id = 'id_' + el.name;
+                }
+                if (el.type === 'text' || el.tagName === 'TEXTAREA') {
+                    el.value = '';
+                }
+                if (el.type === 'checkbox') {
+                    el.checked = false;
+                }
+            });
+            const delInput = newItem.querySelector('input[name$="-DELETE"]');
+            if (delInput) {
+                delInput.checked = false;
+                delInput.type = 'hidden';
+            }
+
+            container.appendChild(newItem);
+            totalForms.value = container.querySelectorAll('.dasar-surat-item').length;
+            updateRemoveButtons();
+        });
+
+        updateRemoveButtons();
+    }
+});
+</script>
 {% endblock %}

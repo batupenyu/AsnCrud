@@ -7,7 +7,7 @@ from .models import (
     SuratKeterangan, SuratResmi, SPTJM, SPMT, FotoKegiatan, SuratUmum,
     SuratPanggilanSiswa, SiswaKeluar, SuratRekomendasiStudiLanjut, SuratKP4, AnggotaKeluargaKP4,
     SuratUndangan, PesertaNotaDinas, SuratDispensasi, PesertaDispensasi,
-    SuratUsulan, PesertaSuratUsulan, StSatyalancana, DRHSatyalancana
+    SuratUsulan, PesertaSuratUsulan, StSatyalancana, DRHSatyalancana, DasarSurat
 )
 
 
@@ -97,9 +97,9 @@ class SPTForm(forms.ModelForm):
     class Meta:
         model = SuratPerintahTugas
         fields = '__all__'
+        exclude = ['dasar_surat']
         widgets = {
             'peserta': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
-            'dasar_surat': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
             'nomor_spt': forms.TextInput(attrs={'class': 'form-control'}),
             'tempat_pelaksanaan': forms.TextInput(attrs={'class': 'form-control'}),
             'waktu_pelaksanaan': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
@@ -744,6 +744,44 @@ class PesertaDispensasiForm(forms.ModelForm):
         # tapi wajib pilih salah satu jika baris diisi.
         if not siswa and not guru:
             return cleaned_data
+
+
+class DasarSuratForm(forms.ModelForm):
+    class Meta:
+        model = DasarSurat
+        fields = ['urutan', 'isi']
+        widgets = {
+            'urutan': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+            'isi': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        isi = cleaned_data.get('isi')
+        if not isi:
+            # Baris kosong dilewati; hapus error pada field lain.
+            self._errors.clear()
+            cleaned_data.pop('urutan', None)
+            cleaned_data.pop('isi', None)
+        return cleaned_data
+
+
+DasarSuratBaseFormSet = inlineformset_factory(
+    SuratPerintahTugas, DasarSurat,
+    form=DasarSuratForm,
+    extra=1,
+    can_delete=True
+)
+
+
+class DasarSuratFormSet(DasarSuratBaseFormSet):
+    def save_new(self, form, commit=True):
+        if not form.cleaned_data.get('isi'):
+            return None
+        return super().save_new(form, commit=commit)
+
+
+
         return cleaned_data
 
 
